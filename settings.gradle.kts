@@ -14,3 +14,4 @@ dependencyResolutionManagement {
 }
 rootProject.name = "tibi"
 include(":core")
+include(":app")
