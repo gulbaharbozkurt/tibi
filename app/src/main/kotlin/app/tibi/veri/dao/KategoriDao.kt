@@ -14,4 +14,14 @@ interface KategoriDao {
     fun tumu(yon: KategoriYonu): Flow<List<Kategori>>
     @Query("SELECT * FROM kategori WHERE ad = :ad") suspend fun adIle(ad: String): Kategori?
     @Query("SELECT * FROM kategori WHERE id = :id") suspend fun getir(id: Long): Kategori?
+
+    /** E4: en çok kullanılan kategori önce; eşitlikte varsayılan sıra. */
+    @Query(
+        """
+        SELECT k.* FROM kategori k LEFT JOIN hareket h ON h.kategoriId = k.id
+        WHERE k.yon = :yon AND k.arsiv = 0
+        GROUP BY k.id ORDER BY COUNT(h.id) DESC, k.sira, k.id
+        """
+    )
+    fun kullanimSirali(yon: KategoriYonu): Flow<List<Kategori>>
 }

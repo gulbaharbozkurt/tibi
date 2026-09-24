@@ -9,6 +9,17 @@ import java.time.LocalDate
 
 data class AylikYuk(val ekstreKesimTarihi: LocalDate, val toplamKurus: Long)
 
+data class KartTaksidi(
+    val hareketId: Long,
+    val aciklama: String?,
+    val kategoriAdi: String?,
+    val toplam: Int,
+    val siradakiSira: Int,
+    val aylikKurus: Long,
+    val kalanKurus: Long,
+    val sonKesim: LocalDate,
+)
+
 @Dao
 interface TaksitDao {
     @Insert suspend fun ekle(satirlar: List<TaksitSatiri>)
@@ -45,4 +56,27 @@ interface TaksitDao {
         """
     )
     fun aylikYuk(bugun: LocalDate): Flow<List<AylikYuk>>
+
+    @Query(
+        """
+        SELECT t.hareketId, h.aciklama, k.ad AS kategoriAdi, MAX(t.toplam) AS toplam, MIN(t.sira) AS siradakiSira,
+               MIN(t.tutarKurus) AS aylikKurus, SUM(t.tutarKurus) AS kalanKurus, MAX(t.ekstreKesimTarihi) AS sonKesim
+        FROM taksit_satiri t
+        JOIN hareket h ON h.id = t.hareketId
+        LEFT JOIN kategori k ON k.id = h.kategoriId
+        WHERE t.oncedenOdendi = 0 AND t.toplam > 1 AND t.ekstreKesimTarihi >= :bugun
+          AND (t.kartId = :anaKartId OR t.kartId IN (SELECT hesapId FROM kart WHERE anaKartId = :anaKartId))
+        GROUP BY t.hareketId ORDER BY sonKesim, t.hareketId
+        """
+    )
+    fun aktifTaksitler(anaKartId: Long, bugun: LocalDate): Flow<List<KartTaksidi>>
+
+    @Query(
+        """
+        SELECT COALESCE(SUM(tutarKurus), 0) FROM taksit_satiri
+        WHERE oncedenOdendi = 0 AND ekstreKesimTarihi = :kesim
+          AND (kartId = :anaKartId OR kartId IN (SELECT hesapId FROM kart WHERE anaKartId = :anaKartId))
+        """
+    )
+    fun kesimTutari(anaKartId: Long, kesim: LocalDate): Flow<Long>
 }
