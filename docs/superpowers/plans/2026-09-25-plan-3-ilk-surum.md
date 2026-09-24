@@ -742,7 +742,7 @@ fun KokEkran() {
 source ~/.tibi-env && cd ~/tibi && ./gradlew :app:testDebugUnitTest :app:assembleDebug
 W="/mnt/c/Users/EZALCO GÜLBAHAR/tibi-araclar"; cp app/build/outputs/apk/debug/app-debug.apk "$W/"
 "$WADB" install -r "$(wslpath -w "$W/app-debug.apk")"
-"$WADB" shell pm clear app.tibi.debug
+"$WADB" uninstall app.tibi.debug; "$WADB" install "$(wslpath -w "$W/app-debug.apk")"
 "$WADB" shell am start -W -n app.tibi.debug/app.tibi.MainActivity | grep Status
 "$WADB" logcat -d -b crash | tail -5
 ```
@@ -1114,7 +1114,7 @@ fun KurulumAkisi(bitti: () -> Unit) {
 ```bash
 source ~/.tibi-env && cd ~/tibi && ./gradlew :app:assembleDebug
 W="/mnt/c/Users/EZALCO GÜLBAHAR/tibi-araclar"; cp app/build/outputs/apk/debug/app-debug.apk "$W/"
-"$WADB" install -r "$(wslpath -w "$W/app-debug.apk")" && "$WADB" shell pm clear app.tibi.debug
+"$WADB" uninstall app.tibi.debug; "$WADB" install "$(wslpath -w "$W/app-debug.apk")"
 "$WADB" shell am start -W -n app.tibi.debug/app.tibi.MainActivity | grep Status
 S=/tmp/claude-1000/-home-setenay/c37b55b1-13ad-43b6-addd-4be6ca4e544d/scratchpad
 "$WADB" exec-out screencap -p > $S/p3-g3.png
@@ -3075,7 +3075,7 @@ Claude-Session: https://claude.ai/code/session_0185ka4qkbLW4rdK5CMc4fuq"
 
 Bu görevi **ana oturum** yürütür, alt ajana verilmez. Kullanıcıyla birlikte yapılır, çünkü Xiaomi otomatik dokunmaya izin vermiyor.
 
-- [ ] **Adım 1:** Debug uygulamayı temizle ve aç (`pm clear app.tibi.debug`). Kullanıcı kurulumu kendi gerçek verisiyle **deneme amaçlı** yapar: bir banka hesabı, maaş, bir kart ve bir taksit girer. Ardından "+" ile birer harcama, gelir ve transfer girer, Özet, Hareketler ve kart detayı ekranlarına bakar. Her adımda ekran görüntüsü alınıp kontrol edilir. Çökme kaydı temiz olmalı.
+- [ ] **Adım 1:** Debug uygulamayı temizle ve aç (MIUI `pm clear`'i engelliyor: `"$WADB" uninstall app.tibi.debug` ve yeniden kur). Kullanıcı kurulumu kendi gerçek verisiyle **deneme amaçlı** yapar: bir banka hesabı, maaş, bir kart ve bir taksit girer. Ardından "+" ile birer harcama, gelir ve transfer girer, Özet, Hareketler ve kart detayı ekranlarına bakar. Her adımda ekran görüntüsü alınıp kontrol edilir. Çökme kaydı temiz olmalı.
 - [ ] **Adım 2:** Bulunan hatalar düzeltilir. Her düzeltmenin kendi testi ve commit'i olur.
 - [ ] **Adım 3:** `app/build.gradle.kts`'de `versionName = "0.2.0"`, commit, push, CI yeşil. Ardından `git tag v0.2.0 && git push origin v0.2.0` ve CI yeşil.
 - [ ] **Adım 4:** Release APK'yı indirip telefona kur: `gh release download v0.2.0` → `"$WADB" install -r`. Aynı anahtarla imzalı olduğu için v0.1.0'ın üzerine kurulur. Kullanıcı **gerçek kurulumunu** bu uygulamada (`app.tibi`) yapar. Debug uygulama (`app.tibi.debug`) isteğe göre silinir: `"$WADB" uninstall app.tibi.debug`.
