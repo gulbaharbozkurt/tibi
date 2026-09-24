@@ -47,6 +47,8 @@ Tek kişinin kullanacağı Android uygulaması. Harcamaları, taksitleri, gelirl
 - **K5.** Kart ekranında şunlar görünür: toplam borç, kendi limitine göre kalan tutar, dönem içi harcamalar, aktif taksitler (ör. 5/12). Banka limiti küçük yazıyla görünür.
 - **K6.** Son ödeme gününden 3 gün ve 1 gün önce hatırlatma gelir. Gün sayıları ayarlanabilir.
 - **K7.** Faiz hesabı yapılmaz.
+- **K8. Geçmişe dönük taksit:** Uygulamaya başlamadan önce yapılmış ve hâlâ ekstreye yansıyan taksitler girilebilir. Şu alanlar olur: açıklama, kart, kategori, aylık taksit tutarı ya da toplam tutar, toplam taksit sayısı, sıradaki ekstrede kaçıncı taksit olduğu (ya da ilk taksit ayı). Kalan taksitler gelecek ekstrelere dağıtılır ve kalan plan hemen gösterilir. Ödenmiş taksitler geçmiş aylara gider olarak yazılmaz, raporları bozmaz.
+- **K9. Açılış borcu:** Kart eklenirken kesilmiş ama ödenmemiş ekstre tutarı ve dönem içindeki tek çekimlerin toplamı girilir. Son ödeme tarihi kartın son ödeme gününden hesaplanır. Uygulama bugünkü durumdan başlar.
 
 ### 3.5 Harcama freni
 - **F1. Kendi limitin:** Her karta banka limitinden bağımsız bir kişisel sınır konur. Kalan tutar bu sınıra göre gösterilir.
@@ -54,8 +56,9 @@ Tek kişinin kullanacağı Android uygulaması. Harcamaları, taksitleri, gelirl
 - **F3. Kademeli uyarı:** Sınırın %70'inde sarı, %90'ında kırmızı uyarı çıkar. Sınır aşılınca Özet ekranının en üstünde kalıcı bir uyarı durur. Eşikler ayarlanabilir.
 - **F4. Kayıt anında etki:** Kaydetmeden önce şunlar gösterilir: bu karttaki kalan kişisel limit ve gelecek ayki kart ödemesinin beklenen maaşa oranı.
 - **F5. Taksit uyarısı:** Taksitli girişte, gelecek aylara eklenecek aylık tutar ve bitiş ayı gösterilir.
-- **F6. Bekleme listesi:** Belirli bir tutarın üstündeki alışverişler "48 saat beklet" ile listeye alınır. Süre dolunca "Hâlâ istiyor musun?" bildirimi gelir. Cevap "Evet" ise harcama formu açılır, "Hayır" ise kayıt listeden silinir. Tutar eşiği ve süre ayarlanabilir.
+- **F6. Bekleme listesi:** Belirli bir tutarın üstündeki alışverişler "48 saat beklet" ile listeye alınır. Süre dolunca "Hâlâ istiyor musun?" bildirimi gelir. Cevap "Evet" ise harcama formu açılır, "Hayır" ise kayıt vazgeçilenlere taşınır. Tutar eşiği ve süre ayarlanabilir.
 - **F7. Harcama hızı:** Özet ekranında şöyle bir cümle görünür: "Ayın %X'i geçti, kart bütçenin %Y'sini harcadın."
+- **F8. Vazgeçilenler sayacı:** Bekleme listesinde bu ay vazgeçilen alışverişlerin toplamı ve adedi gösterilir.
 
 ### 3.6 Gelir
 - **G1.** Gelir kaynakları kullanıcı tarafından tanımlanır, ör. Maaş, Özel ders, Diğer.
@@ -93,7 +96,13 @@ Tek kişinin kullanacağı Android uygulaması. Harcamaları, taksitleri, gelirl
 - **R4.** Ders kazancı ve saatleri, öğrencilere göre dağılım
 - **R5.** Kartlara göre borç gelişimi
 
-### 3.11 Güvenlik ve veri
+### 3.11 İlk kurulum
+- **S1.** İlk açılışta 5 adımlı kurulum çalışır: Gelir, Kartlar, Hesaplar ve nakit, Devam eden taksitler, Harcama freni. Her adım atlanabilir ve sonradan Ayarlar'dan açılabilir.
+- **S2.** Kart sayısında sınır yoktur. Her kart için K1 ve K9'daki alanlar girilir.
+- **S3.** Banka hesapları ve nakit için açılış bakiyesi girilir.
+- **S4.** Harcama freni değerleri (F2, F3, F6) kullanıcı tarafından belirlenir. Önerilen başlangıç değerleri dolu gelir: tavan net gelirin %40'ı, uyarı eşikleri %70 ve %90, bekleme eşiği 2.000 ₺, süre 48 saat.
+
+### 3.12 Güvenlik ve veri
 - **V1.** Uygulama açılırken parmak izi veya PIN istenir.
 - **V2.** Ayarlardan elle şifreli yedek dosyası alınır ve cihaz hafızasına kaydedilir. Aynı dosyadan geri yükleme yapılabilir.
 - **V3.** Uygulama hiçbir kullanıcı verisini ağ üzerinden göndermez.
@@ -132,4 +141,5 @@ Bildirim veya SMS okuma, faiz hesabı, krediler (ihtiyaç, konut, KMH), birden f
 1. **Ay dönemi:** "Bu ay" takvim ayı mı olsun, yoksa maaş gününden maaş gününe mi?
 2. **Kur kaynağı:** Hangi ücretsiz API kullanılacak? Teknik tasarımda seçilecek.
 3. **Varsayılan kategoriler:** Başlangıç seti nasıl olsun?
-4. **Başlangıç değerleri:** Bekleme listesi tutar eşiği ve toplam kart tavanının varsayılanı ne olsun?
+
+Kapandı: fren eşiklerinin başlangıç değerleri kurulumda kullanıcı tarafından girilir (S4).

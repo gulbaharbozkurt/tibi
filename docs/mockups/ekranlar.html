@@ -35,7 +35,7 @@ figcaption span{color:var(--muted);font-size:13.5px}
 .scr{background:var(--ground);border-radius:22px;overflow:hidden;height:560px;display:flex;flex-direction:column;position:relative}
 .bar{display:flex;justify-content:space-between;font:500 11px var(--mono);color:var(--muted);padding:8px 16px 4px}
 .hd{padding:6px 16px 10px}.hd .t{font-family:var(--display);font-weight:700;font-size:19px}.hd .s{font-size:12px;color:var(--muted)}
-.body{flex:1;overflow:hidden;padding:0 12px;display:flex;flex-direction:column;gap:8px}
+.body{flex:1;overflow:auto;scrollbar-width:none;padding:0 12px;display:flex;flex-direction:column;gap:8px}
 .blk{background:var(--paper);border-radius:12px;padding:10px 12px}
 .lbl{font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
 .big{font:500 22px var(--mono);font-variant-numeric:tabular-nums}
@@ -90,6 +90,18 @@ figcaption span{color:var(--muted);font-size:13.5px}
 .set small{color:var(--muted);font-size:11px;display:block}
 .tg{width:30px;height:17px;border-radius:99px;background:var(--accent);position:relative;flex:none}
 .tg::after{content:"";position:absolute;right:2px;top:2px;width:13px;height:13px;border-radius:50%;background:var(--paper)}
+.steps{display:flex;gap:4px;padding:0 16px 8px}
+.steps i{flex:1;height:4px;border-radius:99px;background:var(--line)}
+.steps i.on{background:var(--accent)}
+.inp{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12.5px;border:1px solid var(--line);border-radius:9px;padding:6px 9px;background:var(--paper)}
+.inp span{color:var(--muted)}.inp b{font-weight:600}
+.inp.f{border-color:var(--accent)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.hint{font-size:11px;color:var(--muted)}
+.plan{display:grid;grid-template-columns:repeat(6,1fr);gap:3px;text-align:center;font:500 10px var(--mono)}
+.plan div{padding:4px 0;border-radius:5px;background:var(--line);color:var(--muted)}
+.plan div.p{background:var(--accent-soft);color:var(--accent)}
+.plan div.n{outline:1.5px solid var(--accent)}
 .q ol{margin:6px 0 0;padding-left:20px}.q li{margin:4px 0}
 </style>
 
@@ -411,14 +423,111 @@ figcaption span{color:var(--muted);font-size:13.5px}
       <figcaption><b>9 · Ayarlar</b><span>Kilit, banka uygulaması → kart eşlemesi, fren eşikleri, elle yedek. Kategoriler ve bildirim günleri aşağı kaydırınca.</span></figcaption>
     </figure>
 
+    <figure>
+      <div class="phone"><div class="scr">
+        <div class="bar"><span>09:41</span><span>Kurulum 2 / 5</span></div>
+        <div class="hd"><div class="t">Kartların</div><div class="s">İstediğin kadar kart ekle, sonra da değiştirebilirsin</div></div>
+        <div class="steps"><i class="on"></i><i class="on"></i><i></i><i></i><i></i></div>
+        <div class="body">
+          <div class="blk">
+            <div class="row"><span><b>Bonus ··4821</b><br><span class="hint">Kesim 12 · Son ödeme 22</span></span><span class="num">15.000 / 50.000</span></div>
+          </div>
+          <div class="blk">
+            <div class="row"><span><b>Maximum ··1190</b><br><span class="hint">Kesim 5 · Son ödeme 15</span></span><span class="num">10.000 / 80.000</span></div>
+          </div>
+          <div class="blk">
+            <div class="row"><span><b>Axess ··3307</b><br><span class="hint">Kesim 20 · Son ödeme 30</span></span><span class="num">8.000 / 35.000</span></div>
+          </div>
+          <div class="blk" style="border:1.5px dashed var(--accent);background:transparent;text-align:center;color:var(--accent);font-weight:600;font-size:13px">+ Kart ekle</div>
+          <div class="hint" style="padding:0 2px">Sağdaki rakam: kendi limitin / banka limiti</div>
+          <div class="hint" style="padding:0 2px">Adımlar: 1 Gelir · <b>2 Kartlar</b> · 3 Hesaplar ve nakit · 4 Devam eden taksitler · 5 Harcama freni</div>
+          <div style="margin-top:auto;display:flex;gap:6px;padding-bottom:10px"><span class="btn o">Geri</span><span class="btn">Devam</span></div>
+        </div>
+      </div></div>
+      <figcaption><b>10 · İlk kurulum</b><span>Uygulama ilk açılışta 5 adımda kurulur. Her adım sonradan Ayarlar'dan tekrar açılabilir. Kart sayısında sınır yok.</span></figcaption>
+    </figure>
+
+    <figure>
+      <div class="phone"><div class="scr">
+        <div class="bar"><span>09:41</span><span></span></div>
+        <div class="hd"><div class="t">Kart ekle</div><div class="s">Bilmediğin alanı boş geç, sonra doldurursun</div></div>
+        <div class="body">
+          <div class="inp"><span>Kart adı</span><b>Bonus</b></div>
+          <div class="two"><div class="inp"><span>Son 4 hane</span><b>4821</b></div><div class="inp"><span>Banka uyg.</span><b>Garanti</b></div></div>
+          <div class="two"><div class="inp"><span>Kesim günü</span><b>12</b></div><div class="inp"><span>Son ödeme</span><b>22</b></div></div>
+          <div class="inp"><span>Banka limiti</span><b class="num">50.000 ₺</b></div>
+          <div class="inp f"><span>Kendi limitin</span><b class="num">15.000 ₺</b></div>
+          <div class="hint">Ekranda bu sınır görünür, uyarılar buna göre çalışır.</div>
+          <div class="lbl" style="margin-top:4px">Şu anki borç</div>
+          <div class="inp"><span>Kesilmiş ekstre (ödenmemiş)</span><b class="num">12.340 ₺</b></div>
+          <div class="inp"><span>Dönem içi tek çekimler</span><b class="num">5.980 ₺</b></div>
+          <div class="hint">Taksitler kurulumun 4. adımında ayrıca girilir.</div>
+          <div style="margin-top:auto;display:flex;gap:6px;padding-bottom:10px"><span class="btn">Kartı kaydet</span></div>
+        </div>
+      </div></div>
+      <figcaption><b>11 · Kart ekle / düzenle</b><span>Kesim ve son ödeme günü, banka limiti, kendi limitin ve kurulum anındaki borç. Uygulama boş başlamaz, bugünkü durumdan başlar.</span></figcaption>
+    </figure>
+
+    <figure>
+      <div class="phone"><div class="scr">
+        <div class="bar"><span>09:41</span><span>Kurulum 4 / 5</span></div>
+        <div class="hd"><div class="t">Devam eden taksit</div><div class="s">Geçmişte yapılmış, hâlâ ekstreye yansıyan</div></div>
+        <div class="body">
+          <div class="two"><div class="inp"><span>Ne?</span><b>Telefon</b></div><div class="inp"><span>Kart</span><b>Bonus</b></div></div>
+          <div class="inp"><span>Kategori</span><b>Elektronik</b></div>
+          <div class="seg"><span class="on">Aylık taksit biliyorum</span><span>Toplam biliyorum</span></div>
+          <div class="two"><div class="inp f"><span>Aylık</span><b class="num">1.850 ₺</b></div><div class="inp"><span>Toplam taksit</span><b>12</b></div></div>
+          <div class="inp f"><span>Bir sonraki ekstrede kaçıncı?</span><b>6. taksit</b></div>
+          <div class="hint">Ya da ilk taksit ayını seç: Mayıs 2026</div>
+          <div class="blk">
+            <div class="row"><span class="lbl">Kalan plan</span><span class="num">7 × 1.850 = 12.950 ₺</span></div>
+            <div class="plan" style="margin-top:6px">
+              <div class="p">May</div><div class="p">Haz</div><div class="p">Tem</div><div class="p">Ağu</div><div class="p">Eyl</div><div class="n">Eki</div>
+              <div>Kas</div><div>Ara</div><div>Oca</div><div>Şub</div><div>Mar</div><div>Nis</div>
+            </div>
+            <div class="hint" style="margin-top:5px">Yeşil: ödenmiş · çerçeveli: sıradaki ekstre · son taksit Nisan 2027</div>
+          </div>
+          <div style="margin-top:auto;display:flex;gap:6px;padding-bottom:10px"><span class="btn o">Bir tane daha</span><span class="btn">Kaydet</span></div>
+        </div>
+      </div></div>
+      <figcaption><b>12 · Geçmişe dönük taksit</b><span>Aylık tutar ya da toplam tutar, toplam taksit ve sıradaki taksit girilir; kalan ay planı hemen görünür. Geçmiş taksitler bugünkü borca ve gelecek ayların yüküne eklenir, geçmiş aylara gider olarak yazılmaz.</span></figcaption>
+    </figure>
+
+    <figure>
+      <div class="phone"><div class="scr">
+        <div class="bar"><span>09:41</span><span>Kurulum 5 / 5</span></div>
+        <div class="hd"><div class="t">Harcama freni</div><div class="s">Önerilen değerler dolu gelir, istediğin gibi değiştir</div></div>
+        <div class="steps"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div>
+        <div class="body">
+          <div class="blk">
+            <div class="lbl">Toplam kart tavanı</div>
+            <div class="seg" style="margin-top:6px;background:var(--ground)"><span class="on">Net gelirin %'si</span><span>Sabit tutar</span></div>
+            <div class="row" style="margin-top:8px"><span class="big">%40</span><span class="num">≈ 14.000 ₺ / ay</span></div>
+            <div class="meter"><i style="width:40%"></i></div>
+            <div class="hint" style="margin-top:4px">Avans düşülmüş maaşa göre hesaplanır</div>
+          </div>
+          <div class="blk">
+            <div class="lbl">Uyarı eşikleri</div>
+            <div class="two" style="margin-top:6px"><div class="inp"><span>Sarı</span><b>%70</b></div><div class="inp"><span>Kırmızı</span><b>%90</b></div></div>
+          </div>
+          <div class="blk">
+            <div class="lbl">Bekleme listesi</div>
+            <div class="two" style="margin-top:6px"><div class="inp"><span>Eşik</span><b class="num">2.000 ₺</b></div><div class="inp"><span>Süre</span><b>48 sa</b></div></div>
+          </div>
+          <div style="margin-top:auto;display:flex;gap:6px;padding-bottom:10px"><span class="btn o">Geri</span><span class="btn">Kurulumu bitir</span></div>
+        </div>
+      </div></div>
+      <figcaption><b>13 · Harcama freni ayarları</b><span>Tavan, uyarı eşikleri ve bekleme listesi senin girdiğin değerlerle çalışır. Önerilen değerler sadece başlangıç.</span></figcaption>
+    </figure>
+
   </div>
 
   <section class="q">
     <h2>Bu turda bakman gerekenler</h2>
     <ol>
-      <li>Hareketler, Raporlar, Bekleme listesi ve Ayarlar ekranları doğru mu?</li>
-      <li>Bekleme listesindeki “Bu ay vazgeçtiklerin” sayacı yeni bir öneri; kalsın mı?</li>
-      <li>Ayarlardaki değerler (tavan %40, bekleme 2.000 ₺) örnek; açık konu 3 ve 4'ün cevabı olarak kullanılsın mı?</li>
+      <li>Kurulum adımları (Gelir · Kartlar · Hesaplar ve nakit · Devam eden taksitler · Harcama freni) doğru sırada mı?</li>
+      <li>Kart formunda eksik alan var mı?</li>
+      <li>Geçmiş taksitte “aylık tutar” ya da “toplam tutar” seçeneği yeterli mi?</li>
     </ol>
     <p class="note">Cevaplarını terminale yaz.</p>
   </section>
