@@ -102,12 +102,13 @@ figcaption span{color:var(--muted);font-size:13.5px}
 .plan div{padding:4px 0;border-radius:5px;background:var(--line);color:var(--muted)}
 .plan div.p{background:var(--accent-soft);color:var(--accent)}
 .plan div.n{outline:1.5px solid var(--accent)}
+.grp{margin-top:36px}.grp h2{font-family:var(--display);font-size:22px;margin:0 0 4px}.grp .note{margin:0 0 16px}
 .q ol{margin:6px 0 0;padding-left:20px}.q li{margin:4px 0}
 </style>
 
 <div class="wrap">
   <h1>tibi · ekranlar ve gezinme</h1>
-  <p class="lead">Gereksinim özetine göre çizilmiş ilk taslak. Tutarlar örnektir, gerçek verin değildir. Amaç yerleşimi ve akışı görmek, renk ve süsleme sonra gelecek.</p>
+  <p class="lead">Ekranlar kullanım sırasına göre dizildi: önce ilk açılış ve kurulum, sonra her gün açılış, harcama anı ve diğer sekmeler. “Bu dönem” maaş gününden maaş gününe sayılır. Tutarlar örnektir, gerçek verin değildir. Amaç yerleşimi ve akışı görmek, renk ve süsleme sonra gelecek.</p>
 
   <section class="nav-map">
     <h2>Alt menü: 5 sekme + her yerde duran “+” butonu</h2>
@@ -135,18 +136,231 @@ figcaption span{color:var(--muted);font-size:13.5px}
   </section>
 
   <span class="ex">Örnek veri</span>
-  <div class="screens">
-
+  <section class="grp">
+    <h2>İlk açılış ve kurulum</h2>
+    <p class="note">Uygulama ilk kez açıldığında bir kere. 7 adım: Hoş geldin → Hesaplar ve nakit → Gelir → Kartlar → Devam eden taksitler → Harcama freni → İzinler.</p>
+    <div class="screens">
     <figure>
       <div class="phone"><div class="scr">
-        <div class="bar"><span>09:41</span><span>Eylül 2026</span></div>
+        <div class="bar"><span>09:41</span><span></span></div>
+        <div class="body" style="justify-content:center;align-items:center;text-align:center;gap:10px">
+          <div style="font-family:var(--display);font-weight:700;font-size:44px;color:var(--accent);letter-spacing:-.02em">tibi</div>
+          <div style="font-size:13px;color:var(--muted);max-width:22ch">Harcamanı frenleyen cep defterin. Her şey bu telefonda kalır.</div>
+        </div>
+        <div style="padding:0 16px 18px;display:flex;flex-direction:column;gap:8px">
+          <span class="btn" style="padding:9px">Yeni başla</span>
+          <span class="btn o" style="padding:9px">Yedekten geri yükle</span>
+          <div class="hint" style="text-align:center">Telefon değiştirdiysen yedek dosyanı seç</div>
+        </div>
+      </div></div>
+      <figcaption><b>1 · Açılış</b><span>Sadece ilk açılışta. “Yeni başla” kuruluma gider; “Yedekten geri yükle” şifreli yedek dosyasını ve yedek şifresini ister, kurulumu atlar.</span></figcaption>
+    </figure>
+    <figure>
+      <div class="phone"><div class="scr">
+        <div class="bar"><span>09:41</span><span>Kurulum 1 / 7</span></div>
+        <div class="hd"><div class="t">Hoş geldin</div><div class="s">tibi her şeyi bu telefonda tutar, hiçbir yere göndermez</div></div>
+        <div class="steps"><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="body">
+          <div class="inp f"><span>Sana nasıl hitap edelim?</span><b>Gülbahar</b></div>
+          <div class="hint">Bildirimlerde kullanılır: “Gülbahar, Bonus'un son ödemesine 3 gün var.”</div>
+          <div class="blk">
+            <div class="lbl">Uygulama kilidi</div>
+            <div class="set" style="margin-top:6px"><span>PIN (4–6 hane)<small>Zorunlu, parmak izi çalışmazsa yedek</small></span><b class="num">••••</b></div>
+            <div class="set"><span>Parmak izi</span><span class="tg"></span></div>
+            <div class="set"><span>Arka plana alınca kilitle<small>1 dakika sonra</small></span><span class="tg"></span></div>
+          </div>
+          <div style="margin-top:auto;display:flex;gap:6px;padding-bottom:10px"><span class="btn">Başla</span></div>
+        </div>
+      </div></div>
+      <figcaption><b>2 · Hoş geldin</b><span>Kurulumun ilk adımı: hitap adı ve uygulama kilidi (PIN zorunlu, parmak izi isteğe bağlı).</span></figcaption>
+    </figure>
+    <figure>
+      <div class="phone"><div class="scr">
+        <div class="bar"><span>09:41</span><span>Kurulum 2 / 7</span></div>
+        <div class="hd"><div class="t">Hesaplar ve nakit</div><div class="s">Bugünkü bakiyeleri gir, uygulama buradan başlar</div></div>
+        <div class="steps"><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="body">
+          <div class="blk"><div class="row"><span><b>Garanti vadesiz</b><br><span class="hint">Banka hesabı · maaş hesabı</span></span><span class="num">8.450 ₺</span></div></div>
+          <div class="blk"><div class="row"><span><b>İş Bankası vadesiz</b><br><span class="hint">Banka hesabı</span></span><span class="num">2.100 ₺</span></div></div>
+          <div class="blk"><div class="row"><span><b>Nakit</b><br><span class="hint">Cüzdandaki para</span></span><span class="num">1.300 ₺</span></div></div>
+          <div class="blk" style="border:1.5px dashed var(--accent);background:transparent;text-align:center;color:var(--accent);font-weight:600;font-size:13px">+ Hesap ekle</div>
+          <div class="hint" style="padding:0 2px">Kredi kartları 4. adımda ayrıca eklenir. Önce hesaplar gelir, çünkü maaşın ve kart ödemelerin bu hesaplara bağlanır.</div>
+          <div style="margin-top:auto;display:flex;gap:6px;padding-bottom:10px"><span class="btn o">Geri</span><span class="btn">Devam</span></div>
+        </div>
+      </div></div>
+      <figcaption><b>3 · Kurulum: hesaplar ve nakit</b><span>Banka hesapları ve nakit, açılış bakiyeleriyle. Maaşın yattığı hesap burada işaretlenir.</span></figcaption>
+    </figure>
+    <figure>
+      <div class="phone"><div class="scr">
+        <div class="bar"><span>09:41</span><span>Kurulum 3 / 7</span></div>
+        <div class="hd"><div class="t">Gelirin</div><div class="s">Dönemlerin maaş gününe göre hesaplanır</div></div>
+        <div class="steps"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i></div>
+        <div class="body">
+          <div class="lbl">Maaş</div>
+          <div class="two"><div class="inp f"><span>Tutar</span><b class="num">45.000</b></div><div class="inp f"><span>Yattığı gün</span><b>30</b></div></div>
+          <div class="inp"><span>Hafta sonuna denk gelirse</span><b>Önceki iş günü</b></div>
+          <div class="inp"><span>Yattığı hesap</span><b>Garanti vadesiz</b></div>
+          <div class="blk" style="background:var(--accent-soft);color:var(--accent);font-size:12px">Bu dönem: <b>30 Ağu – 29 Eyl</b><br>Bütçeler, harcama hızı ve “bu dönem kalan” bu aralığa göre hesaplanır.</div>
+          <div class="inp"><span>Maaştan düşülecek avans var mı?</span><b class="num">10.000 ₺</b></div>
+          <div class="lbl" style="margin-top:4px">Yan gelirler</div>
+          <div class="blk"><div class="row"><span><b>Özel ders</b><br><span class="hint">Düzensiz · öğrencileri Dersler'den eklersin</span></span><span class="pill">Eklendi</span></div></div>
+          <div class="blk" style="border:1.5px dashed var(--accent);background:transparent;text-align:center;color:var(--accent);font-weight:600;font-size:13px">+ Gelir kaynağı ekle</div>
+          <div style="margin-top:auto;display:flex;gap:6px;padding-bottom:10px"><span class="btn o">Geri</span><span class="btn">Devam</span></div>
+        </div>
+      </div></div>
+      <figcaption><b>4 · Kurulum: gelir</b><span>Maaş tutarı, günü ve hesabı; dönem aralığı hemen gösterilir. Bekleyen avans ve yan gelir kaynakları da burada girilir.</span></figcaption>
+    </figure>
+    <figure>
+      <div class="phone"><div class="scr">
+        <div class="bar"><span>09:41</span><span>Kurulum 4 / 7</span></div>
+        <div class="hd"><div class="t">Kartların</div><div class="s">İstediğin kadar kart ekle, sonra da değiştirebilirsin</div></div>
+        <div class="steps"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i></div>
+        <div class="body">
+          <div class="blk">
+            <div class="row"><span><b>Bonus ··4821</b><br><span class="hint">Kesim 12 · Son ödeme 22</span></span><span class="num">15.000 / 50.000</span></div>
+          </div>
+          <div class="blk">
+            <div class="row"><span><b>Maximum ··1190</b><br><span class="hint">Kesim 5 · Son ödeme 15</span></span><span class="num">10.000 / 80.000</span></div>
+          </div>
+          <div class="blk">
+            <div class="row"><span><b>Bonus Sanal ··9054</b><br><span class="hint">Ortak limit → Bonus</span></span><span class="num">Bonus'la ortak</span></div>
+          </div>
+          <div class="blk" style="border:1.5px dashed var(--accent);background:transparent;text-align:center;color:var(--accent);font-weight:600;font-size:13px">+ Kart ekle</div>
+          <div class="hint" style="padding:0 2px">Sağdaki rakam: kendi limitin / banka limiti</div>
+          <div class="hint" style="padding:0 2px">Adımlar: 1 Hoş geldin · 2 Hesaplar ve nakit · 3 Gelir · <b>4 Kartlar</b> · 5 Devam eden taksitler · 6 Harcama freni · 7 İzinler</div>
+          <div style="margin-top:auto;display:flex;gap:6px;padding-bottom:10px"><span class="btn o">Geri</span><span class="btn">Devam</span></div>
+        </div>
+      </div></div>
+      <figcaption><b>5 · Kurulum: kartlar</b><span>Uygulama ilk açılışta 7 adımda kurulur. Her adım sonradan Ayarlar'dan tekrar açılabilir. Kart sayısında sınır yok.</span></figcaption>
+    </figure>
+    <figure>
+      <div class="phone"><div class="scr">
+        <div class="bar"><span>09:41</span><span></span></div>
+        <div class="hd"><div class="t">Kart ekle</div><div class="s">Bilmediğin alanı boş geç, sonra doldurursun</div></div>
+        <div class="body">
+          <div class="two"><div class="inp"><span>Kart adı</span><b>Bonus</b></div><div class="inp"><span>Renk</span><b style="color:var(--accent)">●</b></div></div>
+          <div class="seg" style="background:var(--paper)"><span class="on">Ana kart</span><span>Ek kart</span><span>Sanal kart</span></div>
+          <div class="hint">Ek ve sanal kart ana kartın limitini paylaşır, limit iki kez sayılmaz.</div>
+          <div class="two"><div class="inp"><span>Son 4 hane</span><b>4821</b></div><div class="inp"><span>Banka uyg.</span><b>Garanti</b></div></div>
+          <div class="two"><div class="inp"><span>Kesim günü</span><b>12</b></div><div class="inp"><span>Son ödeme</span><b>22</b></div></div>
+          <div class="two"><div class="inp"><span>Banka limiti</span><b class="num">50.000</b></div><div class="inp f"><span>Kendi limitin</span><b class="num">15.000</b></div></div>
+          <div class="two"><div class="inp"><span>Asgari oran</span><b>%40</b></div><div class="inp"><span>Oto. ödeme</span><span class="tg"></span></div></div>
+          <div class="inp"><span>Ödeme hesabı</span><b>Garanti vadesiz</b></div>
+          <div class="two"><div class="inp"><span>Aidat ayı</span><b>Mart</b></div><div class="inp"><span>Aidat</span><b class="num">1.200 ₺</b></div></div>
+          <div class="lbl" style="margin-top:4px">Şu anki borç</div>
+          <div class="inp"><span>Kesilmiş ekstre (ödenmemiş)</span><b class="num">12.340 ₺</b></div>
+          <div class="inp"><span>Dönem içi tek çekimler</span><b class="num">5.980 ₺</b></div>
+          <div class="hint">Taksitler kurulumun 5. adımında ayrıca girilir. Kart numarası, son kullanma tarihi ve CVV istenmez.</div>
+          <div style="margin-top:auto;display:flex;gap:6px;padding-bottom:10px"><span class="btn">Kartı kaydet</span></div>
+        </div>
+      </div></div>
+      <figcaption><b>6 · Kart ekle / düzenle</b><span>Kart türü (ana, ek, sanal → ortak limit), kesim ve son ödeme günü, limitler, asgari oranı, otomatik ödeme talimatı, yıllık aidat ve kurulum anındaki borç. Uygulama bugünkü durumdan başlar.</span></figcaption>
+    </figure>
+    <figure>
+      <div class="phone"><div class="scr">
+        <div class="bar"><span>09:41</span><span>Kurulum 5 / 7</span></div>
+        <div class="hd"><div class="t">Devam eden taksit</div><div class="s">Geçmişte yapılmış, hâlâ ekstreye yansıyan</div></div>
+        <div class="body">
+          <div class="two"><div class="inp"><span>Ne?</span><b>Telefon</b></div><div class="inp"><span>Kart</span><b>Bonus</b></div></div>
+          <div class="inp"><span>Kategori</span><b>Elektronik</b></div>
+          <div class="chips"><span class="chip on">Alışveriş</span><span class="chip">Ekstre taksitlendirme</span><span class="chip">Nakit avans</span></div>
+          <div class="seg"><span class="on">Aylık tutar</span><span>Toplam tutar</span><span>Kalan borç</span></div>
+          <div class="two"><div class="inp f"><span>Aylık</span><b class="num">1.850 ₺</b></div><div class="inp"><span>Toplam taksit</span><b>12</b></div></div>
+          <div class="inp f"><span>Bir sonraki ekstrede kaçıncı?</span><b>6. taksit</b></div>
+          <div class="hint">Ya da ilk taksit ayını seç: Mayıs 2026 · Erteleme: yok</div>
+          <div class="blk">
+            <div class="row"><span class="lbl">Kalan plan</span><span class="num">7 × 1.850 = 12.950 ₺</span></div>
+            <div class="plan" style="margin-top:6px">
+              <div class="p">May</div><div class="p">Haz</div><div class="p">Tem</div><div class="p">Ağu</div><div class="p">Eyl</div><div class="n">Eki</div>
+              <div>Kas</div><div>Ara</div><div>Oca</div><div>Şub</div><div>Mar</div><div>Nis</div>
+            </div>
+            <div class="hint" style="margin-top:5px">Yeşil: ödenmiş · çerçeveli: sıradaki ekstre · son taksit Nisan 2027</div>
+          </div>
+          <div style="margin-top:auto;display:flex;gap:6px;padding-bottom:10px"><span class="btn o">Bir tane daha</span><span class="btn">Kaydet</span></div>
+        </div>
+      </div></div>
+      <figcaption><b>7 · Geçmişe dönük taksit</b><span>Tür seçilir (alışveriş, ekstre taksitlendirme, nakit avans). Aylık tutar, toplam tutar ya da kalan borç + kalan taksit sayısı ile girilir; kalan ay planı hemen görünür. Geçmiş taksitler bugünkü borca ve gelecek ayların yüküne eklenir, geçmiş aylara gider olarak yazılmaz.</span></figcaption>
+    </figure>
+    <figure>
+      <div class="phone"><div class="scr">
+        <div class="bar"><span>09:41</span><span>Kurulum 6 / 7</span></div>
+        <div class="hd"><div class="t">Harcama freni</div><div class="s">Önerilen değerler dolu gelir, istediğin gibi değiştir</div></div>
+        <div class="steps"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></div>
+        <div class="body">
+          <div class="blk">
+            <div class="lbl">Toplam kart tavanı</div>
+            <div class="seg" style="margin-top:6px;background:var(--ground)"><span class="on">Net gelirin %'si</span><span>Sabit tutar</span></div>
+            <div class="row" style="margin-top:8px"><span class="big">%40</span><span class="num">≈ 14.000 ₺ / ay</span></div>
+            <div class="meter"><i style="width:40%"></i></div>
+            <div class="hint" style="margin-top:4px">Avans düşülmüş maaşa göre hesaplanır</div>
+          </div>
+          <div class="blk">
+            <div class="lbl">Uyarı eşikleri</div>
+            <div class="two" style="margin-top:6px"><div class="inp"><span>Sarı</span><b>%70</b></div><div class="inp"><span>Kırmızı</span><b>%90</b></div></div>
+          </div>
+          <div class="blk">
+            <div class="lbl">Bekleme listesi</div>
+            <div class="two" style="margin-top:6px"><div class="inp"><span>Eşik</span><b class="num">2.000 ₺</b></div><div class="inp"><span>Süre</span><b>48 sa</b></div></div>
+          </div>
+          <div style="margin-top:auto;display:flex;gap:6px;padding-bottom:10px"><span class="btn o">Geri</span><span class="btn">Devam</span></div>
+        </div>
+      </div></div>
+      <figcaption><b>8 · Harcama freni ayarları</b><span>Tavan, uyarı eşikleri ve bekleme listesi senin girdiğin değerlerle çalışır. Önerilen değerler sadece başlangıç.</span></figcaption>
+    </figure>
+    <figure>
+      <div class="phone"><div class="scr">
+        <div class="bar"><span>09:41</span><span>Kurulum 7 / 7</span></div>
+        <div class="hd"><div class="t">İzinler</div><div class="s">İkisi de sonra Ayarlar'dan açılıp kapatılabilir</div></div>
+        <div class="steps"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div>
+        <div class="body">
+          <div class="blk">
+            <div class="row"><span><b>Bildirimler</b></span><span class="pill">Verildi</span></div>
+            <div class="hint" style="margin-top:3px">Son ödeme, maaş, tahsilat ve bekleme listesi hatırlatmaları için.</div>
+          </div>
+          <div class="blk">
+            <div class="row"><span><b>Kullanım erişimi</b></span><span class="pill w">Bekliyor</span></div>
+            <div class="hint" style="margin-top:3px">Seçtiğin banka uygulamasından çıktığını anlayıp “Harcama yaptın mı?” diye sormak için. Sadece hangi uygulamanın açık olduğunu görür, içindekileri okuyamaz.</div>
+            <div class="a" style="display:flex;gap:6px;margin-top:8px"><span class="btn">Ayarlara git</span></div>
+          </div>
+          <div class="hint" style="padding:0 2px">Kullanım erişimi vermezsen tetikleyici çalışmaz, geri kalan her şey çalışır.</div>
+          <div style="margin-top:auto;display:flex;gap:6px;padding-bottom:10px"><span class="btn o">Geri</span><span class="btn">Kurulumu bitir</span></div>
+        </div>
+      </div></div>
+      <figcaption><b>9 · İzinler</b><span>Kurulumun son adımı. Her iznin neden istendiği tek cümleyle yazılır.</span></figcaption>
+    </figure>
+    </div>
+  </section>
+  <section class="grp">
+    <h2>Her açılışta</h2>
+    <p class="note">Kilit açılınca doğrudan Özet gelir.</p>
+    <div class="screens">
+    <figure>
+      <div class="phone"><div class="scr">
+        <div class="bar"><span>09:41</span><span></span></div>
+        <div class="body" style="align-items:center;text-align:center;gap:10px;padding-top:36px">
+          <div style="font-family:var(--display);font-weight:700;font-size:28px;color:var(--accent)">tibi</div>
+          <div style="font-size:14px">Merhaba Gülbahar</div>
+          <div style="width:64px;height:64px;border-radius:50%;border:2px solid var(--accent);display:grid;place-items:center;color:var(--accent);font-size:11px;margin-top:6px">parmak<br>izi</div>
+          <div class="hint">ya da PIN gir</div>
+          <div style="display:flex;gap:10px;margin:4px 0"><i style="width:10px;height:10px;border-radius:50%;background:var(--accent)"></i><i style="width:10px;height:10px;border-radius:50%;background:var(--accent)"></i><i style="width:10px;height:10px;border-radius:50%;background:var(--line)"></i><i style="width:10px;height:10px;border-radius:50%;background:var(--line)"></i></div>
+          <div class="cal" style="grid-template-columns:repeat(3,1fr);width:190px;gap:6px;font-size:15px">
+            <div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div><div>7</div><div>8</div><div>9</div><div></div><div>0</div><div class="h">⌫</div>
+          </div>
+          <div class="hint" style="margin-top:auto;padding-bottom:14px;color:var(--accent)">PIN'i unuttum</div>
+        </div>
+      </div></div>
+      <figcaption><b>10 · Kilit ekranı</b><span>Her açılışta ve arka plandan dönünce. Tutar ya da bakiye göstermez. PIN unutulursa parmak iziyle girip PIN değiştirilir; ikisi de yoksa uygulama sıfırlanır ve yedekten geri yüklenir.</span></figcaption>
+    </figure>
+    <figure>
+      <div class="phone"><div class="scr">
+        <div class="bar"><span>09:41</span><span>30 Ağu – 29 Eyl</span></div>
         <div class="hd"><div class="t">Özet</div><div class="s">23 Eylül · maaşa 7 gün</div></div>
         <div class="body">
           <div class="blk" style="background:var(--warn-soft);color:var(--warn);font-size:12.5px">
-            <b>Kart tavanı %88</b> · 22.000 / 25.000 ₺<br>Ayın %77'si geçti, kart bütçenin %88'ini harcadın.
+            <b>Kart tavanı %88</b> · 22.000 / 25.000 ₺<br>Dönemin %77'si geçti (30 Ağu–29 Eyl), kart bütçenin %88'ini harcadın.
           </div>
           <div class="blk">
-            <div class="lbl">Bu ay kalan</div>
+            <div class="lbl">Bu dönem kalan · maaştan maaşa</div>
             <div class="big">18.420 ₺</div>
             <div class="row"><span>Gelir</span><span class="num">62.500 ₺</span></div>
             <div class="row"><span>Gider</span><span class="num">44.080 ₺</span></div>
@@ -169,9 +383,14 @@ figcaption span{color:var(--muted);font-size:13.5px}
         <div class="fab">+</div>
         <div class="bnav"><span class="on">Özet</span><span>Hareketler</span><span>Hesaplar</span><span>Cüzdanlar</span><span>Dersler</span></div>
       </div></div>
-      <figcaption><b>1 · Özet</b><span>Açınca “bu ay ne durumdayım, yakında ne ödeyeceğim” cevabı tek bakışta görünür.</span></figcaption>
+      <figcaption><b>11 · Özet</b><span>Açınca “bu ay ne durumdayım, yakında ne ödeyeceğim” cevabı tek bakışta görünür.</span></figcaption>
     </figure>
-
+    </div>
+  </section>
+  <section class="grp">
+    <h2>Harcama anında</h2>
+    <p class="note">Banka uygulamasından çıkınca soru gelir; büyük alışveriş beklemeye alınabilir; tüm kayıtlar Hareketler’de.</p>
+    <div class="screens">
     <figure>
       <div class="phone"><div class="scr">
         <div class="bar"><span>12:07</span><span></span></div>
@@ -196,171 +415,8 @@ figcaption span{color:var(--muted);font-size:13.5px}
           <div class="a" style="display:flex;gap:8px;margin-top:2px"><span class="btn">Kaydet</span><span class="btn o">48 sa beklet</span></div>
         </div>
       </div></div>
-      <figcaption><b>2 · Banka tetikleyicisi → hızlı giriş</b><span>Bildirimden “Evet” deyince alttan açılan form. Kart, o banka uygulamasına göre önceden seçili gelir; en sık kategoriler başta.</span></figcaption>
+      <figcaption><b>12 · Banka tetikleyicisi → hızlı giriş</b><span>Bildirimden “Evet” deyince alttan açılan form. Kart, o banka uygulamasına göre önceden seçili gelir; en sık kategoriler başta.</span></figcaption>
     </figure>
-
-    <figure>
-      <div class="phone"><div class="scr">
-        <div class="bar"><span>09:41</span><span></span></div>
-        <div class="hd"><div class="t">Bonus ··4821</div><div class="s">Kesim: her ayın 12'si · Son ödeme: 22'si</div></div>
-        <div class="body">
-          <div class="blk">
-            <div class="row"><span class="lbl">Toplam borç</span><span class="lbl">Kendi limitin</span></div>
-            <div class="row"><span class="big">13.800 ₺</span><span class="num">1.200 kaldı / 15.000</span></div>
-            <div class="meter"><i class="w" style="width:92%"></i></div>
-            <div style="font-size:11px;color:var(--muted);margin-top:4px">Banka limiti 50.000 ₺ (gizli tutuluyor)</div>
-          </div>
-          <div class="blk">
-            <div class="lbl">Kesilen ekstre · 12 Eylül</div>
-            <div class="row"><span>Ekstre tutarı</span><span class="num">12.340 ₺</span></div>
-            <div class="row"><span>Asgari</span><span class="num">4.936 ₺</span></div>
-            <div class="row"><span>Durum</span><span class="pill w">Ödenmedi · 3 gün</span></div>
-            <div class="a" style="display:flex;gap:6px;margin-top:8px"><span class="btn">Tamamını öde</span><span class="btn o">Asgari</span><span class="btn o">Kısmi</span></div>
-          </div>
-          <div class="blk">
-            <div class="lbl">Dönem içi · 13 Eyl–12 Eki</div>
-            <div class="row"><span>Tek çekim</span><span class="num">5.980 ₺</span></div>
-            <div class="row"><span>Taksitler (4 adet)</span><span class="num">3.220 ₺</span></div>
-          </div>
-          <div class="blk">
-            <div class="lbl">Taksitler</div>
-            <div class="row"><span>Telefon · 5/12</span><span class="num">1.850 ₺</span></div>
-            <div class="row"><span>Giyim · 1/3</span><span class="num">416,63 ₺</span></div>
-          </div>
-        </div>
-        <div class="bnav"><span>Özet</span><span>Hareketler</span><span class="on">Hesaplar</span><span>Cüzdanlar</span><span>Dersler</span></div>
-      </div></div>
-      <figcaption><b>3 · Kart detayı</b><span>Ekstre, ödeme işaretleme, devreden borç ve taksitlerin hangi ekstreye düştüğü tek sayfada.</span></figcaption>
-    </figure>
-
-    <figure>
-      <div class="phone"><div class="scr">
-        <div class="bar"><span>09:41</span><span></span></div>
-        <div class="hd"><div class="t">Cüzdanlar</div><div class="s">Bütçe zarfları · kasalar · birikim</div></div>
-        <div class="body">
-          <div class="blk">
-            <div class="lbl">Bütçe zarfları · Eylül</div>
-            <div class="row"><span>Market</span><span class="num">1.100 kaldı</span></div><div class="meter"><i class="w" style="width:86%"></i></div>
-            <div class="row" style="margin-top:8px"><span>Giyim</span><span class="num">2.750 kaldı</span></div><div class="meter"><i style="width:31%"></i></div>
-          </div>
-          <div class="blk">
-            <div class="lbl">Para kasaları</div>
-            <div class="row"><span>Araba bakımı</span><span class="num">6.200 ₺</span></div>
-            <div class="row"><span>Acil durum</span><span class="num">25.000 ₺</span></div>
-          </div>
-          <div class="blk">
-            <div class="row"><span class="lbl">Hedef · Tatil</span><span class="pill g">Haz 2027</span></div>
-            <div class="row"><span class="num">16.800 / 40.000 ₺</span><span class="num">%42</span></div>
-            <div class="meter"><i class="g" style="width:42%"></i></div>
-            <div style="font-size:11.5px;color:var(--muted);margin-top:4px">Yetişmek için ayda 2.580 ₺ ayırmalısın</div>
-          </div>
-          <div class="blk">
-            <div class="lbl">Yatırımlar · güncel kurla</div>
-            <div class="row"><span>Gram altın · 12 g</span><span class="num" style="color:var(--ok)">+%9,4</span></div>
-            <div class="row"><span>USD · 500</span><span class="num" style="color:var(--ok)">+%3,1</span></div>
-            <div class="row"><span>Fon · ABC</span><span class="num" style="color:var(--warn)">−%1,2</span></div>
-          </div>
-        </div>
-        <div class="fab">+</div>
-        <div class="bnav"><span>Özet</span><span>Hareketler</span><span>Hesaplar</span><span class="on">Cüzdanlar</span><span>Dersler</span></div>
-      </div></div>
-      <figcaption><b>4 · Cüzdanlar ve birikim</b><span>Üç tür tek ekranda: limitli zarflar, bakiyeli kasalar, hedefler ve kurla değerlenen yatırımlar.</span></figcaption>
-    </figure>
-
-    <figure>
-      <div class="phone"><div class="scr">
-        <div class="bar"><span>09:41</span><span></span></div>
-        <div class="hd"><div class="t">Dersler</div><div class="s">Eylül · 22 saat · 17.600 ₺</div></div>
-        <div class="body">
-          <div class="blk">
-            <div class="cal">
-              <div class="h">Pt</div><div class="h">Sa</div><div class="h">Ça</div><div class="h">Pe</div><div class="h">Cu</div><div class="h">Ct</div><div class="h">Pz</div>
-              <div class="x">31</div><div class="d">1</div><div>2</div><div class="d">3</div><div>4</div><div class="d">5</div><div>6</div>
-              <div class="d">8</div><div>9</div><div class="d">10</div><div>11</div><div class="d">12</div><div>13</div><div>14</div>
-              <div class="d">15</div><div>16</div><div class="d">17</div><div>18</div><div class="d">19</div><div>20</div><div>21</div>
-              <div class="d">22</div><div style="outline:1.5px solid var(--accent)">23</div><div>24</div><div>25</div><div>26</div><div>27</div><div>28</div>
-            </div>
-          </div>
-          <div class="blk">
-            <div class="lbl">Öğrenciler · alacak</div>
-            <div class="row"><span>Ayşe · ay sonu · 800 ₺/sa</span><span class="pill w">4.800 ₺</span></div>
-            <div class="row"><span>Mert · ders başı · 700 ₺/sa</span><span class="pill">0 ₺</span></div>
-            <div class="row"><span>Deniz · 4'lü paket</span><span class="pill g">2 ders kaldı</span></div>
-          </div>
-          <div class="blk">
-            <div class="lbl">Bugün</div>
-            <div class="row"><span>Ayşe · 17:00 · 1,5 sa</span><span class="num">1.200 ₺</span></div>
-            <div class="a" style="display:flex;gap:6px;margin-top:8px"><span class="btn">Ders yapıldı</span><span class="btn o">İptal</span></div>
-          </div>
-        </div>
-        <div class="fab">+</div>
-        <div class="bnav"><span>Özet</span><span>Hareketler</span><span>Hesaplar</span><span>Cüzdanlar</span><span class="on">Dersler</span></div>
-      </div></div>
-      <figcaption><b>5 · Dersler</b><span>Takvimde ders günleri, öğrenci başına ödeme şekli ve alacak. Tahsilat girilince alacaktan düşer, gelire eklenir.</span></figcaption>
-    </figure>
-
-    <figure>
-      <div class="phone"><div class="scr">
-        <div class="bar"><span>09:41</span><span></span></div>
-        <div class="hd"><div class="t">Hareketler</div><div class="s">Eylül · 64 kayıt</div></div>
-        <div class="body">
-          <div class="srch">Ara: iş yeri, not, tutar…</div>
-          <div class="chips"><span class="chip on">Tümü</span><span class="chip">Harcama</span><span class="chip">Gelir</span><span class="chip">Transfer</span><span class="chip">Avans</span></div>
-          <div class="day">Bugün · 24 Eyl</div>
-          <div class="blk">
-            <div class="tx"><span>Giyim<small>Bonus ··4821 · 3 taksit</small></span><span class="num minus">−1.249,90</span></div>
-            <div class="tx"><span>Market<small>Nakit</small></span><span class="num minus">−386,50</span></div>
-          </div>
-          <div class="day">Dün · 23 Eyl</div>
-          <div class="blk">
-            <div class="tx"><span>Özel ders · Mert<small>Tahsilat · Nakit</small></span><span class="num plus">+1.050,00</span></div>
-            <div class="tx"><span>Kart ödemesi<small>Transfer · Vadesiz → Maximum</small></span><span class="num">8.000,00</span></div>
-          </div>
-          <div class="day">20 Eyl</div>
-          <div class="blk">
-            <div class="tx"><span>Avans<small>Vadesiz · maaştan düşülecek</small></span><span class="num plus">+10.000,00</span></div>
-          </div>
-        </div>
-        <div class="fab">+</div>
-        <div class="bnav"><span>Özet</span><span class="on">Hareketler</span><span>Hesaplar</span><span>Cüzdanlar</span><span>Dersler</span></div>
-      </div></div>
-      <figcaption><b>6 · Hareketler</b><span>Tüm kayıtlar günlere göre gruplu. Türe göre filtre, iş yeri/not/tutarla arama. Bir kayda dokununca düzenlenir.</span></figcaption>
-    </figure>
-
-    <figure>
-      <div class="phone"><div class="scr">
-        <div class="bar"><span>09:41</span><span></span></div>
-        <div class="hd"><div class="t">Raporlar</div><div class="s">Özet ekranından açılır</div></div>
-        <div class="body">
-          <div class="seg"><span>Ağu</span><span class="on">Eylül</span><span>Son 6 ay</span></div>
-          <div class="blk">
-            <div class="lbl">Kategoriye göre gider</div>
-            <div class="hbar"><span>Market</span><i style="width:100%"></i><span class="num">6.900</span></div>
-            <div class="hbar"><span>Giyim</span><i style="width:58%"></i><span class="num">4.010</span></div>
-            <div class="hbar"><span>Fatura</span><i style="width:47%"></i><span class="num">3.240</span></div>
-            <div class="hbar"><span>Yemek</span><i style="width:25%"></i><span class="num">1.750</span></div>
-          </div>
-          <div class="blk">
-            <div class="row"><span class="lbl">Gelir · gider</span><span style="font-size:10.5px;color:var(--muted)"><span style="color:var(--accent)">■</span> gelir <span style="color:var(--warn)">■</span> gider</span></div>
-            <div class="cols">
-              <div><i style="height:80%"></i><i class="o" style="height:74%"></i></div>
-              <div><i style="height:92%"></i><i class="o" style="height:70%"></i></div>
-              <div><i style="height:84%"></i><i class="o" style="height:88%"></i></div>
-              <div><i style="height:100%"></i><i class="o" style="height:71%"></i></div>
-            </div>
-            <div class="colx"><span>Haz</span><span>Tem</span><span>Ağu</span><span>Eyl</span></div>
-            <div style="font-size:11px;color:var(--muted);margin-top:4px">Eylül gelirinin 10.000 ₺'si avans</div>
-          </div>
-          <div class="blk">
-            <div class="lbl">Taksit yükü · önümüzdeki 3 ay</div>
-            <div class="row"><span>Eki · Kas · Ara</span><span class="num">9.200 · 7.450 · 3.100</span></div>
-          </div>
-        </div>
-        <div class="bnav"><span class="on">Özet</span><span>Hareketler</span><span>Hesaplar</span><span>Cüzdanlar</span><span>Dersler</span></div>
-      </div></div>
-      <figcaption><b>7 · Raporlar</b><span>Kategori dağılımı, aylık gelir/gider (avans ayrı not edilir), taksit yükü. Ders ve kart borcu raporları aşağı kaydırınca.</span></figcaption>
-    </figure>
-
     <figure>
       <div class="phone"><div class="scr">
         <div class="bar"><span>09:41</span><span></span></div>
@@ -392,9 +448,183 @@ figcaption span{color:var(--muted);font-size:13.5px}
         <div class="fab">+</div>
         <div class="bnav"><span>Özet</span><span>Hareketler</span><span>Hesaplar</span><span class="on">Cüzdanlar</span><span>Dersler</span></div>
       </div></div>
-      <figcaption><b>8 · Bekleme listesi</b><span>Her ürün hangi kartla ve kaç taksitle alınacaksa öyle kaydedilir; aylık etkisi ve limit aşımı ürünün altında görünür. “Hepsini alırsan” tablosu bekleyenlerin toplam etkisini bugünkü taksit yükünün üstüne koyar.</span></figcaption>
+      <figcaption><b>13 · Bekleme listesi</b><span>Her ürün hangi kartla ve kaç taksitle alınacaksa öyle kaydedilir; aylık etkisi ve limit aşımı ürünün altında görünür. “Hepsini alırsan” tablosu bekleyenlerin toplam etkisini bugünkü taksit yükünün üstüne koyar.</span></figcaption>
     </figure>
-
+    <figure>
+      <div class="phone"><div class="scr">
+        <div class="bar"><span>09:41</span><span></span></div>
+        <div class="hd"><div class="t">Hareketler</div><div class="s">30 Ağu – 29 Eyl dönemi · 64 kayıt</div></div>
+        <div class="body">
+          <div class="srch">Ara: iş yeri, not, tutar…</div>
+          <div class="chips"><span class="chip on">Tümü</span><span class="chip">Harcama</span><span class="chip">Gelir</span><span class="chip">Transfer</span><span class="chip">Avans</span></div>
+          <div class="day">Bugün · 24 Eyl</div>
+          <div class="blk">
+            <div class="tx"><span>Giyim<small>Bonus ··4821 · 3 taksit</small></span><span class="num minus">−1.249,90</span></div>
+            <div class="tx"><span>Market<small>Nakit</small></span><span class="num minus">−386,50</span></div>
+          </div>
+          <div class="day">Dün · 23 Eyl</div>
+          <div class="blk">
+            <div class="tx"><span>Özel ders · Mert<small>Tahsilat · Nakit</small></span><span class="num plus">+1.050,00</span></div>
+            <div class="tx"><span>Kart ödemesi<small>Transfer · Vadesiz → Maximum</small></span><span class="num">8.000,00</span></div>
+          </div>
+          <div class="day">20 Eyl</div>
+          <div class="blk">
+            <div class="tx"><span>Avans<small>Vadesiz · maaştan düşülecek</small></span><span class="num plus">+10.000,00</span></div>
+          </div>
+        </div>
+        <div class="fab">+</div>
+        <div class="bnav"><span>Özet</span><span class="on">Hareketler</span><span>Hesaplar</span><span>Cüzdanlar</span><span>Dersler</span></div>
+      </div></div>
+      <figcaption><b>14 · Hareketler</b><span>Tüm kayıtlar günlere göre gruplu. Türe göre filtre, iş yeri/not/tutarla arama. Bir kayda dokununca düzenlenir.</span></figcaption>
+    </figure>
+    </div>
+  </section>
+  <section class="grp">
+    <h2>Kartlar ve birikim</h2>
+    <p class="note">Hesaplar ve Cüzdanlar sekmeleri.</p>
+    <div class="screens">
+    <figure>
+      <div class="phone"><div class="scr">
+        <div class="bar"><span>09:41</span><span></span></div>
+        <div class="hd"><div class="t">Bonus ··4821</div><div class="s">Kesim: her ayın 12'si · Son ödeme: 22'si</div></div>
+        <div class="body">
+          <div class="blk">
+            <div class="row"><span class="lbl">Toplam borç</span><span class="lbl">Kendi limitin</span></div>
+            <div class="row"><span class="big">13.800 ₺</span><span class="num">1.200 kaldı / 15.000</span></div>
+            <div class="meter"><i class="w" style="width:92%"></i></div>
+            <div style="font-size:11px;color:var(--muted);margin-top:4px">Banka limiti 50.000 ₺ (gizli tutuluyor)</div>
+          </div>
+          <div class="blk">
+            <div class="lbl">Kesilen ekstre · 12 Eylül</div>
+            <div class="row"><span>Ekstre tutarı</span><span class="num">12.340 ₺</span></div>
+            <div class="row"><span>Asgari</span><span class="num">4.936 ₺</span></div>
+            <div class="row"><span>Durum</span><span class="pill w">Ödenmedi · 3 gün</span></div>
+            <div class="a" style="display:flex;gap:6px;margin-top:8px"><span class="btn">Tamamını öde</span><span class="btn o">Asgari</span><span class="btn o">Kısmi</span></div>
+          </div>
+          <div class="blk">
+            <div class="lbl">Dönem içi · 13 Eyl–12 Eki</div>
+            <div class="row"><span>Tek çekim</span><span class="num">5.980 ₺</span></div>
+            <div class="row"><span>Taksitler (4 adet)</span><span class="num">3.220 ₺</span></div>
+          </div>
+          <div class="blk">
+            <div class="lbl">Taksitler</div>
+            <div class="row"><span>Telefon · 5/12</span><span class="num">1.850 ₺</span></div>
+            <div class="row"><span>Giyim · 1/3</span><span class="num">416,63 ₺</span></div>
+          </div>
+        </div>
+        <div class="bnav"><span>Özet</span><span>Hareketler</span><span class="on">Hesaplar</span><span>Cüzdanlar</span><span>Dersler</span></div>
+      </div></div>
+      <figcaption><b>15 · Kart detayı</b><span>Ekstre, ödeme işaretleme, devreden borç ve taksitlerin hangi ekstreye düştüğü tek sayfada.</span></figcaption>
+    </figure>
+    <figure>
+      <div class="phone"><div class="scr">
+        <div class="bar"><span>09:41</span><span></span></div>
+        <div class="hd"><div class="t">Cüzdanlar</div><div class="s">Bütçe zarfları · kasalar · birikim</div></div>
+        <div class="body">
+          <div class="blk">
+            <div class="lbl">Bütçe zarfları · bu dönem</div>
+            <div class="row"><span>Market</span><span class="num">1.100 kaldı</span></div><div class="meter"><i class="w" style="width:86%"></i></div>
+            <div class="row" style="margin-top:8px"><span>Giyim</span><span class="num">2.750 kaldı</span></div><div class="meter"><i style="width:31%"></i></div>
+          </div>
+          <div class="blk">
+            <div class="lbl">Para kasaları</div>
+            <div class="row"><span>Araba bakımı</span><span class="num">6.200 ₺</span></div>
+            <div class="row"><span>Acil durum</span><span class="num">25.000 ₺</span></div>
+          </div>
+          <div class="blk">
+            <div class="row"><span class="lbl">Hedef · Tatil</span><span class="pill g">Haz 2027</span></div>
+            <div class="row"><span class="num">16.800 / 40.000 ₺</span><span class="num">%42</span></div>
+            <div class="meter"><i class="g" style="width:42%"></i></div>
+            <div style="font-size:11.5px;color:var(--muted);margin-top:4px">Yetişmek için ayda 2.580 ₺ ayırmalısın</div>
+          </div>
+          <div class="blk">
+            <div class="lbl">Yatırımlar · güncel kurla</div>
+            <div class="row"><span>Gram altın · 12 g</span><span class="num" style="color:var(--ok)">+%9,4</span></div>
+            <div class="row"><span>USD · 500</span><span class="num" style="color:var(--ok)">+%3,1</span></div>
+            <div class="row"><span>Fon · ABC</span><span class="num" style="color:var(--warn)">−%1,2</span></div>
+          </div>
+        </div>
+        <div class="fab">+</div>
+        <div class="bnav"><span>Özet</span><span>Hareketler</span><span>Hesaplar</span><span class="on">Cüzdanlar</span><span>Dersler</span></div>
+      </div></div>
+      <figcaption><b>16 · Cüzdanlar ve birikim</b><span>Üç tür tek ekranda: limitli zarflar, bakiyeli kasalar, hedefler ve kurla değerlenen yatırımlar.</span></figcaption>
+    </figure>
+    </div>
+  </section>
+  <section class="grp">
+    <h2>Dersler</h2>
+    
+    <div class="screens">
+    <figure>
+      <div class="phone"><div class="scr">
+        <div class="bar"><span>09:41</span><span></span></div>
+        <div class="hd"><div class="t">Dersler</div><div class="s">Eylül · 22 saat · 17.600 ₺</div></div>
+        <div class="body">
+          <div class="blk">
+            <div class="cal">
+              <div class="h">Pt</div><div class="h">Sa</div><div class="h">Ça</div><div class="h">Pe</div><div class="h">Cu</div><div class="h">Ct</div><div class="h">Pz</div>
+              <div class="x">31</div><div class="d">1</div><div>2</div><div class="d">3</div><div>4</div><div class="d">5</div><div>6</div>
+              <div class="d">8</div><div>9</div><div class="d">10</div><div>11</div><div class="d">12</div><div>13</div><div>14</div>
+              <div class="d">15</div><div>16</div><div class="d">17</div><div>18</div><div class="d">19</div><div>20</div><div>21</div>
+              <div class="d">22</div><div style="outline:1.5px solid var(--accent)">23</div><div>24</div><div>25</div><div>26</div><div>27</div><div>28</div>
+            </div>
+          </div>
+          <div class="blk">
+            <div class="lbl">Öğrenciler · alacak</div>
+            <div class="row"><span>Ayşe · ay sonu · 800 ₺/sa</span><span class="pill w">4.800 ₺</span></div>
+            <div class="row"><span>Mert · ders başı · 700 ₺/sa</span><span class="pill">0 ₺</span></div>
+            <div class="row"><span>Deniz · 4'lü paket</span><span class="pill g">2 ders kaldı</span></div>
+          </div>
+          <div class="blk">
+            <div class="lbl">Bugün</div>
+            <div class="row"><span>Ayşe · 17:00 · 1,5 sa</span><span class="num">1.200 ₺</span></div>
+            <div class="a" style="display:flex;gap:6px;margin-top:8px"><span class="btn">Ders yapıldı</span><span class="btn o">İptal</span></div>
+          </div>
+        </div>
+        <div class="fab">+</div>
+        <div class="bnav"><span>Özet</span><span>Hareketler</span><span>Hesaplar</span><span>Cüzdanlar</span><span class="on">Dersler</span></div>
+      </div></div>
+      <figcaption><b>17 · Dersler</b><span>Takvimde ders günleri, öğrenci başına ödeme şekli ve alacak. Tahsilat girilince alacaktan düşer, gelire eklenir.</span></figcaption>
+    </figure>
+    </div>
+  </section>
+  <section class="grp">
+    <h2>Raporlar ve ayarlar</h2>
+    <p class="note">Özet’ten ve sağ üst menüden açılır.</p>
+    <div class="screens">
+    <figure>
+      <div class="phone"><div class="scr">
+        <div class="bar"><span>09:41</span><span></span></div>
+        <div class="hd"><div class="t">Raporlar</div><div class="s">Özet ekranından açılır</div></div>
+        <div class="body">
+          <div class="seg"><span>Önceki dönem</span><span class="on">Bu dönem</span><span>Son 6 dönem</span></div>
+          <div class="blk">
+            <div class="lbl">Kategoriye göre gider</div>
+            <div class="hbar"><span>Market</span><i style="width:100%"></i><span class="num">6.900</span></div>
+            <div class="hbar"><span>Giyim</span><i style="width:58%"></i><span class="num">4.010</span></div>
+            <div class="hbar"><span>Fatura</span><i style="width:47%"></i><span class="num">3.240</span></div>
+            <div class="hbar"><span>Yemek</span><i style="width:25%"></i><span class="num">1.750</span></div>
+          </div>
+          <div class="blk">
+            <div class="row"><span class="lbl">Gelir · gider</span><span style="font-size:10.5px;color:var(--muted)"><span style="color:var(--accent)">■</span> gelir <span style="color:var(--warn)">■</span> gider</span></div>
+            <div class="cols">
+              <div><i style="height:80%"></i><i class="o" style="height:74%"></i></div>
+              <div><i style="height:92%"></i><i class="o" style="height:70%"></i></div>
+              <div><i style="height:84%"></i><i class="o" style="height:88%"></i></div>
+              <div><i style="height:100%"></i><i class="o" style="height:71%"></i></div>
+            </div>
+            <div class="colx"><span>Haz</span><span>Tem</span><span>Ağu</span><span>Eyl</span></div>
+            <div style="font-size:11px;color:var(--muted);margin-top:4px">Eylül gelirinin 10.000 ₺'si avans</div>
+          </div>
+          <div class="blk">
+            <div class="lbl">Taksit yükü · önümüzdeki 3 ay</div>
+            <div class="row"><span>Eki · Kas · Ara</span><span class="num">9.200 · 7.450 · 3.100</span></div>
+          </div>
+        </div>
+        <div class="bnav"><span class="on">Özet</span><span>Hareketler</span><span>Hesaplar</span><span>Cüzdanlar</span><span>Dersler</span></div>
+      </div></div>
+      <figcaption><b>18 · Raporlar</b><span>Kategori dağılımı, aylık gelir/gider (avans ayrı not edilir), taksit yükü. Ders ve kart borcu raporları aşağı kaydırınca.</span></figcaption>
+    </figure>
     <figure>
       <div class="phone"><div class="scr">
         <div class="bar"><span>09:41</span><span></span></div>
@@ -424,159 +654,17 @@ figcaption span{color:var(--muted);font-size:13.5px}
         </div>
         <div class="bnav"><span class="on">Özet</span><span>Hareketler</span><span>Hesaplar</span><span>Cüzdanlar</span><span>Dersler</span></div>
       </div></div>
-      <figcaption><b>9 · Ayarlar</b><span>Kilit, banka uygulaması → kart eşlemesi, fren eşikleri, elle yedek. Kategoriler ve bildirim günleri aşağı kaydırınca.</span></figcaption>
+      <figcaption><b>19 · Ayarlar</b><span>Kilit, banka uygulaması → kart eşlemesi, fren eşikleri, elle yedek. Kategoriler ve bildirim günleri aşağı kaydırınca.</span></figcaption>
     </figure>
-
-    <figure>
-      <div class="phone"><div class="scr">
-        <div class="bar"><span>09:41</span><span>Kurulum 1 / 7</span></div>
-        <div class="hd"><div class="t">Hoş geldin</div><div class="s">tibi her şeyi bu telefonda tutar, hiçbir yere göndermez</div></div>
-        <div class="steps"><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-        <div class="body">
-          <div class="inp f"><span>Sana nasıl hitap edelim?</span><b>Gülbahar</b></div>
-          <div class="hint">Bildirimlerde kullanılır: “Gülbahar, Bonus'un son ödemesine 3 gün var.”</div>
-          <div class="blk">
-            <div class="lbl">Uygulama kilidi</div>
-            <div class="set" style="margin-top:6px"><span>PIN (4–6 hane)<small>Zorunlu, parmak izi çalışmazsa yedek</small></span><b class="num">••••</b></div>
-            <div class="set"><span>Parmak izi</span><span class="tg"></span></div>
-            <div class="set"><span>Arka plana alınca kilitle<small>1 dakika sonra</small></span><span class="tg"></span></div>
-          </div>
-          <div style="margin-top:auto;display:flex;gap:6px;padding-bottom:10px"><span class="btn">Başla</span></div>
-        </div>
-      </div></div>
-      <figcaption><b>10 · Hoş geldin</b><span>Kurulumun ilk adımı: hitap adı ve uygulama kilidi (PIN zorunlu, parmak izi isteğe bağlı).</span></figcaption>
-    </figure>
-
-    <figure>
-      <div class="phone"><div class="scr">
-        <div class="bar"><span>09:41</span><span>Kurulum 3 / 7</span></div>
-        <div class="hd"><div class="t">Kartların</div><div class="s">İstediğin kadar kart ekle, sonra da değiştirebilirsin</div></div>
-        <div class="steps"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i></div>
-        <div class="body">
-          <div class="blk">
-            <div class="row"><span><b>Bonus ··4821</b><br><span class="hint">Kesim 12 · Son ödeme 22</span></span><span class="num">15.000 / 50.000</span></div>
-          </div>
-          <div class="blk">
-            <div class="row"><span><b>Maximum ··1190</b><br><span class="hint">Kesim 5 · Son ödeme 15</span></span><span class="num">10.000 / 80.000</span></div>
-          </div>
-          <div class="blk">
-            <div class="row"><span><b>Bonus Sanal ··9054</b><br><span class="hint">Ortak limit → Bonus</span></span><span class="num">Bonus'la ortak</span></div>
-          </div>
-          <div class="blk" style="border:1.5px dashed var(--accent);background:transparent;text-align:center;color:var(--accent);font-weight:600;font-size:13px">+ Kart ekle</div>
-          <div class="hint" style="padding:0 2px">Sağdaki rakam: kendi limitin / banka limiti</div>
-          <div class="hint" style="padding:0 2px">Adımlar: 1 Hoş geldin · 2 Gelir · <b>3 Kartlar</b> · 4 Hesaplar ve nakit · 5 Devam eden taksitler · 6 Harcama freni · 7 İzinler</div>
-          <div style="margin-top:auto;display:flex;gap:6px;padding-bottom:10px"><span class="btn o">Geri</span><span class="btn">Devam</span></div>
-        </div>
-      </div></div>
-      <figcaption><b>11 · Kurulum: kartlar</b><span>Uygulama ilk açılışta 7 adımda kurulur. Her adım sonradan Ayarlar'dan tekrar açılabilir. Kart sayısında sınır yok.</span></figcaption>
-    </figure>
-
-    <figure>
-      <div class="phone"><div class="scr">
-        <div class="bar"><span>09:41</span><span></span></div>
-        <div class="hd"><div class="t">Kart ekle</div><div class="s">Bilmediğin alanı boş geç, sonra doldurursun</div></div>
-        <div class="body">
-          <div class="two"><div class="inp"><span>Kart adı</span><b>Bonus</b></div><div class="inp"><span>Renk</span><b style="color:var(--accent)">●</b></div></div>
-          <div class="seg" style="background:var(--paper)"><span class="on">Ana kart</span><span>Ek kart</span><span>Sanal kart</span></div>
-          <div class="hint">Ek ve sanal kart ana kartın limitini paylaşır, limit iki kez sayılmaz.</div>
-          <div class="two"><div class="inp"><span>Son 4 hane</span><b>4821</b></div><div class="inp"><span>Banka uyg.</span><b>Garanti</b></div></div>
-          <div class="two"><div class="inp"><span>Kesim günü</span><b>12</b></div><div class="inp"><span>Son ödeme</span><b>22</b></div></div>
-          <div class="two"><div class="inp"><span>Banka limiti</span><b class="num">50.000</b></div><div class="inp f"><span>Kendi limitin</span><b class="num">15.000</b></div></div>
-          <div class="two"><div class="inp"><span>Asgari oran</span><b>%40</b></div><div class="inp"><span>Oto. ödeme</span><span class="tg"></span></div></div>
-          <div class="two"><div class="inp"><span>Aidat ayı</span><b>Mart</b></div><div class="inp"><span>Aidat</span><b class="num">1.200 ₺</b></div></div>
-          <div class="lbl" style="margin-top:4px">Şu anki borç</div>
-          <div class="inp"><span>Kesilmiş ekstre (ödenmemiş)</span><b class="num">12.340 ₺</b></div>
-          <div class="inp"><span>Dönem içi tek çekimler</span><b class="num">5.980 ₺</b></div>
-          <div class="hint">Taksitler kurulumun 5. adımında ayrıca girilir. Kart numarası, son kullanma tarihi ve CVV istenmez.</div>
-          <div style="margin-top:auto;display:flex;gap:6px;padding-bottom:10px"><span class="btn">Kartı kaydet</span></div>
-        </div>
-      </div></div>
-      <figcaption><b>12 · Kart ekle / düzenle</b><span>Kart türü (ana, ek, sanal → ortak limit), kesim ve son ödeme günü, limitler, asgari oranı, otomatik ödeme talimatı, yıllık aidat ve kurulum anındaki borç. Uygulama bugünkü durumdan başlar.</span></figcaption>
-    </figure>
-
-    <figure>
-      <div class="phone"><div class="scr">
-        <div class="bar"><span>09:41</span><span>Kurulum 5 / 7</span></div>
-        <div class="hd"><div class="t">Devam eden taksit</div><div class="s">Geçmişte yapılmış, hâlâ ekstreye yansıyan</div></div>
-        <div class="body">
-          <div class="two"><div class="inp"><span>Ne?</span><b>Telefon</b></div><div class="inp"><span>Kart</span><b>Bonus</b></div></div>
-          <div class="inp"><span>Kategori</span><b>Elektronik</b></div>
-          <div class="chips"><span class="chip on">Alışveriş</span><span class="chip">Ekstre taksitlendirme</span><span class="chip">Nakit avans</span></div>
-          <div class="seg"><span class="on">Aylık tutar</span><span>Toplam tutar</span><span>Kalan borç</span></div>
-          <div class="two"><div class="inp f"><span>Aylık</span><b class="num">1.850 ₺</b></div><div class="inp"><span>Toplam taksit</span><b>12</b></div></div>
-          <div class="inp f"><span>Bir sonraki ekstrede kaçıncı?</span><b>6. taksit</b></div>
-          <div class="hint">Ya da ilk taksit ayını seç: Mayıs 2026 · Erteleme: yok</div>
-          <div class="blk">
-            <div class="row"><span class="lbl">Kalan plan</span><span class="num">7 × 1.850 = 12.950 ₺</span></div>
-            <div class="plan" style="margin-top:6px">
-              <div class="p">May</div><div class="p">Haz</div><div class="p">Tem</div><div class="p">Ağu</div><div class="p">Eyl</div><div class="n">Eki</div>
-              <div>Kas</div><div>Ara</div><div>Oca</div><div>Şub</div><div>Mar</div><div>Nis</div>
-            </div>
-            <div class="hint" style="margin-top:5px">Yeşil: ödenmiş · çerçeveli: sıradaki ekstre · son taksit Nisan 2027</div>
-          </div>
-          <div style="margin-top:auto;display:flex;gap:6px;padding-bottom:10px"><span class="btn o">Bir tane daha</span><span class="btn">Kaydet</span></div>
-        </div>
-      </div></div>
-      <figcaption><b>13 · Geçmişe dönük taksit</b><span>Tür seçilir (alışveriş, ekstre taksitlendirme, nakit avans). Aylık tutar, toplam tutar ya da kalan borç + kalan taksit sayısı ile girilir; kalan ay planı hemen görünür. Geçmiş taksitler bugünkü borca ve gelecek ayların yüküne eklenir, geçmiş aylara gider olarak yazılmaz.</span></figcaption>
-    </figure>
-
-    <figure>
-      <div class="phone"><div class="scr">
-        <div class="bar"><span>09:41</span><span>Kurulum 6 / 7</span></div>
-        <div class="hd"><div class="t">Harcama freni</div><div class="s">Önerilen değerler dolu gelir, istediğin gibi değiştir</div></div>
-        <div class="steps"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i></div>
-        <div class="body">
-          <div class="blk">
-            <div class="lbl">Toplam kart tavanı</div>
-            <div class="seg" style="margin-top:6px;background:var(--ground)"><span class="on">Net gelirin %'si</span><span>Sabit tutar</span></div>
-            <div class="row" style="margin-top:8px"><span class="big">%40</span><span class="num">≈ 14.000 ₺ / ay</span></div>
-            <div class="meter"><i style="width:40%"></i></div>
-            <div class="hint" style="margin-top:4px">Avans düşülmüş maaşa göre hesaplanır</div>
-          </div>
-          <div class="blk">
-            <div class="lbl">Uyarı eşikleri</div>
-            <div class="two" style="margin-top:6px"><div class="inp"><span>Sarı</span><b>%70</b></div><div class="inp"><span>Kırmızı</span><b>%90</b></div></div>
-          </div>
-          <div class="blk">
-            <div class="lbl">Bekleme listesi</div>
-            <div class="two" style="margin-top:6px"><div class="inp"><span>Eşik</span><b class="num">2.000 ₺</b></div><div class="inp"><span>Süre</span><b>48 sa</b></div></div>
-          </div>
-          <div style="margin-top:auto;display:flex;gap:6px;padding-bottom:10px"><span class="btn o">Geri</span><span class="btn">Devam</span></div>
-        </div>
-      </div></div>
-      <figcaption><b>14 · Harcama freni ayarları</b><span>Tavan, uyarı eşikleri ve bekleme listesi senin girdiğin değerlerle çalışır. Önerilen değerler sadece başlangıç.</span></figcaption>
-    </figure>
-
-    <figure>
-      <div class="phone"><div class="scr">
-        <div class="bar"><span>09:41</span><span>Kurulum 7 / 7</span></div>
-        <div class="hd"><div class="t">İzinler</div><div class="s">İkisi de sonra Ayarlar'dan açılıp kapatılabilir</div></div>
-        <div class="steps"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div>
-        <div class="body">
-          <div class="blk">
-            <div class="row"><span><b>Bildirimler</b></span><span class="pill">Verildi</span></div>
-            <div class="hint" style="margin-top:3px">Son ödeme, maaş, tahsilat ve bekleme listesi hatırlatmaları için.</div>
-          </div>
-          <div class="blk">
-            <div class="row"><span><b>Kullanım erişimi</b></span><span class="pill w">Bekliyor</span></div>
-            <div class="hint" style="margin-top:3px">Seçtiğin banka uygulamasından çıktığını anlayıp “Harcama yaptın mı?” diye sormak için. Sadece hangi uygulamanın açık olduğunu görür, içindekileri okuyamaz.</div>
-            <div class="a" style="display:flex;gap:6px;margin-top:8px"><span class="btn">Ayarlara git</span></div>
-          </div>
-          <div class="hint" style="padding:0 2px">Kullanım erişimi vermezsen tetikleyici çalışmaz, geri kalan her şey çalışır.</div>
-          <div style="margin-top:auto;display:flex;gap:6px;padding-bottom:10px"><span class="btn o">Geri</span><span class="btn">Kurulumu bitir</span></div>
-        </div>
-      </div></div>
-      <figcaption><b>15 · İzinler</b><span>Kurulumun son adımı. Her iznin neden istendiği tek cümleyle yazılır.</span></figcaption>
-    </figure>
-
-  </div>
+    </div>
+  </section>
 
   <section class="q">
     <h2>Bu turda bakman gerekenler</h2>
     <ol>
-      <li>Hoş geldin ve İzinler adımları uygun mu?</li>
-      <li>Kart formundaki yeni alanlar (kart türü, asgari oran, otomatik ödeme, aidat, renk) doğru mu?</li>
-      <li>Geçmiş taksitteki türler ve “kalan borç” seçeneği doğru mu?</li>
+      <li>Açılış, kilit ekranı ve kurulum akışı doğru mu? Kurulum sırasını Hesaplar → Gelir → Kartlar olarak değiştirdim, çünkü maaş ve kart ödemeleri hesaplara bağlanıyor.</li>
+      <li>Kurulumdaki Gelir ekranında maaş günü ve dönem aralığı anlaşılır mı?</li>
+      <li>PIN unutulursa kurtarma kuralı uygun mu?</li>
     </ol>
     <p class="note">Cevaplarını terminale yaz.</p>
   </section>

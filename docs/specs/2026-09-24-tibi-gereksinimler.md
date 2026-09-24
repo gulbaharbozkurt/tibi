@@ -19,6 +19,7 @@ Tek kişinin kullanacağı Android uygulaması. Harcamaları, taksitleri, gelirl
 | İnternet | Yalnızca kur ve fon fiyatını çekmek için. Kullanıcı verisi dışarı gönderilmez. |
 | Harcama girişi | Tamamen elle. Bankanın bildirimi veya SMS'i okunmaz. |
 | Para birimi | TL. Döviz yalnızca yatırım varlığı olarak tutulur. |
+| Dönem | "Bu dönem" maaş gününden bir sonraki maaş gününün bir gün öncesine kadardır (ör. 30 Ağu – 29 Eyl). Bütçe zarfları, harcama hızı, toplam kart tavanı ve Özet/Hareketler/Raporlar bu döneme göre çalışır. Kart ekstreleri kendi kesim günlerine, ders takvimi ve ay sonu tahsilatı takvim ayına göre kalır. |
 
 ## 3. Fonksiyonel Gereksinimler
 
@@ -66,7 +67,7 @@ Tek kişinin kullanacağı Android uygulaması. Harcamaları, taksitleri, gelirl
 
 ### 3.6 Gelir
 - **G1.** Gelir kaynakları kullanıcı tarafından tanımlanır, ör. Maaş, Özel ders, Diğer.
-- **G2.** Düzenli gelirin tekrar kuralı (aylık, haftalık, belirli bir gün) ve beklenen tutarı tanımlanır. Beklenen günde "Yattı mı?" hatırlatması gelir. Tutar o an düzeltilebilir.
+- **G2.** Düzenli gelirin tekrar kuralı (aylık, haftalık, belirli bir gün) ve beklenen tutarı tanımlanır. Maaş günü hafta sonuna denk gelirse ne olacağı seçilir (önceki iş günü / sonraki iş günü / aynı gün); dönem başlangıcı buna göre kayar. Beklenen günde "Yattı mı?" hatırlatması gelir. Tutar o an düzeltilebilir.
 - **G3.** Düzensiz gelir tek seferlik girilir.
 - **G4.** Her gelir bir hesaba veya nakde yatar.
 - **G5.** Gelirin bir kısmı cüzdanlara otomatik dağıtılabilir, ör. maaşın %10'u Birikim'e. Bu isteğe bağlıdır.
@@ -101,15 +102,17 @@ Tek kişinin kullanacağı Android uygulaması. Harcamaları, taksitleri, gelirl
 - **R5.** Kartlara göre borç gelişimi
 
 ### 3.11 İlk kurulum
+- **S-1. Açılış:** Uygulama ilk açıldığında iki seçenek sunar: "Yeni başla" (kuruluma gider) ve "Yedekten geri yükle" (şifreli yedek dosyası ve yedek şifresi istenir, kurulum atlanır).
 - **S0.** Hoş geldin adımında hitap adı girilir (bildirimlerde kullanılır) ve uygulama kilidi kurulur: PIN zorunlu, parmak izi isteğe bağlı, arka plana alınınca kilitlenme süresi.
-- **S1.** İlk açılışta 7 adımlı kurulum çalışır: Hoş geldin, Gelir, Kartlar, Hesaplar ve nakit, Devam eden taksitler, Harcama freni, İzinler. Hoş geldin dışındaki her adım atlanabilir ve sonradan Ayarlar'dan açılabilir.
+- **S1.** İlk açılışta 7 adımlı kurulum çalışır: Hoş geldin, Hesaplar ve nakit, Gelir, Kartlar, Devam eden taksitler, Harcama freni, İzinler. Hesaplar önce gelir, çünkü maaş ve kart ödemeleri hesaplara bağlanır. Hoş geldin dışındaki her adım atlanabilir ve sonradan Ayarlar'dan açılabilir.
 - **S2.** Kart sayısında sınır yoktur. Her kart için K1 ve K9'daki alanlar girilir.
 - **S3.** Banka hesapları ve nakit için açılış bakiyesi girilir.
 - **S4.** Harcama freni değerleri (F2, F3, F6) kullanıcı tarafından belirlenir. Önerilen başlangıç değerleri dolu gelir: tavan net gelirin %40'ı, uyarı eşikleri %70 ve %90, bekleme eşiği 2.000 ₺, süre 48 saat.
 - **S5.** İzinler adımında bildirim izni ve kullanım erişimi izni istenir; her iznin neden gerektiği tek cümleyle açıklanır. Kullanım erişimi verilmezse yalnızca banka tetikleyicisi çalışmaz.
 
 ### 3.12 Güvenlik ve veri
-- **V1.** Uygulama açılırken parmak izi veya PIN istenir.
+- **V1.** Uygulama her açılışta ve arka plandan dönünce (ayarlanan süreden sonra) kilit ekranı gösterir: parmak izi ya da PIN. Kilit ekranında tutar veya bakiye görünmez.
+- **V1a.** PIN unutulursa parmak iziyle girilip PIN değiştirilebilir. Parmak izi de yoksa kurtarma yoktur: uygulama sıfırlanır ve yedekten geri yüklenir. Kullanıcı kurulumda bu konuda uyarılır.
 - **V2.** Ayarlardan elle şifreli yedek dosyası alınır ve cihaz hafızasına kaydedilir. Aynı dosyadan geri yükleme yapılabilir.
 - **V3.** Uygulama hiçbir kullanıcı verisini ağ üzerinden göndermez.
 
@@ -144,8 +147,7 @@ Bildirim veya SMS okuma, faiz hesabı, krediler (ihtiyaç, konut, KMH), birden f
 
 ## 7. Açık Konular
 
-1. **Ay dönemi:** "Bu ay" takvim ayı mı olsun, yoksa maaş gününden maaş gününe mi?
-2. **Kur kaynağı:** Hangi ücretsiz API kullanılacak? Teknik tasarımda seçilecek.
-3. **Varsayılan kategoriler:** Başlangıç seti nasıl olsun?
+1. **Kur kaynağı:** Hangi ücretsiz API kullanılacak? Teknik tasarımda seçilecek.
+2. **Varsayılan kategoriler:** Başlangıç seti nasıl olsun?
 
-Kapandı: fren eşiklerinin başlangıç değerleri kurulumda kullanıcı tarafından girilir (S4).
+Kapandı: fren eşiklerinin başlangıç değerleri kurulumda kullanıcı tarafından girilir (S4). "Bu ay" maaş döneminden maaşa sayılır (bkz. Temel Kararlar, Dönem).
