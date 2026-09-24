@@ -29,12 +29,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import app.tibi.ui.giris.HizliGirisSayfasi
 import app.tibi.ui.hareketler.HareketlerEkrani
+import app.tibi.ui.hesaplar.HesaplarEkrani
+import app.tibi.ui.hesaplar.KartDetayEkrani
 import app.tibi.ui.ozet.OzetEkrani
 import kotlinx.coroutines.launch
 
@@ -65,7 +69,7 @@ fun Kabuk() {
             NavigationBar {
                 Sekme.entries.forEach { s ->
                     NavigationBarItem(
-                        selected = aktif == s.rota,
+                        selected = aktif == s.rota || (s == Sekme.HESAPLAR && aktif?.startsWith("kart/") == true),
                         onClick = {
                             nav.navigate(s.rota) {
                                 popUpTo(nav.graph.findStartDestination().id) { saveState = true }
@@ -83,7 +87,11 @@ fun Kabuk() {
         NavHost(nav, startDestination = Sekme.OZET.rota, modifier = Modifier.padding(ic)) {
             composable(Sekme.OZET.rota) { OzetEkrani() }
             composable(Sekme.HAREKETLER.rota) { HareketlerEkrani() }
-            listOf(Sekme.HESAPLAR, Sekme.CUZDANLAR, Sekme.DERSLER).forEach { s -> composable(s.rota) { YerTutucu(s.baslik) } }
+            composable(Sekme.HESAPLAR.rota) { HesaplarEkrani(kartAc = { nav.navigate("kart/$it") }) }
+            composable("kart/{id}", arguments = listOf(navArgument("id") { type = NavType.LongType })) { giris ->
+                KartDetayEkrani(giris.arguments!!.getLong("id"), geri = { nav.popBackStack() })
+            }
+            listOf(Sekme.CUZDANLAR, Sekme.DERSLER).forEach { s -> composable(s.rota) { YerTutucu(s.baslik) } }
         }
     }
     if (giris) HizliGirisSayfasi { kaydedildi ->
