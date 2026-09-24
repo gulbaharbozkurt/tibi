@@ -59,6 +59,7 @@ Tek kişinin kullanacağı Android uygulaması. Harcamaları, taksitleri, gelirl
 - **F6. Bekleme listesi:** Belirli bir tutarın üstündeki alışverişler "48 saat beklet" ile listeye alınır. Süre dolunca "Hâlâ istiyor musun?" bildirimi gelir. Cevap "Evet" ise harcama formu açılır, "Hayır" ise kayıt vazgeçilenlere taşınır. Tutar eşiği ve süre ayarlanabilir.
 - **F7. Harcama hızı:** Özet ekranında şöyle bir cümle görünür: "Ayın %X'i geçti, kart bütçenin %Y'sini harcadın."
 - **F8. Vazgeçilenler sayacı:** Bekleme listesinde bu ay vazgeçilen alışverişlerin toplamı ve adedi gösterilir.
+- **F9. Bekleme listesinin gelecek aylara etkisi:** Bekleyen her ürün, alınması planlanan kart ve taksit sayısıyla kaydedilir. Ürünün altında aylık taksit tutarı, hangi aylara yansıyacağı ve kendi limitini aşıp aşmayacağı görünür. "Hepsini alırsan" tablosu, bekleyen ürünlerin toplam etkisini gelecek ayların mevcut taksit yüküne ekleyerek gösterir (şu an → alırsan), ayrıca gelecek ayki kart ödemesinin maaşa oranındaki değişimi verir.
 
 ### 3.6 Gelir
 - **G1.** Gelir kaynakları kullanıcı tarafından tanımlanır, ör. Maaş, Özel ders, Diğer.
