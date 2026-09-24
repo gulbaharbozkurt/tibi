@@ -1,0 +1,82 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "ea567cb2c27215a81ee1042258ed1d39",
+    "entities": [
+      {
+        "tableName": "hesap",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `ad` TEXT NOT NULL, `tur` TEXT NOT NULL, `acilisBakiyeKurus` INTEGER NOT NULL, `acilisTarihi` INTEGER NOT NULL, `maasHesabi` INTEGER NOT NULL, `renk` INTEGER, `sira` INTEGER NOT NULL, `arsiv` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ad",
+            "columnName": "ad",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tur",
+            "columnName": "tur",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "acilisBakiyeKurus",
+            "columnName": "acilisBakiyeKurus",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "acilisTarihi",
+            "columnName": "acilisTarihi",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "maasHesabi",
+            "columnName": "maasHesabi",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "renk",
+            "columnName": "renk",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "sira",
+            "columnName": "sira",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "arsiv",
+            "columnName": "arsiv",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'ea567cb2c27215a81ee1042258ed1d39')"
+    ]
+  }
+}
