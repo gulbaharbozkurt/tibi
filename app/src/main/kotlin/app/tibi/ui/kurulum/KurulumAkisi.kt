@@ -18,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -33,6 +34,7 @@ fun KurulumAkisi(bitti: () -> Unit) {
     val kapsam = rememberCoroutineScope()
     var adim by rememberSaveable { mutableStateOf(KurulumAdimi.HOS_GELDIN) }
     var hitap by rememberSaveable { mutableStateOf("") }
+    var gelir by remember { mutableStateOf(GelirFormu()) }
     var hata by rememberSaveable { mutableStateOf<String?>(null) }
     val adimlar = KurulumAdimi.entries
     val sira = adimlar.indexOf(adim)
@@ -47,6 +49,7 @@ fun KurulumAkisi(bitti: () -> Unit) {
                 when (adim) {
                     KurulumAdimi.HOS_GELDIN -> HosGeldinEkrani(hitap) { hitap = it }
                     KurulumAdimi.HESAPLAR -> HesaplarAdimi(vm)
+                    KurulumAdimi.GELIR -> GelirAdimi(vm, gelir) { gelir = it }
                     else -> Text("Bu adım sonraki görevde eklenecek.")
                 }
                 hata?.let { Text(it, color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(top = 8.dp)) }
@@ -57,6 +60,7 @@ fun KurulumAkisi(bitti: () -> Unit) {
                     kapsam.launch {
                         val s = when (adim) {
                             KurulumAdimi.HOS_GELDIN -> vm.hitapKaydet(hitap)
+                            KurulumAdimi.GELIR -> vm.maasKaydet(gelir.tutar, gelir.gun, gelir.haftaSonu, gelir.hesapId)
                             else -> Sonuc.Tamam
                         }
                         when {

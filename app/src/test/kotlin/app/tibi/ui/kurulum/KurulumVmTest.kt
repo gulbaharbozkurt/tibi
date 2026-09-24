@@ -2,6 +2,8 @@ package app.tibi.ui.kurulum
 
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import app.tibi.core.donem.Donem
+import app.tibi.core.tarih.HaftaSonuKurali
 import app.tibi.ui.Sonuc
 import app.tibi.veri.Anahtarlar
 import app.tibi.veri.KayitServisi
@@ -60,5 +62,38 @@ class KurulumVmTest {
     fun `bitir kurulumu tamamlar`() = runTest {
         vm.bitir()
         assertEquals("1", db.ayarDao().oku(Anahtarlar.KURULUM_TAMAM))
+    }
+
+    @Test
+    fun `maas kurali kaydedilir ve donem hesaplanir`() = runTest {
+        vm.hesapEkle("Garanti", HesapTuru.BANKA, "0", true)
+        val hesap = vm.hesaplar.first().single().id
+        assertEquals(Donem(LocalDate.parse("2026-08-28"), LocalDate.parse("2026-09-29")), vm.donemOnizleme("30", HaftaSonuKurali.ONCEKI))
+        assertEquals(Sonuc.Tamam, vm.maasKaydet("45.000", "30", HaftaSonuKurali.ONCEKI, hesap))
+        val k = vm.maasKurali.first()!!
+        assertEquals(4_500_000L, k.tutarKurus)
+        assertEquals(30, k.gun)
+        assertEquals(hesap, k.hesapId)
+    }
+
+    @Test
+    fun `maas yeniden kaydedilince eskisi pasif olur`() = runTest {
+        vm.hesapEkle("Garanti", HesapTuru.BANKA, "0", true)
+        val hesap = vm.hesaplar.first().single().id
+        vm.maasKaydet("45.000", "30", HaftaSonuKurali.ONCEKI, hesap)
+        vm.maasKaydet("47.500", "1", HaftaSonuKurali.SONRAKI, hesap)
+        assertEquals(4_750_000L, vm.maasKurali.first()!!.tutarKurus)
+        assertEquals(1, vm.maasKurali.first()!!.gun)
+    }
+
+    @Test
+    fun `hatali maas girisleri`() = runTest {
+        vm.hesapEkle("Garanti", HesapTuru.BANKA, "0", true)
+        val hesap = vm.hesaplar.first().single().id
+        assertIs<Sonuc.Hata>(vm.maasKaydet("", "30", HaftaSonuKurali.ONCEKI, hesap))
+        assertIs<Sonuc.Hata>(vm.maasKaydet("45.000", "32", HaftaSonuKurali.ONCEKI, hesap))
+        assertIs<Sonuc.Hata>(vm.maasKaydet("45.000", "30", HaftaSonuKurali.ONCEKI, null))
+        assertEquals(null, vm.donemOnizleme("0", HaftaSonuKurali.ONCEKI))
+        assertEquals(null, vm.maasKurali.first())
     }
 }
