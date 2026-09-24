@@ -1,0 +1,244 @@
+<title>tibi Veri Akışı</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Figtree:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+:root{
+  --ground:#EEF1EC; --paper:#FFFFFF; --ink:#18231F; --muted:#5E6B65; --line:#D6DDD7;
+  --accent:#1F5A50; --accent-soft:#DCEBE6; --warn:#B4531A; --warn-soft:#F7E3D6;
+  --display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --body:"Figtree",ui-sans-serif,system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  color-scheme:dark;--ground:#121816;--paper:#1B2320;--ink:#E6ECE8;--muted:#9AA8A1;--line:#2D3834;
+  --accent:#6FC2AE;--accent-soft:#1F3631;--warn:#F08A4B;--warn-soft:#3A2519;}}
+:root[data-theme="dark"]{
+  color-scheme:dark;--ground:#121816;--paper:#1B2320;--ink:#E6ECE8;--muted:#9AA8A1;--line:#2D3834;
+  --accent:#6FC2AE;--accent-soft:#1F3631;--warn:#F08A4B;--warn-soft:#3A2519;}
+body{background:var(--ground);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.55}
+.wrap{max-width:1080px;margin:0 auto;padding-block:32px 64px;padding-inline:16px}
+h1{font-family:var(--display);font-size:clamp(28px,4vw,38px);line-height:1.1;margin:0 0 8px;text-wrap:balance}
+h2{font-family:var(--display);font-size:22px;margin:40px 0 8px;text-wrap:balance}
+p,li{max-width:70ch}
+.lead{color:var(--muted);margin:0 0 24px}
+figure{margin:0;background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:16px}
+.scroll{overflow-x:auto}
+svg{display:block;width:100%;min-width:760px;height:auto;color:var(--ink);font-family:var(--body)}
+figcaption{color:var(--muted);font-size:13.5px;margin-top:10px;max-width:none}
+.box{fill:var(--paper);stroke:currentColor;stroke-width:1.2}
+.rd{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.2}
+.db{fill:var(--ground);stroke:currentColor;stroke-width:1.6}
+.ext{fill:var(--warn-soft);stroke:var(--warn);stroke-width:1.4;stroke-dasharray:5 3}
+.bound{fill:none;stroke:var(--muted);stroke-width:1.2;stroke-dasharray:8 5}
+.ln{fill:none;stroke:currentColor;stroke-width:1.3}
+.net{fill:none;stroke:var(--warn);stroke-width:2}
+.t{font-size:13px;fill:currentColor;font-weight:600}
+.s{font-size:11px;fill:var(--muted)}
+.lab{font-size:11px;fill:var(--muted)}
+.hdr{font-size:11px;fill:var(--muted);letter-spacing:.08em}
+.tw{font-size:11px;fill:var(--warn);font-weight:600}
+.tbl{font:500 11.5px var(--mono);fill:currentColor}
+ol.seq{padding-left:22px;margin:8px 0 0}
+ol.seq li{margin:6px 0}
+ol.seq b{font-weight:600}
+.dec{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;margin-top:10px}
+.dec div{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.dec b{display:block;font-size:14.5px;margin-bottom:2px}
+.dec span{font-size:13.5px;color:var(--muted)}
+code{font-family:var(--mono);font-size:.88em}
+.open{background:var(--warn-soft);border:1px solid var(--warn);border-radius:12px;padding:14px 16px;margin-top:12px}
+.open b{color:var(--warn)}
+.open ul{margin:6px 0 0;padding-left:20px}
+</style>
+
+<div class="wrap">
+  <h1>tibi · veri akışı</h1>
+  <p class="lead">Verinin nereden girdiği, nerede durduğu ve ekranlara nasıl çıktığı. Ana fikir: <b>yazan</b> parçalarla <b>okuyup hesaplayan</b> parçalar ayrı; aradaki tek ortak nokta telefondaki şifreli veritabanı. İnternete tek bir ok çıkıyor, o da sadece fiyat okuyor.</p>
+
+  <figure>
+    <div class="scroll">
+    <svg viewBox="0 0 1010 665" role="img" aria-label="Veri akışı: girdiler yazan servislere, yazan servisler şifreli veritabanına yazar; okuyan motorlar veritabanından okuyup ekranlara ve bildirimlere çıktı verir. İnternete yalnızca kur çekici çıkar.">
+      <defs>
+        <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker>
+        <marker id="ahw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#C2621F"/></marker>
+      </defs>
+
+      <!-- internet -->
+      <rect class="ext" x="250" y="4" width="170" height="34" rx="8"/>
+      <text class="t" x="335" y="26" text-anchor="middle">Kur / fon fiyat API</text>
+      <text class="tw" x="432" y="26">İNTERNET</text>
+
+      <!-- device boundary -->
+      <rect class="bound" x="8" y="56" width="994" height="598" rx="14"/>
+      <text class="hdr" x="22" y="74">TELEFON (verinin çıkmadığı sınır)</text>
+
+      <!-- column headers -->
+      <text class="hdr" x="100" y="98" text-anchor="middle">GİRDİLER</text>
+      <text class="hdr" x="335" y="98" text-anchor="middle">YAZANLAR</text>
+      <text class="hdr" x="770" y="98" text-anchor="middle">OKUYUP HESAPLAYANLAR</text>
+      <text class="hdr" x="945" y="98" text-anchor="middle">ÇIKTILAR</text>
+
+      <!-- col1 inputs -->
+      <rect class="box" x="20" y="180" width="160" height="44" rx="8"/>
+      <text class="t" x="100" y="199" text-anchor="middle">Formlar</text>
+      <text class="s" x="100" y="214" text-anchor="middle">hızlı giriş, kurulum, ayar</text>
+
+      <rect class="box" x="20" y="340" width="160" height="44" rx="8"/>
+      <text class="t" x="100" y="359" text-anchor="middle">Yedek dosyası</text>
+      <text class="s" x="100" y="374" text-anchor="middle">cihaz hafızası, şifreli</text>
+
+      <rect class="box" x="20" y="450" width="160" height="44" rx="8"/>
+      <text class="t" x="100" y="469" text-anchor="middle">Zamanlayıcı</text>
+      <text class="s" x="100" y="484" text-anchor="middle">WorkManager, günde 1+</text>
+
+      <rect class="box" x="20" y="540" width="160" height="44" rx="8"/>
+      <text class="t" x="100" y="559" text-anchor="middle">Uygulama izleyici</text>
+      <text class="s" x="100" y="574" text-anchor="middle">banka uyg. kapandı mı?</text>
+
+      <!-- col2 writers -->
+      <rect class="box" x="250" y="110" width="170" height="44" rx="8"/>
+      <text class="t" x="335" y="129" text-anchor="middle">Kur çekici</text>
+      <text class="s" x="335" y="144" text-anchor="middle">6 saatte bir, sadece GET</text>
+
+      <rect class="box" x="250" y="180" width="170" height="44" rx="8"/>
+      <text class="t" x="335" y="199" text-anchor="middle">Kayıt servisi</text>
+      <text class="s" x="335" y="214" text-anchor="middle">hareket yazar, doğrular</text>
+
+      <rect class="box" x="250" y="250" width="170" height="44" rx="8"/>
+      <text class="t" x="335" y="269" text-anchor="middle">Taksit planlayıcı</text>
+      <text class="s" x="335" y="284" text-anchor="middle">ekstrelere dağıtır</text>
+
+      <rect class="box" x="250" y="340" width="170" height="44" rx="8"/>
+      <text class="t" x="335" y="359" text-anchor="middle">Yedekleme</text>
+      <text class="s" x="335" y="374" text-anchor="middle">dışa aktar / geri yükle</text>
+
+      <rect class="box" x="250" y="450" width="170" height="44" rx="8"/>
+      <text class="t" x="335" y="469" text-anchor="middle">Ekstre motoru</text>
+      <text class="s" x="335" y="484" text-anchor="middle">kesimde ekstreyi kapatır</text>
+
+      <!-- DB -->
+      <rect class="db" x="480" y="100" width="150" height="490" rx="12"/>
+      <text class="t" x="555" y="126" text-anchor="middle">Veritabanı</text>
+      <text class="s" x="555" y="142" text-anchor="middle">Room + SQLCipher</text>
+      <line x1="496" y1="154" x2="614" y2="154" stroke="currentColor" stroke-opacity=".3"/>
+      <g class="tbl">
+        <text x="498" y="176">Hareket</text>
+        <text x="498" y="198">TaksitSatiri</text>
+        <text x="498" y="220">Ekstre</text>
+        <text x="498" y="242">Hesap · Kart</text>
+        <text x="498" y="264">GelirKurali</text>
+        <text x="498" y="286">Avans</text>
+        <text x="498" y="308">Ogrenci · Ders</text>
+        <text x="498" y="330">Cuzdan · Hedef</text>
+        <text x="498" y="352">Varlik</text>
+        <text x="498" y="374">BeklemeKalemi</text>
+        <text x="498" y="396">Kategori</text>
+        <text x="498" y="418">KurOnbellegi</text>
+        <text x="498" y="440">Ayar</text>
+      </g>
+      <text class="s" x="555" y="560" text-anchor="middle">anahtar: Android Keystore</text>
+
+      <!-- col4 readers -->
+      <rect class="rd" x="690" y="110" width="160" height="44" rx="8"/>
+      <text class="t" x="770" y="129" text-anchor="middle">Dönem hesaplayıcı</text>
+      <text class="s" x="770" y="144" text-anchor="middle">maaştan maaşa aralık</text>
+
+      <rect class="rd" x="690" y="180" width="160" height="44" rx="8"/>
+      <text class="t" x="770" y="199" text-anchor="middle">Fren motoru</text>
+      <text class="s" x="770" y="214" text-anchor="middle">limit, tavan, etki, hız</text>
+
+      <rect class="rd" x="690" y="250" width="160" height="44" rx="8"/>
+      <text class="t" x="770" y="269" text-anchor="middle">Değerleme</text>
+      <text class="s" x="770" y="284" text-anchor="middle">bakiye, varlık × kur</text>
+
+      <rect class="rd" x="690" y="340" width="160" height="44" rx="8"/>
+      <text class="t" x="770" y="359" text-anchor="middle">Hatırlatma üretici</text>
+      <text class="s" x="770" y="374" text-anchor="middle">ne zaman, ne sorulacak</text>
+
+      <!-- col5 outputs -->
+      <rect class="box" x="900" y="110" width="90" height="184" rx="8"/>
+      <text class="t" x="945" y="196" text-anchor="middle">Ekranlar</text>
+      <text class="s" x="945" y="212" text-anchor="middle">Compose</text>
+
+      <rect class="box" x="900" y="340" width="90" height="44" rx="8"/>
+      <text class="t" x="945" y="366" text-anchor="middle">Bildirimler</text>
+
+      <!-- network arrow -->
+      <line class="net" x1="395" y1="38" x2="395" y2="108" marker-end="url(#ahw)"/>
+      <text class="tw" x="403" y="80">fiyat okur, veri göndermez</text>
+
+      <!-- inputs -> writers -->
+      <line class="ln" x1="180" y1="202" x2="248" y2="202" marker-end="url(#ah)"/>
+      <text class="lab" x="214" y="196" text-anchor="middle">kaydet</text>
+      <line class="ln" x1="182" y1="362" x2="248" y2="362" marker-start="url(#ah)" marker-end="url(#ah)"/>
+      <text class="lab" x="214" y="356" text-anchor="middle">oku/yaz</text>
+      <line class="ln" x1="180" y1="466" x2="248" y2="466" marker-end="url(#ah)"/>
+      <text class="lab" x="214" y="460" text-anchor="middle">kesim günü</text>
+
+      <!-- kayıt -> taksit -->
+      <line class="ln" x1="335" y1="224" x2="335" y2="248" marker-end="url(#ah)"/>
+      <text class="lab" x="343" y="241">taksitliyse</text>
+
+      <!-- writers -> DB -->
+      <line class="ln" x1="420" y1="132" x2="478" y2="132" marker-end="url(#ah)"/>
+      <line class="ln" x1="420" y1="202" x2="478" y2="202" marker-end="url(#ah)"/>
+      <text class="lab" x="449" y="196" text-anchor="middle">yazar</text>
+      <line class="ln" x1="420" y1="272" x2="478" y2="272" marker-end="url(#ah)"/>
+      <line class="ln" x1="422" y1="362" x2="478" y2="362" marker-start="url(#ah)" marker-end="url(#ah)"/>
+      <line class="ln" x1="420" y1="472" x2="478" y2="472" marker-end="url(#ah)"/>
+
+      <!-- DB -> readers -->
+      <line class="ln" x1="630" y1="132" x2="688" y2="132" marker-end="url(#ah)"/>
+      <text class="lab" x="659" y="126" text-anchor="middle">okur</text>
+      <line class="ln" x1="630" y1="202" x2="688" y2="202" marker-end="url(#ah)"/>
+      <line class="ln" x1="630" y1="272" x2="688" y2="272" marker-end="url(#ah)"/>
+      <line class="ln" x1="630" y1="362" x2="688" y2="362" marker-end="url(#ah)"/>
+
+      <!-- dönem -> fren -->
+      <line class="ln" x1="770" y1="154" x2="770" y2="178" marker-end="url(#ah)"/>
+
+      <!-- readers -> outputs -->
+      <line class="ln" x1="850" y1="132" x2="898" y2="132" marker-end="url(#ah)"/>
+      <line class="ln" x1="850" y1="202" x2="898" y2="202" marker-end="url(#ah)"/>
+      <line class="ln" x1="850" y1="272" x2="898" y2="272" marker-end="url(#ah)"/>
+      <line class="ln" x1="850" y1="362" x2="898" y2="362" marker-end="url(#ah)"/>
+
+      <!-- zamanlayıcı -> hatırlatma (bottom route) -->
+      <polyline class="ln" points="180,484 228,484 228,615 720,615 720,386" marker-end="url(#ah)"/>
+      <text class="lab" x="470" y="609" text-anchor="middle">her gün: son ödeme, maaş, tahsilat, bekleme süresi</text>
+      <!-- izleyici -> hatırlatma (bottom route) -->
+      <polyline class="ln" points="180,562 210,562 210,635 800,635 800,386" marker-end="url(#ah)"/>
+      <text class="lab" x="470" y="629" text-anchor="middle">banka uygulaması kapandı → “harcama yaptın mı?”</text>
+    </svg>
+    </div>
+    <figcaption>Soldan sağa: girdiler → yazanlar → veritabanı → okuyup hesaplayanlar → ekranlar ve bildirimler. Yeşil kutular hiçbir şey yazmaz, sadece hesaplar. Ekranlardaki formlar ve bildirime dokunmak döngüyü soldaki “Formlar”a geri bağlar. Turuncu kesikli ok, telefonun dışına uzanan tek bağlantı.</figcaption>
+  </figure>
+
+  <h2>Harcama anında veri nasıl akar</h2>
+  <ol class="seq">
+    <li><b>Uygulama izleyici</b> Garanti uygulamasının kapandığını görür, <b>Hatırlatma üretici</b>ye haber verir. Son 10 dakikada sorulduysa sessiz kalır.</li>
+    <li>Bildirim çıkar: “Harcama yaptın mı?” Dokununca hızlı giriş formu, Garanti'ye bağlı kart seçili açılır.</li>
+    <li>Tutar ve taksit yazılırken <b>Fren motoru</b> veritabanından okuyup etkiyi anında gösterir: kalan kişisel limit, taksit yükü, maaşa oran. Henüz hiçbir şey yazılmadı.</li>
+    <li>“Kaydet” → <b>Kayıt servisi</b> tek bir işlemde (transaction) hareketi yazar; taksitliyse <b>Taksit planlayıcı</b> her taksiti ilgili ekstre dönemine satır olarak ekler. İkisinden biri başarısız olursa hiçbiri yazılmaz.</li>
+    <li>Veritabanı değişince Özet, kart ve cüzdan ekranları kendiliğinden yenilenir (Room Flow). Ayrıca “yenile” kodu yok.</li>
+    <li>“48 sa beklet” seçilirse yalnızca <b>BeklemeKalemi</b> yazılır; hareket yazılmaz. Süre dolunca Zamanlayıcı → Hatırlatma üretici soruyu sorar.</li>
+  </ol>
+
+  <h2>Bu şemanın getirdiği tasarım kararları</h2>
+  <div class="dec">
+    <div><b>Tek kaynak: Hareket defteri</b><span>Bakiye, kart borcu, kalan limit, dönem toplamı saklanmaz; hareketlerden hesaplanır. Böylece iki yerde tutulup birbirini tutmayan rakam olmaz. Sadece kesilmiş ekstreler o anki hâliyle dondurulup saklanır.</span></div>
+    <div><b>Para kuruş olarak tam sayı</b><span>Tüm tutarlar <code>Long</code> kuruş (1.249,90 ₺ = 124990). Ondalık sayı yuvarlama hatası yok. Taksit bölmede kalan kuruş ilk taksite eklenir.</span></div>
+    <div><b>Taksitler önceden satır olur</b><span>12 taksitli harcama, 12 <code>TaksitSatiri</code> olarak hangi ekstreye düşeceğiyle birlikte yazılır. “Gelecek ayların yükü” ve “hepsini alırsan” hesabı basit bir toplam olur.</span></div>
+    <div><b>Hesaplayanlar yazmaz</b><span>Fren, dönem, değerleme ve hatırlatma saf fonksiyonlar: veri girer, sonuç çıkar. Telefon olmadan, bilgisayarda birim testiyle doğrulanabilirler. Kuralların %80'i burada.</span></div>
+    <div><b>Veritabanı şifreli</b><span>SQLCipher ile şifreli; anahtar Android Keystore'da, uygulama dışına çıkmaz. Yedek dosyası ayrıca kullanıcının belirlediği yedek şifresiyle şifrelenir.</span></div>
+    <div><b>İnternet tek yönlü</b><span>İnternete yalnızca Kur çekici çıkar ve yalnızca fiyat okur. İstekte kullanıcı verisi yok. Kur çekilemezse son bilinen kur tarihiyle kullanılır; uygulama çevrimdışı tam çalışır.</span></div>
+  </div>
+
+  <div class="open">
+    <b>Karar gerekiyor: uygulama izleyici nasıl çalışsın?</b>
+    <ul>
+      <li><b>A) Kullanım erişimi + arka plan servisi.</b> Gereksinimdeki yol. Ekran açıkken birkaç saniyede bir “en son hangi uygulama açıktı” diye bakar. Bildirim çubuğunda sürekli küçük bir tibi ikonu durur; biraz pil harcar; bildirim 2–5 sn gecikebilir.</li>
+      <li><b>B) Erişilebilirlik servisi.</b> Android uygulama değiştiğinde anında haber verir; pil neredeyse harcamaz, sürekli ikon yok. Ama izin ekranı “ekranınızı okuyabilir” der (tibi yalnızca uygulama adını dinler), ve elle kurulan uygulamada ayarlardan bir kez “kısıtlı ayara izin ver” demek gerekir.</li>
+    </ul>
+  </div>
+</div>
