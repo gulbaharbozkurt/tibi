@@ -34,6 +34,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import app.tibi.ui.giris.HizliGirisSayfasi
+import app.tibi.ui.hareketler.HareketlerEkrani
 import app.tibi.ui.ozet.OzetEkrani
 import kotlinx.coroutines.launch
 
@@ -81,7 +82,8 @@ fun Kabuk() {
     ) { ic ->
         NavHost(nav, startDestination = Sekme.OZET.rota, modifier = Modifier.padding(ic)) {
             composable(Sekme.OZET.rota) { OzetEkrani() }
-            Sekme.entries.drop(1).forEach { s -> composable(s.rota) { YerTutucu(s.baslik) } }
+            composable(Sekme.HAREKETLER.rota) { HareketlerEkrani() }
+            listOf(Sekme.HESAPLAR, Sekme.CUZDANLAR, Sekme.DERSLER).forEach { s -> composable(s.rota) { YerTutucu(s.baslik) } }
         }
     }
     if (giris) HizliGirisSayfasi { kaydedildi ->
