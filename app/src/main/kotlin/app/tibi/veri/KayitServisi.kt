@@ -1,15 +1,30 @@
 package app.tibi.veri
 
 import androidx.room.withTransaction
+import app.tibi.core.kart.KartTakvimi
+import app.tibi.core.kart.PlanliTaksit
+import app.tibi.core.kart.TaksitPlanlayici
 import app.tibi.core.para.Kurus
+import app.tibi.core.para.topla
+import app.tibi.veri.tablo.Ekstre
 import app.tibi.veri.tablo.Hareket
 import app.tibi.veri.tablo.HareketTuru
 import app.tibi.veri.tablo.Hesap
 import app.tibi.veri.tablo.HesapTuru
+import app.tibi.veri.tablo.TaksitSatiri
+import app.tibi.veri.tablo.TaksitTuru
 import java.time.Instant
 import java.time.LocalDate
+import java.time.YearMonth
 
 class KayitHatasi(mesaj: String) : IllegalArgumentException(mesaj)
+
+/** K8: geçmişte başlamış taksitin üç giriş yolu. */
+sealed interface GecmisTaksitGirisi {
+    data class Aylik(val aylik: Kurus, val toplam: Int, val siradakiNo: Int) : GecmisTaksitGirisi
+    data class Toplam(val tutar: Kurus, val toplam: Int, val siradakiNo: Int) : GecmisTaksitGirisi
+    data class KalanBorc(val tutar: Kurus, val kalanSayi: Int) : GecmisTaksitGirisi
+}
 
 /** Bütün yazma işlemleri burada; her biri tek transaction. Biri başarısız olursa hiçbir satır yazılmaz. */
 class KayitServisi(
@@ -64,9 +79,85 @@ class KayitServisi(
             )
         }
 
-    /** Görev 5'te taksit satırlarını üretir. */
     internal suspend fun kartaYansit(hareketId: Long, kartId: Long, tutar: Kurus, taksitSayisi: Int, ertelemeAy: Int, tarih: LocalDate) {
-        throw KayitHatasi("Kart harcaması henüz desteklenmiyor")
+        val plan = try {
+            TaksitPlanlayici.yeniHarcama(tutar, taksitSayisi, ertelemeAy, tarih, takvim(kartId))
+        } catch (e: IllegalArgumentException) {
+            throw KayitHatasi(e.message ?: "Geçersiz taksit")
+        }
+        satirlariYaz(hareketId, kartId, plan)
+    }
+
+    suspend fun kartOdemesi(tutar: Kurus, tarih: LocalDate, bankaHesapId: Long, kartId: Long, ekstreId: Long? = null): Long =
+        db.withTransaction {
+            pozitif(tutar)
+            hesapGetir(bankaHesapId)
+            if (hesapGetir(kartId).tur != HesapTuru.KREDI_KARTI) throw KayitHatasi("Ödeme yalnızca kredi kartına yapılır")
+            db.hareketDao().ekle(
+                Hareket(tur = HareketTuru.KART_ODEME, tarih = tarih, tutarKurus = tutar.deger,
+                    kaynakHesapId = bankaHesapId, hedefHesapId = kartId, ekstreId = ekstreId, olusturma = saat())
+            )
+        }
+
+    suspend fun gecmisTaksit(
+        giris: GecmisTaksitGirisi,
+        kartId: Long,
+        kategoriId: Long?,
+        taksitTuru: TaksitTuru,
+        bugun: LocalDate,
+        aciklama: String? = null,
+    ): Long = db.withTransaction {
+        if (hesapGetir(kartId).tur != HesapTuru.KREDI_KARTI) throw KayitHatasi("Geçmiş taksit yalnızca kredi kartına girilir")
+        val tk = takvim(kartId)
+        val plan = try {
+            when (giris) {
+                is GecmisTaksitGirisi.Aylik -> { pozitif(giris.aylik); TaksitPlanlayici.gecmisAylik(giris.aylik, giris.toplam, giris.siradakiNo, bugun, tk) }
+                is GecmisTaksitGirisi.Toplam -> { pozitif(giris.tutar); TaksitPlanlayici.gecmisToplam(giris.tutar, giris.toplam, giris.siradakiNo, bugun, tk) }
+                is GecmisTaksitGirisi.KalanBorc -> { pozitif(giris.tutar); TaksitPlanlayici.kalanBorc(giris.tutar, giris.kalanSayi, bugun, tk) }
+            }
+        } catch (e: IllegalArgumentException) {
+            if (e is KayitHatasi) throw e
+            throw KayitHatasi(e.message ?: "Geçersiz taksit")
+        }
+        val hareketId = db.hareketDao().ekle(
+            Hareket(
+                tur = HareketTuru.HARCAMA, tarih = bugun, tutarKurus = plan.map { it.tutar }.topla().deger,
+                kaynakHesapId = kartId, kategoriId = kategoriId, taksitSayisi = plan.size,
+                taksitTuru = taksitTuru, gecmisAktarim = true, aciklama = aciklama, olusturma = saat(),
+            )
+        )
+        satirlariYaz(hareketId, kartId, plan)
+        hareketId
+    }
+
+    /** K9: kurulumda girilen, kesilmiş ama ödenmemiş ekstre. Kesim tarihi bugüne kadarki son kesimdir. */
+    suspend fun acilisEkstresi(kartId: Long, toplam: Kurus, bugun: LocalDate): Long = db.withTransaction {
+        pozitif(toplam)
+        val kart = db.kartDao().getir(kartId) ?: throw KayitHatasi("Kart bulunamadı: $kartId")
+        val tk = takvim(kartId)
+        val buAy = tk.kesimTarihi(YearMonth.from(bugun))
+        val kesim = if (buAy.isAfter(bugun)) tk.kesimTarihi(YearMonth.from(bugun).minusMonths(1)) else buAy
+        db.ekstreDao().ekle(
+            Ekstre(
+                kartId = kart.anaKartId ?: kartId, kesimTarihi = kesim, sonOdemeTarihi = tk.sonOdeme(kesim),
+                donemTutariKurus = toplam.deger, toplamKurus = toplam.deger,
+                asgariKurus = toplam.oran(kart.asgariOranBinde).deger, acilis = true,
+            )
+        )
+    }
+
+    /** Ek/sanal kart ana kartın kesim ve son ödeme günlerini kullanır. */
+    private suspend fun takvim(kartId: Long): KartTakvimi {
+        val kart = db.kartDao().getir(kartId) ?: throw KayitHatasi("Kart bilgisi yok: $kartId")
+        val ana = kart.anaKartId?.let { db.kartDao().getir(it) ?: throw KayitHatasi("Ana kart yok: $it") } ?: kart
+        return KartTakvimi(ana.kesimGunu, ana.sonOdemeGunu)
+    }
+
+    private suspend fun satirlariYaz(hareketId: Long, kartId: Long, plan: List<PlanliTaksit>) {
+        db.taksitDao().ekle(plan.map {
+            TaksitSatiri(hareketId = hareketId, kartId = kartId, sira = it.sira, toplam = it.toplam,
+                tutarKurus = it.tutar.deger, ekstreKesimTarihi = it.ekstreKesimTarihi, oncedenOdendi = it.oncedenOdendi)
+        })
     }
 
     private fun pozitif(tutar: Kurus) {
