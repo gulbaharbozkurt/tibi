@@ -5,6 +5,9 @@ import androidx.room.withTransaction
 import app.tibi.core.donem.Donem
 import app.tibi.core.donem.DonemHesaplayici
 import app.tibi.core.donem.MaasKurali
+import app.tibi.core.kart.KartTakvimi
+import app.tibi.core.kart.PlanliTaksit
+import app.tibi.core.kart.TaksitPlanlayici
 import app.tibi.core.para.Kurus
 import app.tibi.core.para.kurusCoz
 import app.tibi.core.tarih.HaftaSonuKurali
@@ -16,6 +19,7 @@ import app.tibi.veri.KayitServisi
 import app.tibi.veri.TibiVeritabani
 import app.tibi.veri.dao.HesapBakiyesi
 import app.tibi.veri.dao.KartBilgisi
+import app.tibi.veri.dao.KartTaksidi
 import app.tibi.veri.tablo.Ayar
 import app.tibi.veri.tablo.DuzenliKural
 import app.tibi.veri.tablo.Hesap
@@ -25,8 +29,12 @@ import app.tibi.veri.tablo.KartTuru
 import app.tibi.veri.tablo.KategoriYonu
 import app.tibi.veri.tablo.Periyot
 import app.tibi.veri.tablo.TaksitTuru
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import java.time.LocalDate
 
 enum class KurulumAdimi(val baslik: String) {
@@ -49,6 +57,18 @@ data class KartGirdisi(
     val asgariOran: String = "40",
     val kesilmisEkstre: String = "",
     val donemIci: String = "",
+)
+
+enum class TaksitModu { AYLIK, TOPLAM, KALAN }
+
+data class TaksitGirdisi(
+    val kartId: Long? = null,
+    val aciklama: String = "",
+    val tur: TaksitTuru = TaksitTuru.ALISVERIS,
+    val mod: TaksitModu = TaksitModu.AYLIK,
+    val tutar: String = "",
+    val sayi: String = "",
+    val siradaki: String = "",
 )
 
 class KurulumVm(
@@ -135,6 +155,53 @@ class KurulumVm(
         Sonuc.Hata(e.message!!)
     } catch (e: KayitHatasi) {
         Sonuc.Hata(e.message ?: "Kart kaydedilemedi.")
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val taksitler: Flow<List<KartTaksidi>> = kartlar.flatMapLatest { liste ->
+        val analar = liste.filter { it.anaKartId == null }
+        if (analar.isEmpty()) flowOf(emptyList())
+        else combine(analar.map { db.taksitDao().aktifTaksitler(it.hesapId, bugun()) }) { it.toList().flatten() }
+    }
+
+    private fun taksitGirisi(g: TaksitGirdisi): GecmisTaksitGirisi {
+        val tutar = kurusCoz(g.tutar)?.takeIf { it.deger > 0 } ?: throw GirdiHatasi("Tutarı 1.850 biçiminde yaz.")
+        val sayi = g.sayi.toIntOrNull()?.takeIf { it >= 1 } ?: throw GirdiHatasi("Taksit sayısını yaz.")
+        return when (g.mod) {
+            TaksitModu.KALAN -> GecmisTaksitGirisi.KalanBorc(tutar, sayi)
+            else -> {
+                val siradaki = g.siradaki.toIntOrNull()?.takeIf { it in 1..sayi }
+                    ?: throw GirdiHatasi("Sıradaki ekstrede kaçıncı taksit olduğu 1 ile $sayi arasında olmalı.")
+                if (g.mod == TaksitModu.AYLIK) GecmisTaksitGirisi.Aylik(tutar, sayi, siradaki)
+                else GecmisTaksitGirisi.Toplam(tutar, sayi, siradaki)
+            }
+        }
+    }
+
+    private suspend fun takvim(kartId: Long): KartTakvimi {
+        val k = db.kartDao().getir(kartId) ?: throw GirdiHatasi("Kart bulunamadı.")
+        val ana = k.anaKartId?.let { db.kartDao().getir(it) } ?: k
+        return KartTakvimi(ana.kesimGunu, ana.sonOdemeGunu)
+    }
+
+    suspend fun planOnizleme(g: TaksitGirdisi): List<PlanliTaksit>? = try {
+        val kartId = g.kartId ?: throw GirdiHatasi("Kart seç.")
+        val tk = takvim(kartId)
+        when (val giris = taksitGirisi(g)) {
+            is GecmisTaksitGirisi.Aylik -> TaksitPlanlayici.gecmisAylik(giris.aylik, giris.toplam, giris.siradakiNo, bugun(), tk)
+            is GecmisTaksitGirisi.Toplam -> TaksitPlanlayici.gecmisToplam(giris.tutar, giris.toplam, giris.siradakiNo, bugun(), tk)
+            is GecmisTaksitGirisi.KalanBorc -> TaksitPlanlayici.kalanBorc(giris.tutar, giris.kalanSayi, bugun(), tk)
+        }
+    } catch (e: GirdiHatasi) { null } catch (e: IllegalArgumentException) { null }
+
+    suspend fun taksitEkle(g: TaksitGirdisi): Sonuc = try {
+        val kartId = g.kartId ?: throw GirdiHatasi("Taksitin yansıdığı kartı seç.")
+        kayit.gecmisTaksit(taksitGirisi(g), kartId, null, g.tur, bugun(), g.aciklama.trim().ifEmpty { null })
+        Sonuc.Tamam
+    } catch (e: GirdiHatasi) {
+        Sonuc.Hata(e.message!!)
+    } catch (e: KayitHatasi) {
+        Sonuc.Hata(e.message ?: "Taksit kaydedilemedi.")
     }
 
     suspend fun bitir(): Sonuc {

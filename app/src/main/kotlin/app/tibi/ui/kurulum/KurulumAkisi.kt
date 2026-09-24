@@ -51,7 +51,7 @@ fun KurulumAkisi(bitti: () -> Unit) {
                     KurulumAdimi.HESAPLAR -> HesaplarAdimi(vm)
                     KurulumAdimi.GELIR -> GelirAdimi(vm, gelir) { gelir = it }
                     KurulumAdimi.KARTLAR -> KartlarAdimi(vm)
-                    else -> Text("Bu adım sonraki görevde eklenecek.")
+                    KurulumAdimi.TAKSITLER -> TaksitlerAdimi(vm)
                 }
                 hata?.let { Text(it, color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(top = 8.dp)) }
             }

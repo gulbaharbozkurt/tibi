@@ -10,6 +10,7 @@ import app.tibi.veri.KayitServisi
 import app.tibi.veri.TibiVeritabani
 import app.tibi.veri.tablo.HesapTuru
 import app.tibi.veri.tablo.KartTuru
+import app.tibi.veri.tablo.TaksitTuru
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.After
@@ -132,5 +133,40 @@ class KurulumVmTest {
         assertIs<Sonuc.Hata>(vm.kartEkle(KartGirdisi(ad = "X", son4 = "4821", kesimGunu = "12", sonOdemeGunu = "22", kendiLimiti = "abc")))
         assertIs<Sonuc.Hata>(vm.kartEkle(KartGirdisi(ad = "X", tur = KartTuru.EK, son4 = "4821")))   // ana kart seçilmedi
         assertEquals(0, vm.kartlar.first().size)
+    }
+
+    private suspend fun bonusEkle(): Long {
+        vm.kartEkle(KartGirdisi(ad = "Bonus", son4 = "4821", kesimGunu = "12", sonOdemeGunu = "22", kendiLimiti = "15.000"))
+        return vm.kartlar.first().single().hesapId
+    }
+
+    @Test
+    fun `taksit onizlemesi yazmadan plani gosterir`() = runTest {
+        val bonus = bonusEkle()
+        val p = vm.planOnizleme(TaksitGirdisi(kartId = bonus, mod = TaksitModu.AYLIK, tutar = "1.850", sayi = "12", siradaki = "6"))!!
+        assertEquals(12, p.size)
+        assertEquals(LocalDate.parse("2027-04-12"), p.last().ekstreKesimTarihi)
+        assertEquals(0L, vm.kartlar.first().single().kullanimKurus)
+        assertEquals(null, vm.planOnizleme(TaksitGirdisi(kartId = bonus, mod = TaksitModu.AYLIK, tutar = "1.850", sayi = "12", siradaki = "13")))
+    }
+
+    @Test
+    fun `uc giris yoluyla taksit eklenir`() = runTest {
+        val bonus = bonusEkle()
+        assertEquals(Sonuc.Tamam, vm.taksitEkle(TaksitGirdisi(kartId = bonus, aciklama = "Telefon", mod = TaksitModu.AYLIK, tutar = "1.850", sayi = "12", siradaki = "6")))
+        assertEquals(Sonuc.Tamam, vm.taksitEkle(TaksitGirdisi(kartId = bonus, mod = TaksitModu.TOPLAM, tutar = "3.000", sayi = "3", siradaki = "1")))
+        assertEquals(Sonuc.Tamam, vm.taksitEkle(TaksitGirdisi(kartId = bonus, tur = TaksitTuru.EKSTRE_TAKSIT, mod = TaksitModu.KALAN, tutar = "4.000", sayi = "4")))
+        assertEquals(7 * 185000L + 300000L + 400000L, vm.kartlar.first().single().kullanimKurus)
+        assertEquals(3, vm.taksitler.first().size)
+    }
+
+    @Test
+    fun `hatali taksit girisleri`() = runTest {
+        val bonus = bonusEkle()
+        assertIs<Sonuc.Hata>(vm.taksitEkle(TaksitGirdisi(kartId = null, tutar = "100", sayi = "3", siradaki = "1")))
+        assertIs<Sonuc.Hata>(vm.taksitEkle(TaksitGirdisi(kartId = bonus, tutar = "", sayi = "3", siradaki = "1")))
+        assertIs<Sonuc.Hata>(vm.taksitEkle(TaksitGirdisi(kartId = bonus, tutar = "100", sayi = "", siradaki = "1")))
+        assertIs<Sonuc.Hata>(vm.taksitEkle(TaksitGirdisi(kartId = bonus, tutar = "100", sayi = "3", siradaki = "4")))
+        assertEquals(0L, vm.kartlar.first().single().kullanimKurus)
     }
 }
