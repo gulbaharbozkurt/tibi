@@ -15,6 +15,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -54,6 +55,11 @@ fun KurulumAkisi(bitti: () -> Unit) {
                     KurulumAdimi.TAKSITLER -> TaksitlerAdimi(vm)
                 }
                 hata?.let { Text(it, color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(top = 8.dp)) }
+                if (adim == KurulumAdimi.GELIR) {
+                    TextButton({ hata = null; adim = adimlar[sira + 1] }, Modifier.padding(top = 8.dp)) { Text("Şimdilik geç") }
+                    Text("Maaş girilmezse \"bu dönem\" takvim ayına göre sayılır.", style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
             }
             Row(Modifier.fillMaxWidth().padding(vertical = 12.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 if (sira > 0) OutlinedButton({ hata = null; adim = adimlar[sira - 1] }, Modifier.weight(1f)) { Text("Geri") }
