@@ -22,8 +22,8 @@ jobs:
 
       - uses: gradle/actions/setup-gradle@v4
 
-      - name: Çekirdek testleri
-        run: ./gradlew :core:test
+      - name: Testler
+        run: ./gradlew :core:test :app:testDebugUnitTest
 
       - name: İmza anahtarını çöz
         if: github.event_name != 'pull_request'

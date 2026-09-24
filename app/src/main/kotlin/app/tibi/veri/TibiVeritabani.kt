@@ -54,6 +54,19 @@ abstract class TibiVeritabani : RoomDatabase() {
             }
         }
 
+        /** Telefonda: SQLCipher ile şifreli dosya. */
+        fun olustur(
+            context: Context,
+            ad: String = "tibi.db",
+            parola: ByteArray = VeritabaniAnahtari(context).parola(),
+        ): TibiVeritabani {
+            System.loadLibrary("sqlcipher")
+            return Room.databaseBuilder(context, TibiVeritabani::class.java, ad)
+                .openHelperFactory(net.zetetic.database.sqlcipher.SupportOpenHelperFactory(parola))
+                .addCallback(TOHUM)
+                .build()
+        }
+
         /** Testler için: bellekte, şifresiz. */
         fun bellekte(context: Context): TibiVeritabani =
             Room.inMemoryDatabaseBuilder(context, TibiVeritabani::class.java).addCallback(TOHUM).build()
