@@ -6,19 +6,41 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
+import app.tibi.veri.dao.AyarDao
+import app.tibi.veri.dao.DuzenliKuralDao
+import app.tibi.veri.dao.EkstreDao
+import app.tibi.veri.dao.HareketDao
 import app.tibi.veri.dao.HesapDao
 import app.tibi.veri.dao.KartDao
 import app.tibi.veri.dao.KategoriDao
+import app.tibi.veri.dao.TaksitDao
+import app.tibi.veri.tablo.Ayar
+import app.tibi.veri.tablo.DuzenliKural
+import app.tibi.veri.tablo.Ekstre
+import app.tibi.veri.tablo.Hareket
 import app.tibi.veri.tablo.Hesap
 import app.tibi.veri.tablo.Kart
 import app.tibi.veri.tablo.Kategori
+import app.tibi.veri.tablo.TaksitSatiri
 
-@Database(entities = [Hesap::class, Kart::class, Kategori::class], version = 1, exportSchema = true)
+@Database(
+    entities = [
+        Hesap::class, Kart::class, Kategori::class, Hareket::class, TaksitSatiri::class,
+        Ekstre::class, DuzenliKural::class, Ayar::class,
+    ],
+    version = 1,
+    exportSchema = true,
+)
 @TypeConverters(Donusturuculer::class)
 abstract class TibiVeritabani : RoomDatabase() {
     abstract fun hesapDao(): HesapDao
     abstract fun kartDao(): KartDao
     abstract fun kategoriDao(): KategoriDao
+    abstract fun hareketDao(): HareketDao
+    abstract fun taksitDao(): TaksitDao
+    abstract fun ekstreDao(): EkstreDao
+    abstract fun duzenliKuralDao(): DuzenliKuralDao
+    abstract fun ayarDao(): AyarDao
 
     companion object {
         /** İlk oluşturmada varsayılan kategorileri yazar. */

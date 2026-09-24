@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "8445bb13a516f87fc93273f3d3f230f3",
+    "identityHash": "321070c961bcd38867dccdb40dc413c3",
     "entities": [
       {
         "tableName": "hesap",
@@ -270,12 +270,638 @@
           }
         ],
         "foreignKeys": []
+      },
+      {
+        "tableName": "hareket",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `tur` TEXT NOT NULL, `tarih` INTEGER NOT NULL, `tutarKurus` INTEGER NOT NULL, `kaynakHesapId` INTEGER, `hedefHesapId` INTEGER, `kategoriId` INTEGER, `cuzdanId` INTEGER, `taksitSayisi` INTEGER NOT NULL, `ertelemeAy` INTEGER NOT NULL, `taksitTuru` TEXT, `gecmisAktarim` INTEGER NOT NULL, `ekstreId` INTEGER, `ogrenciId` INTEGER, `duzenliKuralId` INTEGER, `beklenenTarih` INTEGER, `aciklama` TEXT, `olusturma` INTEGER NOT NULL, FOREIGN KEY(`kaynakHesapId`) REFERENCES `hesap`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`hedefHesapId`) REFERENCES `hesap`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`kategoriId`) REFERENCES `kategori`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`ekstreId`) REFERENCES `ekstre`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tur",
+            "columnName": "tur",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tarih",
+            "columnName": "tarih",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tutarKurus",
+            "columnName": "tutarKurus",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "kaynakHesapId",
+            "columnName": "kaynakHesapId",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "hedefHesapId",
+            "columnName": "hedefHesapId",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "kategoriId",
+            "columnName": "kategoriId",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "cuzdanId",
+            "columnName": "cuzdanId",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "taksitSayisi",
+            "columnName": "taksitSayisi",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ertelemeAy",
+            "columnName": "ertelemeAy",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "taksitTuru",
+            "columnName": "taksitTuru",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "gecmisAktarim",
+            "columnName": "gecmisAktarim",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ekstreId",
+            "columnName": "ekstreId",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "ogrenciId",
+            "columnName": "ogrenciId",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "duzenliKuralId",
+            "columnName": "duzenliKuralId",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "beklenenTarih",
+            "columnName": "beklenenTarih",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "aciklama",
+            "columnName": "aciklama",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "olusturma",
+            "columnName": "olusturma",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_hareket_kaynakHesapId",
+            "unique": false,
+            "columnNames": [
+              "kaynakHesapId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_hareket_kaynakHesapId` ON `${TABLE_NAME}` (`kaynakHesapId`)"
+          },
+          {
+            "name": "index_hareket_hedefHesapId",
+            "unique": false,
+            "columnNames": [
+              "hedefHesapId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_hareket_hedefHesapId` ON `${TABLE_NAME}` (`hedefHesapId`)"
+          },
+          {
+            "name": "index_hareket_kategoriId",
+            "unique": false,
+            "columnNames": [
+              "kategoriId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_hareket_kategoriId` ON `${TABLE_NAME}` (`kategoriId`)"
+          },
+          {
+            "name": "index_hareket_ekstreId",
+            "unique": false,
+            "columnNames": [
+              "ekstreId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_hareket_ekstreId` ON `${TABLE_NAME}` (`ekstreId`)"
+          },
+          {
+            "name": "index_hareket_tarih",
+            "unique": false,
+            "columnNames": [
+              "tarih"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_hareket_tarih` ON `${TABLE_NAME}` (`tarih`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "hesap",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "kaynakHesapId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          },
+          {
+            "table": "hesap",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "hedefHesapId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          },
+          {
+            "table": "kategori",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "kategoriId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          },
+          {
+            "table": "ekstre",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "ekstreId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "taksit_satiri",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `hareketId` INTEGER NOT NULL, `kartId` INTEGER NOT NULL, `sira` INTEGER NOT NULL, `toplam` INTEGER NOT NULL, `tutarKurus` INTEGER NOT NULL, `ekstreKesimTarihi` INTEGER NOT NULL, `ekstreId` INTEGER, `oncedenOdendi` INTEGER NOT NULL, FOREIGN KEY(`hareketId`) REFERENCES `hareket`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`kartId`) REFERENCES `hesap`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`ekstreId`) REFERENCES `ekstre`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "hareketId",
+            "columnName": "hareketId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "kartId",
+            "columnName": "kartId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sira",
+            "columnName": "sira",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "toplam",
+            "columnName": "toplam",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tutarKurus",
+            "columnName": "tutarKurus",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ekstreKesimTarihi",
+            "columnName": "ekstreKesimTarihi",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ekstreId",
+            "columnName": "ekstreId",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "oncedenOdendi",
+            "columnName": "oncedenOdendi",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_taksit_satiri_hareketId",
+            "unique": false,
+            "columnNames": [
+              "hareketId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_taksit_satiri_hareketId` ON `${TABLE_NAME}` (`hareketId`)"
+          },
+          {
+            "name": "index_taksit_satiri_kartId",
+            "unique": false,
+            "columnNames": [
+              "kartId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_taksit_satiri_kartId` ON `${TABLE_NAME}` (`kartId`)"
+          },
+          {
+            "name": "index_taksit_satiri_ekstreId",
+            "unique": false,
+            "columnNames": [
+              "ekstreId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_taksit_satiri_ekstreId` ON `${TABLE_NAME}` (`ekstreId`)"
+          },
+          {
+            "name": "index_taksit_satiri_ekstreKesimTarihi",
+            "unique": false,
+            "columnNames": [
+              "ekstreKesimTarihi"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_taksit_satiri_ekstreKesimTarihi` ON `${TABLE_NAME}` (`ekstreKesimTarihi`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "hareket",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "hareketId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          },
+          {
+            "table": "hesap",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "kartId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          },
+          {
+            "table": "ekstre",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "ekstreId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "ekstre",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `kartId` INTEGER NOT NULL, `kesimTarihi` INTEGER NOT NULL, `sonOdemeTarihi` INTEGER NOT NULL, `donemTutariKurus` INTEGER NOT NULL, `devredenKurus` INTEGER NOT NULL, `toplamKurus` INTEGER NOT NULL, `asgariKurus` INTEGER NOT NULL, `durum` TEXT NOT NULL, `acilis` INTEGER NOT NULL, FOREIGN KEY(`kartId`) REFERENCES `hesap`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "kartId",
+            "columnName": "kartId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "kesimTarihi",
+            "columnName": "kesimTarihi",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sonOdemeTarihi",
+            "columnName": "sonOdemeTarihi",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "donemTutariKurus",
+            "columnName": "donemTutariKurus",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "devredenKurus",
+            "columnName": "devredenKurus",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "toplamKurus",
+            "columnName": "toplamKurus",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "asgariKurus",
+            "columnName": "asgariKurus",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "durum",
+            "columnName": "durum",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "acilis",
+            "columnName": "acilis",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_ekstre_kartId",
+            "unique": false,
+            "columnNames": [
+              "kartId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_ekstre_kartId` ON `${TABLE_NAME}` (`kartId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "hesap",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "kartId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "duzenli_kural",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `ad` TEXT NOT NULL, `yon` TEXT NOT NULL, `maas` INTEGER NOT NULL, `tutarKurus` INTEGER NOT NULL, `degisken` INTEGER NOT NULL, `periyot` TEXT NOT NULL, `gun` INTEGER NOT NULL, `ay` INTEGER, `haftaSonuKurali` TEXT NOT NULL, `hesapId` INTEGER NOT NULL, `kategoriId` INTEGER, `otomatik` INTEGER NOT NULL, `baslangic` INTEGER NOT NULL, `bitis` INTEGER, `aktif` INTEGER NOT NULL, FOREIGN KEY(`hesapId`) REFERENCES `hesap`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`kategoriId`) REFERENCES `kategori`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ad",
+            "columnName": "ad",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "yon",
+            "columnName": "yon",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "maas",
+            "columnName": "maas",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tutarKurus",
+            "columnName": "tutarKurus",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "degisken",
+            "columnName": "degisken",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "periyot",
+            "columnName": "periyot",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "gun",
+            "columnName": "gun",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ay",
+            "columnName": "ay",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "haftaSonuKurali",
+            "columnName": "haftaSonuKurali",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "hesapId",
+            "columnName": "hesapId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "kategoriId",
+            "columnName": "kategoriId",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "otomatik",
+            "columnName": "otomatik",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "baslangic",
+            "columnName": "baslangic",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "bitis",
+            "columnName": "bitis",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "aktif",
+            "columnName": "aktif",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_duzenli_kural_hesapId",
+            "unique": false,
+            "columnNames": [
+              "hesapId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_duzenli_kural_hesapId` ON `${TABLE_NAME}` (`hesapId`)"
+          },
+          {
+            "name": "index_duzenli_kural_kategoriId",
+            "unique": false,
+            "columnNames": [
+              "kategoriId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_duzenli_kural_kategoriId` ON `${TABLE_NAME}` (`kategoriId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "hesap",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "hesapId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          },
+          {
+            "table": "kategori",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "kategoriId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "ayar",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`anahtar` TEXT NOT NULL, `deger` TEXT NOT NULL, PRIMARY KEY(`anahtar`))",
+        "fields": [
+          {
+            "fieldPath": "anahtar",
+            "columnName": "anahtar",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "deger",
+            "columnName": "deger",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "anahtar"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '8445bb13a516f87fc93273f3d3f230f3')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '321070c961bcd38867dccdb40dc413c3')"
     ]
   }
 }
