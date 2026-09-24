@@ -7,17 +7,25 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.AccountBox
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
@@ -29,6 +37,8 @@ import androidx.navigation.compose.rememberNavController
 import app.tibi.core.donem.DonemHesaplayici
 import app.tibi.core.donem.MaasKurali
 import app.tibi.core.tarih.HaftaSonuKurali
+import app.tibi.ui.giris.HizliGirisSayfasi
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -44,9 +54,18 @@ enum class Sekme(val rota: String, val baslik: String, val ikon: ImageVector) {
 @Composable
 fun Kabuk() {
     val nav = rememberNavController()
-    val giris by nav.currentBackStackEntryAsState()
-    val aktif = giris?.destination?.route
+    val yigin by nav.currentBackStackEntryAsState()
+    val aktif = yigin?.destination?.route
+    var giris by remember { mutableStateOf(false) }
+    val bildirim = remember { SnackbarHostState() }
+    val kapsam = rememberCoroutineScope()
     Scaffold(
+        snackbarHost = { SnackbarHost(bildirim) },
+        floatingActionButton = {
+            if (aktif in Sekme.entries.map { it.rota }) FloatingActionButton(onClick = { giris = true }) {
+                Icon(Icons.Filled.Add, contentDescription = "Yeni kayıt")
+            }
+        },
         bottomBar = {
             NavigationBar {
                 Sekme.entries.forEach { s ->
@@ -70,6 +89,10 @@ fun Kabuk() {
             composable(Sekme.OZET.rota) { OzetYerTutucu() }
             Sekme.entries.drop(1).forEach { s -> composable(s.rota) { YerTutucu(s.baslik) } }
         }
+    }
+    if (giris) HizliGirisSayfasi { kaydedildi ->
+        giris = false
+        if (kaydedildi) kapsam.launch { bildirim.showSnackbar("Kaydedildi") }
     }
 }
 
