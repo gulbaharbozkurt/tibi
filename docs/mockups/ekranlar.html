@@ -1,0 +1,277 @@
+<title>tibi Ekranları</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Figtree:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+:root{
+  --ground:#EEF1EC; --paper:#FFFFFF; --ink:#18231F; --muted:#5E6B65; --line:#D6DDD7;
+  --accent:#1F5A50; --accent-soft:#DCEBE6; --gold:#9A7425; --gold-soft:#F3EAD4;
+  --warn:#B4531A; --warn-soft:#F7E3D6; --ok:#2E7D4F; --frame:#1B2421;
+  --display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --body:"Figtree",ui-sans-serif,system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  color-scheme:dark;--ground:#121816;--paper:#1B2320;--ink:#E6ECE8;--muted:#9AA8A1;--line:#2D3834;
+  --accent:#6FC2AE;--accent-soft:#1F3631;--gold:#D9B360;--gold-soft:#342C1A;--warn:#F08A4B;--warn-soft:#3A2519;--ok:#6BC58E;--frame:#050807;}}
+:root[data-theme="dark"]{
+  color-scheme:dark;--ground:#121816;--paper:#1B2320;--ink:#E6ECE8;--muted:#9AA8A1;--line:#2D3834;
+  --accent:#6FC2AE;--accent-soft:#1F3631;--gold:#D9B360;--gold-soft:#342C1A;--warn:#F08A4B;--warn-soft:#3A2519;--ok:#6BC58E;--frame:#050807;}
+body{background:var(--ground);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5}
+.wrap{max-width:1180px;margin:0 auto;padding:32px 16px 64px}
+h1{font-family:var(--display);font-size:clamp(28px,4vw,40px);line-height:1.1;margin:0 0 8px;text-wrap:balance}
+.lead{color:var(--muted);max-width:65ch;margin:0 0 28px}
+.nav-map{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin-bottom:36px}
+.nav-map h2,.sec h2{font-family:var(--display);font-size:20px;margin:0 0 10px}
+.tabs{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.tab{border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.tab b{display:block;font-size:14px}.tab span{color:var(--muted);font-size:13px}
+.note{font-size:13px;color:var(--muted);margin-top:10px}
+.screens{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:28px 24px}
+figure{margin:0}
+figcaption{margin-top:12px}
+figcaption b{font-family:var(--display);font-size:16px;display:block}
+figcaption span{color:var(--muted);font-size:13.5px}
+.phone{background:var(--frame);border-radius:30px;padding:10px;max-width:300px}
+.scr{background:var(--ground);border-radius:22px;overflow:hidden;height:560px;display:flex;flex-direction:column;position:relative}
+.bar{display:flex;justify-content:space-between;font:500 11px var(--mono);color:var(--muted);padding:8px 16px 4px}
+.hd{padding:6px 16px 10px}.hd .t{font-family:var(--display);font-weight:700;font-size:19px}.hd .s{font-size:12px;color:var(--muted)}
+.body{flex:1;overflow:hidden;padding:0 12px;display:flex;flex-direction:column;gap:8px}
+.blk{background:var(--paper);border-radius:12px;padding:10px 12px}
+.lbl{font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.big{font:500 22px var(--mono);font-variant-numeric:tabular-nums}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:12.5px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13px}
+.row+.row{margin-top:6px}
+.pill{font-size:10.5px;padding:2px 7px;border-radius:99px;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
+.pill.w{background:var(--warn-soft);color:var(--warn)}.pill.g{background:var(--gold-soft);color:var(--gold)}
+.meter{height:6px;border-radius:99px;background:var(--line);overflow:hidden;margin-top:5px}
+.meter i{display:block;height:100%;background:var(--accent)}.meter i.w{background:var(--warn)}.meter i.g{background:var(--gold)}
+.bnav{display:flex;justify-content:space-around;background:var(--paper);border-top:1px solid var(--line);padding:8px 4px 10px;font-size:10px;color:var(--muted)}
+.bnav .on{color:var(--accent);font-weight:600}
+.fab{position:absolute;right:14px;bottom:58px;width:44px;height:44px;border-radius:14px;background:var(--accent);color:var(--paper);display:grid;place-items:center;font-size:24px}
+.notif{margin:10px;background:var(--paper);border-radius:14px;padding:10px 12px;box-shadow:0 6px 18px rgba(0,0,0,.18)}
+.notif .a{display:flex;gap:8px;margin-top:8px}
+.btn{flex:1;text-align:center;font-size:12px;padding:6px;border-radius:8px;background:var(--accent);color:var(--paper);font-weight:600}
+.btn.o{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+.sheet{margin-top:auto;background:var(--paper);border-radius:18px 18px 0 0;padding:12px 14px 14px;display:flex;flex-direction:column;gap:8px}
+.amt{font:500 30px var(--mono);text-align:center;padding:4px 0}
+.chips{display:flex;flex-wrap:wrap;gap:5px}
+.chip{font-size:11.5px;border:1px solid var(--line);border-radius:99px;padding:3px 9px}
+.chip.on{background:var(--accent);color:var(--paper);border-color:var(--accent)}
+.fld{display:flex;justify-content:space-between;font-size:12.5px;border-bottom:1px solid var(--line);padding:5px 0}
+.fld span{color:var(--muted)}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;text-align:center;font:500 11px var(--mono)}
+.cal div{padding:5px 0;border-radius:6px}
+.cal .h{color:var(--muted);font-family:var(--body)}
+.cal .d{background:var(--accent-soft);color:var(--accent)}
+.cal .x{color:var(--line)}
+.ex{display:inline-block;font-size:11px;color:var(--warn);background:var(--warn-soft);padding:2px 8px;border-radius:99px;margin-bottom:14px}
+.q{margin-top:40px;background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:18px 20px;max-width:760px}
+.q ol{margin:6px 0 0;padding-left:20px}.q li{margin:4px 0}
+</style>
+
+<div class="wrap">
+  <h1>tibi · ekranlar ve gezinme</h1>
+  <p class="lead">Gereksinim özetine göre çizilmiş ilk taslak. Tutarlar örnektir, gerçek verin değildir. Amaç yerleşimi ve akışı görmek, renk ve süsleme sonra gelecek.</p>
+
+  <section class="nav-map">
+    <h2>Alt menü: 5 sekme + her yerde duran “+” butonu</h2>
+    <div class="tabs">
+      <div class="tab"><b>Özet</b><span>Bu ay gelir/gider, yaklaşan ödemeler, uyarılar</span></div>
+      <div class="tab"><b>Hareketler</b><span>Tüm harcama, gelir ve transferler; filtre ve arama</span></div>
+      <div class="tab"><b>Hesaplar</b><span>Kartlar (ekstre, taksit, borç), banka hesapları, nakit</span></div>
+      <div class="tab"><b>Cüzdanlar</b><span>Bütçe zarfları, para kasaları, birikim hedefleri ve yatırımlar</span></div>
+      <div class="tab"><b>Dersler</b><span>Öğrenciler, ders takvimi, alacaklar</span></div>
+    </div>
+    <p class="note">“+” ile hızlı giriş: Harcama · Gelir · Transfer · Ders. Raporlar Özet ekranının içinden açılır. Ayarlar (kilit, yedek, izlenen banka uygulamaları, kategoriler) sağ üstteki menüde.</p>
+  </section>
+
+  <section class="nav-map">
+    <h2>Harcama freni</h2>
+    <div class="tabs">
+      <div class="tab"><b>Kendi limitin</b><span>Her karta banka limitinden düşük kişisel sınır; ekranda banka limiti değil bu görünür</span></div>
+      <div class="tab"><b>Toplam kart tavanı</b><span>Tüm kartların borcu için tek sınır, ör. net gelirin %40'ı</span></div>
+      <div class="tab"><b>Kademeli uyarı</b><span>%70 sarı · %90 kırmızı · aşınca Özet'te kalıcı uyarı</span></div>
+      <div class="tab"><b>Kayıt anında etki</b><span>Kaydetmeden önce kalan limit ve gelecek ay kart ödemesinin maaşa oranı</span></div>
+      <div class="tab"><b>Taksit uyarısı</b><span>Taksitli girişte gelecek aylara eklenecek tutar</span></div>
+      <div class="tab"><b>Bekleme listesi</b><span>Belli tutarın üstü 48 saat bekler, sonra “hâlâ istiyor musun?”</span></div>
+      <div class="tab"><b>Harcama hızı</b><span>Ayın geçen kısmı ile harcanan kart bütçesinin karşılaştırması</span></div>
+    </div>
+  </section>
+
+  <span class="ex">Örnek veri</span>
+  <div class="screens">
+
+    <figure>
+      <div class="phone"><div class="scr">
+        <div class="bar"><span>09:41</span><span>Eylül 2026</span></div>
+        <div class="hd"><div class="t">Özet</div><div class="s">23 Eylül · maaşa 7 gün</div></div>
+        <div class="body">
+          <div class="blk" style="background:var(--warn-soft);color:var(--warn);font-size:12.5px">
+            <b>Kart tavanı %88</b> · 22.000 / 25.000 ₺<br>Ayın %77'si geçti, kart bütçenin %88'ini harcadın.
+          </div>
+          <div class="blk">
+            <div class="lbl">Bu ay kalan</div>
+            <div class="big">18.420 ₺</div>
+            <div class="row"><span>Gelir</span><span class="num">62.500 ₺</span></div>
+            <div class="row"><span>Gider</span><span class="num">44.080 ₺</span></div>
+          </div>
+          <div class="blk">
+            <div class="lbl">Yaklaşan</div>
+            <div class="row"><span>Bonus kart son ödeme</span><span class="pill w">3 gün · 12.340 ₺</span></div>
+            <div class="row"><span>Ayşe – ay sonu tahsilat</span><span class="pill">30 Eyl · 4.800 ₺</span></div>
+            <div class="row"><span>Maaş bekleniyor</span><span class="pill">30 Eyl</span></div>
+          </div>
+          <div class="blk">
+            <div class="lbl">Bütçe durumu</div>
+            <div class="row"><span>Market</span><span class="num">6.900 / 8.000</span></div>
+            <div class="meter"><i class="w" style="width:86%"></i></div>
+            <div class="row" style="margin-top:8px"><span>Dışarıda yemek</span><span class="num">1.750 / 4.000</span></div>
+            <div class="meter"><i style="width:44%"></i></div>
+          </div>
+        </div>
+        <div class="fab">+</div>
+        <div class="bnav"><span class="on">Özet</span><span>Hareketler</span><span>Hesaplar</span><span>Cüzdanlar</span><span>Dersler</span></div>
+      </div></div>
+      <figcaption><b>1 · Özet</b><span>Açınca “bu ay ne durumdayım, yakında ne ödeyeceğim” cevabı tek bakışta görünür.</span></figcaption>
+    </figure>
+
+    <figure>
+      <div class="phone"><div class="scr">
+        <div class="bar"><span>12:07</span><span></span></div>
+        <div class="notif">
+          <div class="lbl">tibi · şimdi</div>
+          <div style="font-weight:600;font-size:13.5px">Garanti uygulamasından çıktın</div>
+          <div style="font-size:12.5px;color:var(--muted)">Harcama yaptın mı?</div>
+          <div class="a"><span class="btn">Evet, gir</span><span class="btn o">Hayır</span></div>
+        </div>
+        <div class="sheet">
+          <div class="lbl" style="text-align:center">Hızlı harcama</div>
+          <div class="amt">1.249,90 ₺</div>
+          <div class="chips">
+            <span class="chip on">Giyim</span><span class="chip">Market</span><span class="chip">Yemek</span><span class="chip">Ulaşım</span><span class="chip">Fatura</span><span class="chip">+ Diğer</span>
+          </div>
+          <div class="fld"><span>Kart</span><b>Bonus ··4821</b></div>
+          <div class="fld"><span>Taksit</span><b>3 taksit · Eki–Ara</b></div>
+          <div class="fld"><span>Cüzdan</span><b>Giyim bütçesi</b></div>
+          <div class="blk" style="background:var(--warn-soft);color:var(--warn);font-size:11.5px;padding:7px 10px">
+            Bonus'ta kendi limitinden <b>1.200 ₺</b> kalıyor · Eki–Ara her ay <b>+416 ₺</b> · Ekim kart ödemesi maaşının <b>%52</b>'si
+          </div>
+          <div class="a" style="display:flex;gap:8px;margin-top:2px"><span class="btn">Kaydet</span><span class="btn o">48 sa beklet</span></div>
+        </div>
+      </div></div>
+      <figcaption><b>2 · Banka tetikleyicisi → hızlı giriş</b><span>Bildirimden “Evet” deyince alttan açılan form. Kart, o banka uygulamasına göre önceden seçili gelir; en sık kategoriler başta.</span></figcaption>
+    </figure>
+
+    <figure>
+      <div class="phone"><div class="scr">
+        <div class="bar"><span>09:41</span><span></span></div>
+        <div class="hd"><div class="t">Bonus ··4821</div><div class="s">Kesim: her ayın 12'si · Son ödeme: 22'si</div></div>
+        <div class="body">
+          <div class="blk">
+            <div class="row"><span class="lbl">Toplam borç</span><span class="lbl">Kendi limitin</span></div>
+            <div class="row"><span class="big">13.800 ₺</span><span class="num">1.200 kaldı / 15.000</span></div>
+            <div class="meter"><i class="w" style="width:92%"></i></div>
+            <div style="font-size:11px;color:var(--muted);margin-top:4px">Banka limiti 50.000 ₺ (gizli tutuluyor)</div>
+          </div>
+          <div class="blk">
+            <div class="lbl">Kesilen ekstre · 12 Eylül</div>
+            <div class="row"><span>Ekstre tutarı</span><span class="num">12.340 ₺</span></div>
+            <div class="row"><span>Asgari</span><span class="num">4.936 ₺</span></div>
+            <div class="row"><span>Durum</span><span class="pill w">Ödenmedi · 3 gün</span></div>
+            <div class="a" style="display:flex;gap:6px;margin-top:8px"><span class="btn">Tamamını öde</span><span class="btn o">Asgari</span><span class="btn o">Kısmi</span></div>
+          </div>
+          <div class="blk">
+            <div class="lbl">Dönem içi · 13 Eyl–12 Eki</div>
+            <div class="row"><span>Tek çekim</span><span class="num">5.980 ₺</span></div>
+            <div class="row"><span>Taksitler (4 adet)</span><span class="num">3.220 ₺</span></div>
+          </div>
+          <div class="blk">
+            <div class="lbl">Taksitler</div>
+            <div class="row"><span>Telefon · 5/12</span><span class="num">1.850 ₺</span></div>
+            <div class="row"><span>Giyim · 1/3</span><span class="num">416,63 ₺</span></div>
+          </div>
+        </div>
+        <div class="bnav"><span>Özet</span><span>Hareketler</span><span class="on">Hesaplar</span><span>Cüzdanlar</span><span>Dersler</span></div>
+      </div></div>
+      <figcaption><b>3 · Kart detayı</b><span>Ekstre, ödeme işaretleme, devreden borç ve taksitlerin hangi ekstreye düştüğü tek sayfada.</span></figcaption>
+    </figure>
+
+    <figure>
+      <div class="phone"><div class="scr">
+        <div class="bar"><span>09:41</span><span></span></div>
+        <div class="hd"><div class="t">Cüzdanlar</div><div class="s">Bütçe zarfları · kasalar · birikim</div></div>
+        <div class="body">
+          <div class="blk">
+            <div class="lbl">Bütçe zarfları · Eylül</div>
+            <div class="row"><span>Market</span><span class="num">1.100 kaldı</span></div><div class="meter"><i class="w" style="width:86%"></i></div>
+            <div class="row" style="margin-top:8px"><span>Giyim</span><span class="num">2.750 kaldı</span></div><div class="meter"><i style="width:31%"></i></div>
+          </div>
+          <div class="blk">
+            <div class="lbl">Para kasaları</div>
+            <div class="row"><span>Araba bakımı</span><span class="num">6.200 ₺</span></div>
+            <div class="row"><span>Acil durum</span><span class="num">25.000 ₺</span></div>
+          </div>
+          <div class="blk">
+            <div class="row"><span class="lbl">Hedef · Tatil</span><span class="pill g">Haz 2027</span></div>
+            <div class="row"><span class="num">16.800 / 40.000 ₺</span><span class="num">%42</span></div>
+            <div class="meter"><i class="g" style="width:42%"></i></div>
+            <div style="font-size:11.5px;color:var(--muted);margin-top:4px">Yetişmek için ayda 2.580 ₺ ayırmalısın</div>
+          </div>
+          <div class="blk">
+            <div class="lbl">Yatırımlar · güncel kurla</div>
+            <div class="row"><span>Gram altın · 12 g</span><span class="num" style="color:var(--ok)">+%9,4</span></div>
+            <div class="row"><span>USD · 500</span><span class="num" style="color:var(--ok)">+%3,1</span></div>
+            <div class="row"><span>Fon · ABC</span><span class="num" style="color:var(--warn)">−%1,2</span></div>
+          </div>
+        </div>
+        <div class="fab">+</div>
+        <div class="bnav"><span>Özet</span><span>Hareketler</span><span>Hesaplar</span><span class="on">Cüzdanlar</span><span>Dersler</span></div>
+      </div></div>
+      <figcaption><b>4 · Cüzdanlar ve birikim</b><span>Üç tür tek ekranda: limitli zarflar, bakiyeli kasalar, hedefler ve kurla değerlenen yatırımlar.</span></figcaption>
+    </figure>
+
+    <figure>
+      <div class="phone"><div class="scr">
+        <div class="bar"><span>09:41</span><span></span></div>
+        <div class="hd"><div class="t">Dersler</div><div class="s">Eylül · 22 saat · 17.600 ₺</div></div>
+        <div class="body">
+          <div class="blk">
+            <div class="cal">
+              <div class="h">Pt</div><div class="h">Sa</div><div class="h">Ça</div><div class="h">Pe</div><div class="h">Cu</div><div class="h">Ct</div><div class="h">Pz</div>
+              <div class="x">31</div><div class="d">1</div><div>2</div><div class="d">3</div><div>4</div><div class="d">5</div><div>6</div>
+              <div class="d">8</div><div>9</div><div class="d">10</div><div>11</div><div class="d">12</div><div>13</div><div>14</div>
+              <div class="d">15</div><div>16</div><div class="d">17</div><div>18</div><div class="d">19</div><div>20</div><div>21</div>
+              <div class="d">22</div><div style="outline:1.5px solid var(--accent)">23</div><div>24</div><div>25</div><div>26</div><div>27</div><div>28</div>
+            </div>
+          </div>
+          <div class="blk">
+            <div class="lbl">Öğrenciler · alacak</div>
+            <div class="row"><span>Ayşe · ay sonu · 800 ₺/sa</span><span class="pill w">4.800 ₺</span></div>
+            <div class="row"><span>Mert · ders başı · 700 ₺/sa</span><span class="pill">0 ₺</span></div>
+            <div class="row"><span>Deniz · 4'lü paket</span><span class="pill g">2 ders kaldı</span></div>
+          </div>
+          <div class="blk">
+            <div class="lbl">Bugün</div>
+            <div class="row"><span>Ayşe · 17:00 · 1,5 sa</span><span class="num">1.200 ₺</span></div>
+            <div class="a" style="display:flex;gap:6px;margin-top:8px"><span class="btn">Ders yapıldı</span><span class="btn o">İptal</span></div>
+          </div>
+        </div>
+        <div class="fab">+</div>
+        <div class="bnav"><span>Özet</span><span>Hareketler</span><span>Hesaplar</span><span>Cüzdanlar</span><span class="on">Dersler</span></div>
+      </div></div>
+      <figcaption><b>5 · Dersler</b><span>Takvimde ders günleri, öğrenci başına ödeme şekli ve alacak. Tahsilat girilince alacaktan düşer, gelire eklenir.</span></figcaption>
+    </figure>
+
+  </div>
+
+  <section class="q">
+    <h2>Bu ekranda karar vereceklerin</h2>
+    <ol>
+      <li>Alt menüdeki 5 sekme (Özet · Hareketler · Hesaplar · Cüzdanlar · Dersler) doğru mu?</li>
+      <li>Özet ekranında görmek istediğin başka bir şey var mı?</li>
+      <li>Hızlı giriş formundaki alanlar yeterli mi, fazla mı?</li>
+    </ol>
+    <p class="note">Cevaplarını terminale yaz.</p>
+  </section>
+</div>
