@@ -1,0 +1,281 @@
+<title>tibi Veri Modeli</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Figtree:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+:root{
+  --ground:#EEF1EC; --paper:#FFFFFF; --ink:#18231F; --muted:#5E6B65; --line:#D6DDD7;
+  --accent:#1F5A50; --accent-soft:#DCEBE6; --warn:#B4531A; --warn-soft:#F7E3D6;
+  --display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --body:"Figtree",ui-sans-serif,system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  color-scheme:dark;--ground:#121816;--paper:#1B2320;--ink:#E6ECE8;--muted:#9AA8A1;--line:#2D3834;
+  --accent:#6FC2AE;--accent-soft:#1F3631;--warn:#F08A4B;--warn-soft:#3A2519;}}
+:root[data-theme="dark"]{
+  color-scheme:dark;--ground:#121816;--paper:#1B2320;--ink:#E6ECE8;--muted:#9AA8A1;--line:#2D3834;
+  --accent:#6FC2AE;--accent-soft:#1F3631;--warn:#F08A4B;--warn-soft:#3A2519;}
+body{background:var(--ground);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.55}
+.wrap{max-width:1080px;margin:0 auto;padding-block:32px 64px;padding-inline:16px}
+h1{font-family:var(--display);font-size:clamp(28px,4vw,38px);line-height:1.1;margin:0 0 8px;text-wrap:balance}
+h2{font-family:var(--display);font-size:22px;margin:40px 0 8px;text-wrap:balance}
+h3{font-family:var(--display);font-size:17px;margin:22px 0 6px}
+p,li{max-width:72ch}
+.lead{color:var(--muted);margin:0 0 20px}
+figure{margin:0;background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:16px}
+figcaption{color:var(--muted);font-size:13.5px;margin-top:10px}
+.scroll{overflow-x:auto}
+pre.mermaid{margin:0;background:transparent;min-width:760px}
+.conv{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
+.conv div{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:10px 14px}
+.conv b{display:block;font-size:14px}.conv span{font-size:13.5px;color:var(--muted)}
+table{border-collapse:collapse;width:100%;font-size:13.5px;background:var(--paper);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+th,td{text-align:left;padding:6px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600;background:var(--ground)}
+tr:last-child td{border-bottom:0}
+td:first-child{font-family:var(--mono);font-size:12.5px;white-space:nowrap}
+td:nth-child(2){font-family:var(--mono);font-size:12px;color:var(--accent);white-space:nowrap}
+.tw{overflow-x:auto;margin-bottom:6px}
+.ents{display:grid;grid-template-columns:repeat(auto-fit,minmax(460px,1fr));gap:4px 20px}
+@media (max-width:520px){.ents{grid-template-columns:1fr}}
+code{font-family:var(--mono);font-size:.88em}
+.pill{display:inline-block;font-size:11px;padding:1px 7px;border-radius:99px;background:var(--accent-soft);color:var(--accent);margin-left:6px;vertical-align:2px}
+.map td:first-child{color:var(--ink)}
+</style>
+
+<div class="wrap">
+  <h1>tibi · veri modeli</h1>
+  <p class="lead">Telefondaki şifreli veritabanının tabloları, alanları ve birbirine bağlanışı. Veri akışı şemasındaki kural geçerli: <b>Hareket</b> tek kaynak, bakiye ve borç gibi rakamlar saklanmaz, hesaplanır.</p>
+
+  <h2>Ortak kurallar</h2>
+  <div class="conv">
+    <div><b>Tutar</b><span><code>Long</code>, kuruş. 79,99 ₺ = <code>7999</code>. Hep pozitif; yönü hareket türü ve hesap alanları belirler.</span></div>
+    <div><b>Tarih</b><span>Gün: <code>LocalDate</code> (epochDay olarak saklanır). An: <code>Instant</code> (ms). Saat dilimi: Europe/Istanbul.</span></div>
+    <div><b>Kimlik</b><span><code>id: Long</code>, otomatik artan. Silme yerine <code>arsiv</code> bayrağı: eski kayıtların bağlantısı kopmaz.</span></div>
+    <div><b>Oran</b><span>Yüzdeler binde tam sayı: %40 = <code>400</code>, %12,5 = <code>125</code>.</span></div>
+  </div>
+
+  <h2>İlişki şeması</h2>
+  <figure>
+    <div class="scroll">
+<pre class="mermaid">
+erDiagram
+  HESAP ||--o| KART : "kredi kartıysa"
+  KART |o--o{ KART : "ek/sanal → ana"
+  HESAP ||--o{ HAREKET : "kaynak / hedef"
+  KATEGORI |o--o{ HAREKET : "sınıflar"
+  CUZDAN |o--o{ HAREKET : "cüzdandan"
+  HAREKET ||--o{ TAKSIT_SATIRI : "karta yazılan her tutar"
+  KART ||--o{ TAKSIT_SATIRI : "yansır"
+  KART ||--o{ EKSTRE : "keser"
+  EKSTRE |o--o{ TAKSIT_SATIRI : "kesimde bağlanır"
+  EKSTRE |o--o{ HAREKET : "kart ödemesi"
+  DUZENLI_KURAL |o--o{ HAREKET : "üretir"
+  HAREKET ||--o| AVANS : "avanssa"
+  OGRENCI ||--o{ OGRENCI_UCRET : "ücret geçmişi"
+  OGRENCI ||--o{ DERS : "alır"
+  OGRENCI |o--o{ HAREKET : "tahsilat"
+  CUZDAN ||--o{ CUZDAN_KATEGORI : "kapsar"
+  KATEGORI ||--o{ CUZDAN_KATEGORI : "zarfa düşer"
+  CUZDAN |o--o{ VARLIK : "hedefe bağlı"
+  KUR_ONBELLEGI ||--o{ VARLIK : "kod"
+  KART ||--o{ BEKLEME_KALEMI : "alınacağı kart"
+  BEKLEME_KALEMI |o--o| HAREKET : "alınırsa"
+  HESAP ||--o{ IZLENEN_UYGULAMA : "bağlı kart/hesap"
+</pre>
+    </div>
+    <figcaption>Ortadaki çizgi HESAP → HAREKET → TAKSIT_SATIRI → EKSTRE: harcama, kart borcu ve ekstre bu zincirden hesaplanır. AYAR ve BILDIRIM_KAYDI tek başına duran tablolar, şemada yok.</figcaption>
+  </figure>
+
+  <h2>Hareket türleri ve hesap alanları</h2>
+  <p>Paranın yönünü <code>kaynakHesapId</code> (çıktığı yer) ve <code>hedefHesapId</code> (girdiği yer) belirler. Böylece bakiye tek formülle hesaplanır: açılış + girenler − çıkanlar.</p>
+  <div class="tw"><table class="map">
+    <tr><th>Tür</th><th>kaynak → hedef</th><th>Ek alan</th><th>Not</th></tr>
+    <tr><td>HARCAMA</td><td>hesap/kart → —</td><td>kategori, cüzdan?</td><td>Karttan ise TaksitSatiri üretir (tek çekim = 1 satır)</td></tr>
+    <tr><td>GELIR</td><td>— → hesap</td><td>kategori (gelir)</td><td>Maaş, yan gelir</td></tr>
+    <tr><td>AVANS</td><td>— → hesap</td><td>Avans kaydı</td><td>Gelir sayılmaz; sonraki maaştan düşülür</td></tr>
+    <tr><td>TAHSILAT</td><td>— → hesap</td><td>ogrenciId</td><td>Öğrencinin alacağından düşer</td></tr>
+    <tr><td>TRANSFER</td><td>hesap → hesap</td><td></td><td>Hesaplar arası</td></tr>
+    <tr><td>KART_ODEME</td><td>banka → kart</td><td>ekstreId</td><td>Tam / asgari / kısmi</td></tr>
+    <tr><td>CUZDAN_AKTAR</td><td>hesap → hesap</td><td>cuzdanId</td><td>Para hesapta kalır, kasa cüzdanına ayrılır</td></tr>
+    <tr><td>DUZELTME</td><td>hesap ↔ —</td><td>not</td><td>Bakiyeyi gerçeğe eşitlemek için</td></tr>
+  </table></div>
+
+  <h2>Tablolar</h2>
+  <div class="ents">
+  <div>
+  <h3>Hesap</h3>
+  <div class="tw"><table><tr><th>Alan</th><th>Tür</th><th>Açıklama</th></tr>
+    <tr><td>id</td><td>Long</td><td></td></tr>
+    <tr><td>ad</td><td>String</td><td>“Garanti vadesiz”, “Bonus”</td></tr>
+    <tr><td>tur</td><td>enum</td><td>BANKA · NAKIT · KREDI_KARTI</td></tr>
+    <tr><td>acilisBakiye</td><td>Long</td><td>Kurulum anındaki bakiye</td></tr>
+    <tr><td>acilisTarihi</td><td>LocalDate</td><td></td></tr>
+    <tr><td>maasHesabi</td><td>Boolean</td><td></td></tr>
+    <tr><td>renk, sira, arsiv</td><td>…</td><td></td></tr>
+  </table></div>
+  </div>
+
+  <div>
+  <h3>Kart <span class="pill">Hesap'ın uzantısı</span></h3>
+  <div class="tw"><table><tr><th>Alan</th><th>Tür</th><th>Açıklama</th></tr>
+    <tr><td>hesapId</td><td>Long PK/FK</td><td>Kart da bir hesap</td></tr>
+    <tr><td>kartTuru</td><td>enum</td><td>ANA · EK · SANAL</td></tr>
+    <tr><td>anaKartId</td><td>Long?</td><td>Ek/sanal ise limitini paylaştığı kart</td></tr>
+    <tr><td>son4</td><td>String</td><td>Tam numara, SKT, CVV yok</td></tr>
+    <tr><td>kesimGunu, sonOdemeGunu</td><td>Int</td><td>1–31; ay kısaysa son gün</td></tr>
+    <tr><td>bankaLimiti, kendiLimiti</td><td>Long</td><td>Ek/sanalda boş, ana karttan</td></tr>
+    <tr><td>asgariOran</td><td>Int ‰</td><td>400 = %40</td></tr>
+    <tr><td>otoOdeme, odemeHesapId</td><td>Bool, Long?</td><td></td></tr>
+    <tr><td>aidatAy, aidatTutar</td><td>Int?, Long?</td><td></td></tr>
+  </table></div>
+  </div>
+
+  <div>
+  <h3>Hareket <span class="pill">tek kaynak</span></h3>
+  <div class="tw"><table><tr><th>Alan</th><th>Tür</th><th>Açıklama</th></tr>
+    <tr><td>id</td><td>Long</td><td></td></tr>
+    <tr><td>tur</td><td>enum</td><td>Yukarıdaki tablo</td></tr>
+    <tr><td>tarih</td><td>LocalDate</td><td>Dönem hesabı buna göre</td></tr>
+    <tr><td>tutar</td><td>Long</td><td>Pozitif, kuruş</td></tr>
+    <tr><td>kaynakHesapId, hedefHesapId</td><td>Long?</td><td>Yön</td></tr>
+    <tr><td>kategoriId, cuzdanId</td><td>Long?</td><td></td></tr>
+    <tr><td>taksitSayisi, ertelemeAy</td><td>Int</td><td>Varsayılan 1 ve 0</td></tr>
+    <tr><td>taksitTuru</td><td>enum?</td><td>ALISVERIS · EKSTRE_TAKSIT · NAKIT_AVANS</td></tr>
+    <tr><td>gecmisAktarim</td><td>Boolean</td><td>Kurulumda girilen eski taksit; dönem giderine sayılmaz</td></tr>
+    <tr><td>ekstreId, ogrenciId, duzenliKuralId</td><td>Long?</td><td>Türe göre</td></tr>
+    <tr><td>beklenenTarih</td><td>LocalDate?</td><td>Düzenli kuraldan geldiyse</td></tr>
+    <tr><td>not, olusturma</td><td>String?, Instant</td><td></td></tr>
+  </table></div>
+  </div>
+
+  <div>
+  <h3>TaksitSatiri</h3>
+  <div class="tw"><table><tr><th>Alan</th><th>Tür</th><th>Açıklama</th></tr>
+    <tr><td>id</td><td>Long</td><td></td></tr>
+    <tr><td>hareketId</td><td>Long FK</td><td></td></tr>
+    <tr><td>kartId</td><td>Long FK</td><td>Harcamanın yapıldığı kart</td></tr>
+    <tr><td>sira / toplam</td><td>Int</td><td>5 / 12</td></tr>
+    <tr><td>tutar</td><td>Long</td><td>Kalan kuruş 1. taksite</td></tr>
+    <tr><td>ekstreKesimTarihi</td><td>LocalDate</td><td>Hangi ekstreye düşeceği, baştan hesaplanır</td></tr>
+    <tr><td>ekstreId</td><td>Long?</td><td>Kesim olunca dolar</td></tr>
+    <tr><td>oncedenOdendi</td><td>Boolean</td><td>Geçmiş aktarımda ödenmiş taksitler</td></tr>
+  </table></div>
+  </div>
+
+  <div>
+  <h3>Ekstre <span class="pill">dondurulmuş özet</span></h3>
+  <div class="tw"><table><tr><th>Alan</th><th>Tür</th><th>Açıklama</th></tr>
+    <tr><td>id, kartId</td><td>Long</td><td>Ana kart</td></tr>
+    <tr><td>kesimTarihi, sonOdemeTarihi</td><td>LocalDate</td><td>Hafta sonu kaydırılmış hâli</td></tr>
+    <tr><td>donemTutari</td><td>Long</td><td>Bu kesime düşen satırlar</td></tr>
+    <tr><td>devreden</td><td>Long</td><td>Önceki ekstreden ödenmeyen</td></tr>
+    <tr><td>toplam, asgari</td><td>Long</td><td>asgari = toplam × oran, düzeltilebilir</td></tr>
+    <tr><td>durum</td><td>enum</td><td>KESILDI · KISMI · ODENDI</td></tr>
+    <tr><td>acilis</td><td>Boolean</td><td>Kurulumda girilen ödenmemiş ekstre</td></tr>
+  </table></div>
+  </div>
+
+  <div>
+  <h3>DuzenliKural</h3>
+  <div class="tw"><table><tr><th>Alan</th><th>Tür</th><th>Açıklama</th></tr>
+    <tr><td>id, ad</td><td>Long, String</td><td>“Maaş”, “YouTube”</td></tr>
+    <tr><td>yon</td><td>enum</td><td>GELIR · GIDER</td></tr>
+    <tr><td>maas</td><td>Boolean</td><td>Dönemi belirleyen kural (tek)</td></tr>
+    <tr><td>tutar, degisken</td><td>Long, Bool</td><td>Değişkense tutar tahmini</td></tr>
+    <tr><td>periyot, gun, ay</td><td>enum, Int, Int?</td><td>HAFTALIK · AYLIK · YILLIK</td></tr>
+    <tr><td>haftaSonuKurali</td><td>enum</td><td>ONCEKI · SONRAKI · AYNI</td></tr>
+    <tr><td>hesapId, kategoriId</td><td>Long</td><td></td></tr>
+    <tr><td>otomatik</td><td>Boolean</td><td>false = “önce bana sor”</td></tr>
+    <tr><td>baslangic, bitis</td><td>LocalDate, ?</td><td></td></tr>
+  </table></div>
+  </div>
+
+  <div>
+  <h3>Avans</h3>
+  <div class="tw"><table><tr><th>Alan</th><th>Tür</th><th>Açıklama</th></tr>
+    <tr><td>hareketId</td><td>Long PK/FK</td><td>AVANS hareketi</td></tr>
+    <tr><td>dusulecekMaasTarihi</td><td>LocalDate</td><td>Bir sonraki maaş</td></tr>
+    <tr><td>mahsupHareketId</td><td>Long?</td><td>Maaş kaydedilince dolar</td></tr>
+  </table></div>
+  </div>
+
+  <div>
+  <h3>Ogrenci · OgrenciUcret · Ders</h3>
+  <div class="tw"><table><tr><th>Alan</th><th>Tür</th><th>Açıklama</th></tr>
+    <tr><td>Ogrenci.ad</td><td>String</td><td></td></tr>
+    <tr><td>Ogrenci.odemeSekli</td><td>enum</td><td>DERS_BASI · AY_SONU · PAKET</td></tr>
+    <tr><td>Ogrenci.paketDers</td><td>Int?</td><td>4'lü paket</td></tr>
+    <tr><td>OgrenciUcret.saatlik</td><td>Long</td><td>Ücret geçmişi</td></tr>
+    <tr><td>OgrenciUcret.gecerliBaslangic</td><td>LocalDate</td><td></td></tr>
+    <tr><td>Ders.tarih, baslangicSaat</td><td>LocalDate, Time</td><td></td></tr>
+    <tr><td>Ders.sureDk</td><td>Int</td><td>90 = 1,5 saat</td></tr>
+    <tr><td>Ders.durum</td><td>enum</td><td>PLANLI · YAPILDI · IPTAL</td></tr>
+    <tr><td>Ders.tutar</td><td>Long?</td><td>“Yapıldı”da o günkü ücretle dondurulur</td></tr>
+  </table></div>
+  </div>
+
+  <div>
+  <h3>Cuzdan · CuzdanKategori</h3>
+  <div class="tw"><table><tr><th>Alan</th><th>Tür</th><th>Açıklama</th></tr>
+    <tr><td>tur</td><td>enum</td><td>ZARF · KASA · HEDEF</td></tr>
+    <tr><td>donemLimiti</td><td>Long?</td><td>Zarf için, maaş dönemi başına</td></tr>
+    <tr><td>hedefTutar, hedefTarih</td><td>Long?, LocalDate?</td><td>Hedef için</td></tr>
+    <tr><td>ad, renk, arsiv</td><td>…</td><td></td></tr>
+    <tr><td>CuzdanKategori</td><td>(cuzdanId, kategoriId)</td><td>Zarfa hangi kategoriler düşer</td></tr>
+  </table></div>
+  </div>
+
+  <div>
+  <h3>Varlik · KurOnbellegi</h3>
+  <div class="tw"><table><tr><th>Alan</th><th>Tür</th><th>Açıklama</th></tr>
+    <tr><td>Varlik.tur, kod</td><td>enum, String</td><td>ALTIN “XAU-GR” · DOVIZ “USD” · FON kodu</td></tr>
+    <tr><td>Varlik.miktar</td><td>Long</td><td>milyonda bir birim (0,5 g = 500000)</td></tr>
+    <tr><td>Varlik.maliyet, alisTarihi</td><td>Long, LocalDate</td><td></td></tr>
+    <tr><td>Varlik.cuzdanId</td><td>Long?</td><td>Bağlı hedef</td></tr>
+    <tr><td>KurOnbellegi.kod</td><td>String PK</td><td></td></tr>
+    <tr><td>KurOnbellegi.birimFiyat, zaman</td><td>Long, Instant</td><td>Son bilinen kur ve tarihi</td></tr>
+  </table></div>
+  </div>
+
+  <div>
+  <h3>BeklemeKalemi</h3>
+  <div class="tw"><table><tr><th>Alan</th><th>Tür</th><th>Açıklama</th></tr>
+    <tr><td>ad, tutar</td><td>String, Long</td><td></td></tr>
+    <tr><td>kartId, taksitSayisi</td><td>Long, Int</td><td>Etki hesabı için</td></tr>
+    <tr><td>kategoriId</td><td>Long?</td><td></td></tr>
+    <tr><td>eklenme, bitis</td><td>Instant</td><td>bitis = eklenme + 48 sa</td></tr>
+    <tr><td>durum</td><td>enum</td><td>BEKLIYOR · ALINDI · VAZGECILDI</td></tr>
+    <tr><td>sonuc, hareketId</td><td>Instant?, Long?</td><td>“Vazgeçtiklerin” sayacı buradan</td></tr>
+  </table></div>
+  </div>
+
+  <div>
+  <h3>Kategori · IzlenenUygulama · BildirimKaydi · Ayar</h3>
+  <div class="tw"><table><tr><th>Alan</th><th>Tür</th><th>Açıklama</th></tr>
+    <tr><td>Kategori.ad, yon</td><td>String, enum</td><td>GIDER · GELIR (Maaş, Özel ders…)</td></tr>
+    <tr><td>IzlenenUygulama.paket</td><td>String PK</td><td>com.garanti.cepsubesi</td></tr>
+    <tr><td>IzlenenUygulama.hesapId</td><td>Long</td><td>Formda seçili gelecek kart</td></tr>
+    <tr><td>IzlenenUygulama.sonSorulma</td><td>Instant?</td><td>10 dk kuralı</td></tr>
+    <tr><td>BildirimKaydi.anahtar</td><td>String PK</td><td>“sonodeme:ekstre42:3gun” — aynı bildirim iki kez gitmez</td></tr>
+    <tr><td>Ayar.anahtar, deger</td><td>String, String</td><td>hitap, tavan, eşikler, kilit süresi…</td></tr>
+  </table></div>
+  </div>
+  </div>
+
+  <h2>Saklanmayan, hesaplanan rakamlar</h2>
+  <div class="tw"><table class="map">
+    <tr><th>Rakam</th><th>Nasıl hesaplanır</th></tr>
+    <tr><td>Hesap bakiyesi</td><td>acilisBakiye + Σ(hedef = hesap) − Σ(kaynak = hesap)</td></tr>
+    <tr><td>Kart limit kullanımı</td><td>Σ ödenmemiş TaksitSatiri (ana kart + ek/sanal kartlar, gelecek taksitler dahil) + açılış ekstresi − Σ KART_ODEME</td></tr>
+    <tr><td>Kalan kişisel limit</td><td>kendiLimiti − limit kullanımı</td></tr>
+    <tr><td>Açık dönem ekstresi</td><td>Σ TaksitSatiri, ekstreKesimTarihi = sıradaki kesim</td></tr>
+    <tr><td>Taksit yükü (ay ay)</td><td>Σ TaksitSatiri, ekstreKesimTarihi’ne göre gruplu</td></tr>
+    <tr><td>Bu dönem</td><td>maas = true kuralın son gerçekleşen günü → bir sonraki günün bir öncesi</td></tr>
+    <tr><td>Bu dönem kalan</td><td>dönem geliri − dönem gideri − henüz çekilmemiş düzenli giderler − maaştan düşülecek avans (gelecek dönem için)</td></tr>
+    <tr><td>Zarf harcanan</td><td>Σ HARCAMA, dönem içinde, kategori ∈ zarf ya da cuzdanId = zarf</td></tr>
+    <tr><td>Kasa bakiyesi</td><td>Σ CUZDAN_AKTAR − Σ HARCAMA (cuzdanId = kasa)</td></tr>
+    <tr><td>Öğrenci alacağı</td><td>Σ Ders.tutar (YAPILDI) − Σ TAHSILAT (ogrenciId)</td></tr>
+    <tr><td>Varlık değeri</td><td>miktar × KurOnbellegi.birimFiyat; kâr = değer − maliyet</td></tr>
+  </table></div>
+</div>

@@ -33,6 +33,10 @@ Tek kişinin kullanacağı Android uygulaması. Harcamaları, taksitleri, gelirl
 - **E2.** Kredi kartı harcaması tek çekim ya da N taksit olabilir. Taksitli harcamada erteleme girilebilir (ör. "ilk taksit 3 ay sonra"); ilk taksit o kadar ay ileri kayar.
 - **E3.** Kategoriler kullanıcı tarafından tanımlanır, düzenlenir ve silinir. İlk açılışta şu set hazır gelir: Market, Yemek/Kafe, Fatura, Kira/Aidat, Ulaşım/Yakıt, Giyim, Elektronik, Sağlık, Kişisel bakım, Eğlence/Abonelik, Eğitim, Hediye, Ev, Diğer.
 - **E4.** Hızlı giriş formunda en sık kullanılan kategoriler önde durur.
+- **E5. Düzenli harcama:** Abonelik, kira, fatura gibi tekrarlayan giderler tanımlanır: ad, tutar, sabit ya da değişken tutar, periyot (haftalık, aylık, yıllık), gün (yıllıksa ay da), hesap veya kart, kategori, başlangıç, bitiş (isteğe bağlı).
+- **E6.** Sabit tutarlılar günü gelince kendiliğinden kaydedilir ve bildirim gelir ("YouTube 79,99 ₺ Bonus'a yazıldı"). Değişken tutarlılar (fatura gibi) için "tutarı gir" hatırlatması gelir. Her kalemde "önce bana sor" seçilebilir. Karta yazılanlar ilgili ekstreye düşer.
+- **E7.** Düzenli harcamalar listesinde aylık ve yıllık toplam ile sıradaki çekim tarihleri görünür. Yıllık yenilemelerden 7 gün önce hatırlatma gelir. Tutar değişince yeni tutar sonraki çekimden itibaren geçerli olur; geçmiş kayıtlar değişmez.
+- **E8.** Dönem içinde henüz çekilmemiş düzenli harcamalar "bu dönem kalan"dan önceden düşülür; F4'teki etki hesabına ve toplam kart tavanına beklenen gider olarak girer.
 
 ### 3.3 Banka uygulaması tetikleyicisi
 - **T1.** Kullanıcı ayarlardan izlenecek banka uygulamalarını seçer ve her uygulamayı bir hesaba veya karta bağlar.
@@ -118,7 +122,7 @@ Tek kişinin kullanacağı Android uygulaması. Harcamaları, taksitleri, gelirl
 
 ## 4. Ekranlar
 
-Alt menüde 5 sekme olacak, her ekranda bir "+" butonu duracak. "+" ile açılan hızlı giriş: Harcama, Gelir, Avans, Transfer, Ders, Tahsilat.
+Alt menüde 5 sekme olacak, her ekranda bir "+" butonu duracak. "+" ile açılan hızlı giriş: Harcama, Düzenli harcama, Gelir, Avans, Transfer, Ders, Tahsilat.
 
 | Sekme | İçerik |
 |---|---|
@@ -139,6 +143,8 @@ Ayarlar sağ üstteki menüden açılır: kilit, yedek, izlenen banka uygulamala
 | Düzenli gelir günü geldi | Maaş yattı mı? (avans düşülmüş tutarla) |
 | Tahsilat zamanı geldi | Ayşe'den 4.800 TL tahsil edilecek |
 | Bekleme süresi doldu | Hâlâ istiyor musun? |
+| Düzenli harcama çekildi / tutar bekleniyor | YouTube 79,99 ₺ Bonus'a yazıldı · Elektrik faturası: tutarı gir |
+| Yıllık yenileme yaklaştı | Spotify yıllık üyeliği 7 gün sonra yenilenecek |
 | Kart sınırında %70 veya %90 aşıldı | Sarı veya kırmızı uyarı |
 
 ## 6. Kapsam Dışı (ilk sürüm)

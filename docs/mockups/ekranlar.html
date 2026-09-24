@@ -90,6 +90,7 @@ figcaption span{color:var(--muted);font-size:13.5px}
 .set small{color:var(--muted);font-size:11px;display:block}
 .tg{width:30px;height:17px;border-radius:99px;background:var(--accent);position:relative;flex:none}
 .tg::after{content:"";position:absolute;right:2px;top:2px;width:13px;height:13px;border-radius:50%;background:var(--paper)}
+.tg.off{background:var(--line)}.tg.off::after{right:auto;left:2px}
 .steps{display:flex;gap:4px;padding:0 16px 8px}
 .steps i{flex:1;height:4px;border-radius:99px;background:var(--line)}
 .steps i.on{background:var(--accent)}
@@ -119,7 +120,7 @@ figcaption span{color:var(--muted);font-size:13.5px}
       <div class="tab"><b>Cüzdanlar</b><span>Bütçe zarfları, para kasaları, birikim hedefleri ve yatırımlar</span></div>
       <div class="tab"><b>Dersler</b><span>Öğrenciler, ders takvimi, alacaklar</span></div>
     </div>
-    <p class="note">“+” ile hızlı giriş: Harcama · Gelir · Avans · Transfer · Ders · Tahsilat. Raporlar Özet ekranının içinden açılır. Ayarlar (kilit, yedek, izlenen banka uygulamaları, kategoriler) sağ üstteki menüde.</p>
+    <p class="note">“+” ile hızlı giriş: Harcama · Düzenli harcama · Gelir · Avans · Transfer · Ders · Tahsilat. Raporlar Özet ekranının içinden açılır. Ayarlar (kilit, yedek, izlenen banka uygulamaları, kategoriler) sağ üstteki menüde.</p>
   </section>
 
   <section class="nav-map">
@@ -478,6 +479,33 @@ figcaption span{color:var(--muted);font-size:13.5px}
       </div></div>
       <figcaption><b>14 · Hareketler</b><span>Tüm kayıtlar günlere göre gruplu. Türe göre filtre, iş yeri/not/tutarla arama. Bir kayda dokununca düzenlenir.</span></figcaption>
     </figure>
+    <figure>
+      <div class="phone"><div class="scr">
+        <div class="bar"><span>09:41</span><span></span></div>
+        <div class="hd"><div class="t">Düzenli harcamalar</div><div class="s">Hareketler › Düzenli</div></div>
+        <div class="body">
+          <div class="blk">
+            <div class="row"><span class="lbl">Aylık toplam</span><span class="lbl">Yıllık</span></div>
+            <div class="row"><span class="big">3.214 ₺</span><span class="num">38.568 ₺</span></div>
+            <div class="hint">Bu dönem henüz çekilmeyen: 1.480 ₺ · “bu dönem kalan”dan düşüldü</div>
+          </div>
+          <div class="blk">
+            <div class="tx"><span>YouTube Premium<small>Aylık · her 28'i · Bonus · otomatik</small></span><span class="num">79,99</span></div>
+            <div class="tx"><span>Kira<small>Aylık · her 1'i · Garanti vadesiz · otomatik</small></span><span class="num">2.500,00</span></div>
+            <div class="tx"><span>Elektrik<small>Aylık · her 15'i · değişken · tutarı sorar</small></span><span class="pill w">≈ 460</span></div>
+            <div class="tx"><span>Spotify<small>Yıllık · 3 Ekim · Maximum · 7 gün önce hatırlatır</small></span><span class="num">1.188,00</span></div>
+          </div>
+          <div class="lbl" style="padding:0 2px">Yeni düzenli harcama</div>
+          <div class="two"><div class="inp"><span>Ad</span><b>Netflix</b></div><div class="inp"><span>Tutar</span><b class="num">229,99</b></div></div>
+          <div class="seg"><span>Haftalık</span><span class="on">Aylık</span><span>Yıllık</span></div>
+          <div class="two"><div class="inp"><span>Gün</span><b>12</b></div><div class="inp"><span>Kart</span><b>Bonus</b></div></div>
+          <div class="set" style="padding:0 2px"><span>Önce bana sor<small>Kapalıysa günü gelince kendiliğinden yazılır</small></span><span class="tg off"></span></div>
+          <div style="display:flex;gap:6px;padding-bottom:10px"><span class="btn">Kaydet</span></div>
+        </div>
+        <div class="bnav"><span>Özet</span><span class="on">Hareketler</span><span>Hesaplar</span><span>Cüzdanlar</span><span>Dersler</span></div>
+      </div></div>
+      <figcaption><b>15 · Düzenli harcamalar</b><span>Abonelik, kira, fatura. Sabit tutarlılar günü gelince kendiliğinden yazılır, değişkenler tutarı sorar. Henüz çekilmeyenler dönem hesabından önceden düşülür.</span></figcaption>
+    </figure>
     </div>
   </section>
   <section class="grp">
@@ -515,7 +543,7 @@ figcaption span{color:var(--muted);font-size:13.5px}
         </div>
         <div class="bnav"><span>Özet</span><span>Hareketler</span><span class="on">Hesaplar</span><span>Cüzdanlar</span><span>Dersler</span></div>
       </div></div>
-      <figcaption><b>15 · Kart detayı</b><span>Ekstre, ödeme işaretleme, devreden borç ve taksitlerin hangi ekstreye düştüğü tek sayfada.</span></figcaption>
+      <figcaption><b>16 · Kart detayı</b><span>Ekstre, ödeme işaretleme, devreden borç ve taksitlerin hangi ekstreye düştüğü tek sayfada.</span></figcaption>
     </figure>
     <figure>
       <div class="phone"><div class="scr">
@@ -548,7 +576,7 @@ figcaption span{color:var(--muted);font-size:13.5px}
         <div class="fab">+</div>
         <div class="bnav"><span>Özet</span><span>Hareketler</span><span>Hesaplar</span><span class="on">Cüzdanlar</span><span>Dersler</span></div>
       </div></div>
-      <figcaption><b>16 · Cüzdanlar ve birikim</b><span>Üç tür tek ekranda: limitli zarflar, bakiyeli kasalar, hedefler ve kurla değerlenen yatırımlar.</span></figcaption>
+      <figcaption><b>17 · Cüzdanlar ve birikim</b><span>Üç tür tek ekranda: limitli zarflar, bakiyeli kasalar, hedefler ve kurla değerlenen yatırımlar.</span></figcaption>
     </figure>
     </div>
   </section>
@@ -585,7 +613,7 @@ figcaption span{color:var(--muted);font-size:13.5px}
         <div class="fab">+</div>
         <div class="bnav"><span>Özet</span><span>Hareketler</span><span>Hesaplar</span><span>Cüzdanlar</span><span class="on">Dersler</span></div>
       </div></div>
-      <figcaption><b>17 · Dersler</b><span>Takvimde ders günleri, öğrenci başına ödeme şekli ve alacak. Tahsilat girilince alacaktan düşer, gelire eklenir.</span></figcaption>
+      <figcaption><b>18 · Dersler</b><span>Takvimde ders günleri, öğrenci başına ödeme şekli ve alacak. Tahsilat girilince alacaktan düşer, gelire eklenir.</span></figcaption>
     </figure>
     </div>
   </section>
@@ -624,7 +652,7 @@ figcaption span{color:var(--muted);font-size:13.5px}
         </div>
         <div class="bnav"><span class="on">Özet</span><span>Hareketler</span><span>Hesaplar</span><span>Cüzdanlar</span><span>Dersler</span></div>
       </div></div>
-      <figcaption><b>18 · Raporlar</b><span>Kategori dağılımı, aylık gelir/gider (avans ayrı not edilir), taksit yükü. Ders ve kart borcu raporları aşağı kaydırınca.</span></figcaption>
+      <figcaption><b>19 · Raporlar</b><span>Kategori dağılımı, aylık gelir/gider (avans ayrı not edilir), taksit yükü. Ders ve kart borcu raporları aşağı kaydırınca.</span></figcaption>
     </figure>
     <figure>
       <div class="phone"><div class="scr">
@@ -655,7 +683,7 @@ figcaption span{color:var(--muted);font-size:13.5px}
         </div>
         <div class="bnav"><span class="on">Özet</span><span>Hareketler</span><span>Hesaplar</span><span>Cüzdanlar</span><span>Dersler</span></div>
       </div></div>
-      <figcaption><b>19 · Ayarlar</b><span>Kilit, banka uygulaması → kart eşlemesi, fren eşikleri, elle yedek. Kategoriler ve bildirim günleri aşağı kaydırınca.</span></figcaption>
+      <figcaption><b>20 · Ayarlar</b><span>Kilit, banka uygulaması → kart eşlemesi, fren eşikleri, elle yedek. Kategoriler ve bildirim günleri aşağı kaydırınca.</span></figcaption>
     </figure>
     </div>
   </section>
