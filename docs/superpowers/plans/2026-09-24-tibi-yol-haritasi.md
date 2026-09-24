@@ -5,7 +5,7 @@ Gereksinimler (`docs/specs/2026-09-24-tibi-gereksinimler.md`) birçok ayrı alt 
 | # | Plan | Sonunda elde edilen | Gereksinimler |
 |---|---|---|---|
 | 1 | **Temel** | Derleme araçları, `:core` modülü (para, tarih, dönem, ekstre takvimi, taksit planlayıcı, hepsi testli), 5 sekmeli boş uygulama, GitHub'da imzalı APK üretimi | Temel kararlar, K2, K8 (hesap kısmı), Dönem |
-| 2 | Veri katmanı | Room + SQLCipher; bütün tablolar, DAO'lar, Kayıt servisi (tek transaction), bakiye/borç sorguları, testli | Veri modeli, H1–H3, E1–E2, V3 |
+| 2 | Veri katmanı | Room + SQLCipher; Plan 3'ün tabloları (hesap, kart, kategori, hareket, taksit satırı, ekstre, düzenli kural, ayar), Kayıt servisi (tek transaction), bakiye/limit/taksit yükü sorguları, testli. Diğer tablolar kendi planlarında migration ile eklenir. | Veri modeli, H1–H3, E1–E3, K2, K8–K10, V3 |
 | 3 | **İlk kullanılabilir sürüm** | Kurulum (Hoş geldin adı, Hesaplar, Gelir, Kartlar, Devam eden taksitler), hızlı harcama girişi, Özet, Hareketler, kart detayı. Gerçek veriyle kullanmaya bu planın sonunda başlanır. | S-1…S3, E1–E4, K1, K5, K8–K10, G1–G4 |
 | 4 | Kilit ve yedek | PIN + parmak izi kilidi, şifreli yedek al / geri yükle, açılışta "yedekten dön" | V1, V1a, V2, S0, S-1 |
 | 5 | Ekstre, ödeme, hatırlatma | Kesimde ekstre kapatma, ödeme işaretleme (tam/asgari/kısmi), otomatik ödeme, bildirim altyapısı, son ödeme ve aidat hatırlatması | K3, K4, K6, K11, K12, Bildirimler |
