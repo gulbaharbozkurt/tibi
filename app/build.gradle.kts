@@ -12,13 +12,28 @@ android {
         applicationId = "app.tibi"
         minSdk = 26
         targetSdk = 35
-        versionCode = 1
+        versionCode = (System.getenv("GITHUB_RUN_NUMBER") ?: "1").toInt()
         versionName = "0.1.0"
+    }
+
+    signingConfigs {
+        create("release") {
+            val yol = System.getenv("TIBI_KEYSTORE_YOLU")
+            if (yol != null) {
+                storeFile = file(yol)
+                storePassword = System.getenv("TIBI_KEYSTORE_SIFRE")
+                keyAlias = System.getenv("TIBI_ANAHTAR_ADI")
+                keyPassword = System.getenv("TIBI_ANAHTAR_SIFRE")
+            }
+        }
     }
 
     buildTypes {
         release {
             isMinifyEnabled = false
+            if (System.getenv("TIBI_KEYSTORE_YOLU") != null) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
     }
 

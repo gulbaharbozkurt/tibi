@@ -1,0 +1,57 @@
+name: derle
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+
+permissions:
+  contents: write
+
+jobs:
+  derle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Çekirdek testleri
+        run: ./gradlew :core:test
+
+      - name: İmza anahtarını çöz
+        if: github.event_name != 'pull_request'
+        run: echo "${{ secrets.TIBI_KEYSTORE_B64 }}" | base64 -d > "$RUNNER_TEMP/tibi.jks"
+
+      - name: İmzalı APK
+        if: github.event_name != 'pull_request'
+        env:
+          TIBI_KEYSTORE_YOLU: ${{ runner.temp }}/tibi.jks
+          TIBI_KEYSTORE_SIFRE: ${{ secrets.TIBI_KEYSTORE_SIFRE }}
+          TIBI_ANAHTAR_ADI: ${{ secrets.TIBI_ANAHTAR_ADI }}
+          TIBI_ANAHTAR_SIFRE: ${{ secrets.TIBI_ANAHTAR_SIFRE }}
+        run: |
+          ./gradlew :app:assembleRelease
+          cp app/build/outputs/apk/release/app-release.apk "tibi-${GITHUB_REF_NAME//\//-}.apk"
+
+      - name: PR için imzasız derleme
+        if: github.event_name == 'pull_request'
+        run: ./gradlew :app:assembleDebug
+
+      - uses: actions/upload-artifact@v4
+        if: github.event_name != 'pull_request'
+        with:
+          name: tibi-apk
+          path: tibi-*.apk
+
+      - name: Sürüm yayınla
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: tibi-*.apk
