@@ -10,6 +10,8 @@ import app.tibi.core.para.kurusCoz
 import app.tibi.core.tarih.HaftaSonuKurali
 import app.tibi.ui.Sonuc
 import app.tibi.veri.Anahtarlar
+import app.tibi.veri.GecmisTaksitGirisi
+import app.tibi.veri.KayitHatasi
 import app.tibi.veri.KayitServisi
 import app.tibi.veri.TibiVeritabani
 import app.tibi.veri.dao.HesapBakiyesi
@@ -18,8 +20,11 @@ import app.tibi.veri.tablo.Ayar
 import app.tibi.veri.tablo.DuzenliKural
 import app.tibi.veri.tablo.Hesap
 import app.tibi.veri.tablo.HesapTuru
+import app.tibi.veri.tablo.Kart
+import app.tibi.veri.tablo.KartTuru
 import app.tibi.veri.tablo.KategoriYonu
 import app.tibi.veri.tablo.Periyot
+import app.tibi.veri.tablo.TaksitTuru
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import java.time.LocalDate
@@ -31,6 +36,20 @@ enum class KurulumAdimi(val baslik: String) {
     KARTLAR("Kartlar"),
     TAKSITLER("Devam eden taksitler"),
 }
+
+data class KartGirdisi(
+    val ad: String = "",
+    val tur: KartTuru = KartTuru.ANA,
+    val anaKartId: Long? = null,
+    val son4: String = "",
+    val kesimGunu: String = "",
+    val sonOdemeGunu: String = "",
+    val bankaLimiti: String = "",
+    val kendiLimiti: String = "",
+    val asgariOran: String = "40",
+    val kesilmisEkstre: String = "",
+    val donemIci: String = "",
+)
 
 class KurulumVm(
     internal val db: TibiVeritabani,
@@ -77,6 +96,45 @@ class KurulumVm(
             )
         }
         return Sonuc.Tamam
+    }
+
+    private class GirdiHatasi(mesaj: String) : Exception(mesaj)
+
+    private fun tutarVeyaBos(metin: String, alan: String): Long? =
+        if (metin.isBlank()) null else (kurusCoz(metin) ?: throw GirdiHatasi("$alan tutarını 15.000 biçiminde yaz.")).deger
+
+    private fun gun(metin: String, alan: String): Int =
+        metin.toIntOrNull()?.takeIf { it in 1..31 } ?: throw GirdiHatasi("$alan 1 ile 31 arasında olmalı.")
+
+    suspend fun kartEkle(g: KartGirdisi): Sonuc = try {
+        if (g.ad.isBlank()) throw GirdiHatasi("Karta bir ad ver, ör. \"Bonus\".")
+        if (!Regex("""\d{4}""").matches(g.son4)) throw GirdiHatasi("Kartın son 4 hanesini yaz.")
+        val ana = if (g.tur == KartTuru.ANA) null else {
+            val id = g.anaKartId ?: throw GirdiHatasi("Ek ve sanal kart için ana kartı seç.")
+            db.kartDao().getir(id) ?: throw GirdiHatasi("Seçilen ana kart bulunamadı.")
+        }
+        val kesim = ana?.kesimGunu ?: gun(g.kesimGunu, "Kesim günü")
+        val sonOdeme = ana?.sonOdemeGunu ?: gun(g.sonOdemeGunu, "Son ödeme günü")
+        val bankaLimiti = if (ana == null) tutarVeyaBos(g.bankaLimiti, "Banka limiti") else null
+        val kendiLimiti = if (ana == null) tutarVeyaBos(g.kendiLimiti, "Kendi limitin") else null
+        val oran = g.asgariOran.toIntOrNull()?.takeIf { it in 0..100 } ?: throw GirdiHatasi("Asgari ödeme oranı 0 ile 100 arasında olmalı.")
+        val kesilmis = if (ana == null) tutarVeyaBos(g.kesilmisEkstre, "Kesilmiş ekstre") else null
+        val donemIci = if (ana == null) tutarVeyaBos(g.donemIci, "Dönem içi harcama") else null
+        db.withTransaction {
+            val id = db.hesapDao().ekle(Hesap(ad = g.ad.trim(), tur = HesapTuru.KREDI_KARTI, acilisTarihi = bugun()))
+            db.kartDao().ekle(
+                Kart(hesapId = id, kartTuru = g.tur, anaKartId = ana?.hesapId, son4 = g.son4, kesimGunu = kesim, sonOdemeGunu = sonOdeme,
+                    bankaLimitiKurus = bankaLimiti, kendiLimitiKurus = kendiLimiti, asgariOranBinde = oran * 10)
+            )
+            if (kesilmis != null && kesilmis > 0) kayit.acilisEkstresi(id, Kurus(kesilmis), bugun())
+            if (donemIci != null && donemIci > 0) kayit.gecmisTaksit(GecmisTaksitGirisi.KalanBorc(Kurus(donemIci), 1), id, null,
+                TaksitTuru.ALISVERIS, bugun(), "Kurulum: dönem içi harcamalar")
+        }
+        Sonuc.Tamam
+    } catch (e: GirdiHatasi) {
+        Sonuc.Hata(e.message!!)
+    } catch (e: KayitHatasi) {
+        Sonuc.Hata(e.message ?: "Kart kaydedilemedi.")
     }
 
     suspend fun bitir(): Sonuc {

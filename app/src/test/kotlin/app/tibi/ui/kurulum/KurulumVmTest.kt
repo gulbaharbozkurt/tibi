@@ -9,6 +9,7 @@ import app.tibi.veri.Anahtarlar
 import app.tibi.veri.KayitServisi
 import app.tibi.veri.TibiVeritabani
 import app.tibi.veri.tablo.HesapTuru
+import app.tibi.veri.tablo.KartTuru
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.After
@@ -95,5 +96,41 @@ class KurulumVmTest {
         assertIs<Sonuc.Hata>(vm.maasKaydet("45.000", "30", HaftaSonuKurali.ONCEKI, null))
         assertEquals(null, vm.donemOnizleme("0", HaftaSonuKurali.ONCEKI))
         assertEquals(null, vm.maasKurali.first())
+    }
+
+    @Test
+    fun `ana kart acilis borcuyla eklenir`() = runTest {
+        val s = vm.kartEkle(KartGirdisi(ad = "Bonus", son4 = "4821", kesimGunu = "12", sonOdemeGunu = "22",
+            bankaLimiti = "50.000", kendiLimiti = "15.000", kesilmisEkstre = "12.340", donemIci = "5.980"))
+        assertEquals(Sonuc.Tamam, s)
+        val k = vm.kartlar.first().single()
+        assertEquals("Bonus", k.ad)
+        assertEquals(1_500_000L, k.kendiLimitiKurus)
+        assertEquals(5_000_000L, k.bankaLimitiKurus)
+        assertEquals(400, k.asgariOranBinde)
+        assertEquals(1_234_000L + 598_000L, k.kullanimKurus)
+    }
+
+    @Test
+    fun `sanal kart ana kartin gunlerini alir`() = runTest {
+        vm.kartEkle(KartGirdisi(ad = "Bonus", son4 = "4821", kesimGunu = "12", sonOdemeGunu = "22", kendiLimiti = "15.000"))
+        val ana = vm.kartlar.first().single().hesapId
+        assertEquals(Sonuc.Tamam, vm.kartEkle(KartGirdisi(ad = "Bonus Sanal", tur = KartTuru.SANAL, anaKartId = ana, son4 = "9054",
+            kendiLimiti = "999", kesilmisEkstre = "100")))
+        val s = vm.kartlar.first().first { it.ad == "Bonus Sanal" }
+        assertEquals(12, s.kesimGunu)
+        assertEquals(22, s.sonOdemeGunu)
+        assertEquals(null, s.kendiLimitiKurus)
+        assertEquals(0L, vm.kartlar.first().first { it.hesapId == ana }.kullanimKurus)
+    }
+
+    @Test
+    fun `hatali kart girisleri hicbir sey yazmaz`() = runTest {
+        assertIs<Sonuc.Hata>(vm.kartEkle(KartGirdisi(ad = "", son4 = "4821", kesimGunu = "12", sonOdemeGunu = "22")))
+        assertIs<Sonuc.Hata>(vm.kartEkle(KartGirdisi(ad = "X", son4 = "48", kesimGunu = "12", sonOdemeGunu = "22")))
+        assertIs<Sonuc.Hata>(vm.kartEkle(KartGirdisi(ad = "X", son4 = "4821", kesimGunu = "0", sonOdemeGunu = "22")))
+        assertIs<Sonuc.Hata>(vm.kartEkle(KartGirdisi(ad = "X", son4 = "4821", kesimGunu = "12", sonOdemeGunu = "22", kendiLimiti = "abc")))
+        assertIs<Sonuc.Hata>(vm.kartEkle(KartGirdisi(ad = "X", tur = KartTuru.EK, son4 = "4821")))   // ana kart seçilmedi
+        assertEquals(0, vm.kartlar.first().size)
     }
 }
