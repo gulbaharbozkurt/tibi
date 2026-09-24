@@ -31,7 +31,7 @@ Tek kişinin kullanacağı Android uygulaması. Harcamaları, taksitleri, gelirl
 ### 3.2 Harcama
 - **E1.** Harcama kaydında şu alanlar olur: tutar, kategori, hesap, cüzdan (isteğe bağlı), tarih (varsayılan: bugün), not (isteğe bağlı).
 - **E2.** Kredi kartı harcaması tek çekim ya da N taksit olabilir. Taksitli harcamada erteleme girilebilir (ör. "ilk taksit 3 ay sonra"); ilk taksit o kadar ay ileri kayar.
-- **E3.** Kategoriler kullanıcı tarafından tanımlanır, düzenlenir ve silinir. Hazır bir başlangıç seti gelir.
+- **E3.** Kategoriler kullanıcı tarafından tanımlanır, düzenlenir ve silinir. İlk açılışta şu set hazır gelir: Market, Yemek/Kafe, Fatura, Kira/Aidat, Ulaşım/Yakıt, Giyim, Elektronik, Sağlık, Kişisel bakım, Eğlence/Abonelik, Eğitim, Hediye, Ev, Diğer.
 - **E4.** Hızlı giriş formunda en sık kullanılan kategoriler önde durur.
 
 ### 3.3 Banka uygulaması tetikleyicisi
@@ -147,7 +147,6 @@ Bildirim veya SMS okuma, faiz hesabı, krediler (ihtiyaç, konut, KMH), birden f
 
 ## 7. Açık Konular
 
-1. **Kur kaynağı:** Hangi ücretsiz API kullanılacak? Teknik tasarımda seçilecek.
-2. **Varsayılan kategoriler:** Başlangıç seti nasıl olsun?
+1. **Kur kaynağı:** Hangi ücretsiz API kullanılacak? Teknik tasarımda seçilecek (kullanıcı kararı gerektirmez).
 
-Kapandı: fren eşiklerinin başlangıç değerleri kurulumda kullanıcı tarafından girilir (S4). "Bu ay" maaş döneminden maaşa sayılır (bkz. Temel Kararlar, Dönem).
+Kapandı: fren eşiklerinin başlangıç değerleri kurulumda kullanıcı tarafından girilir (S4). "Bu ay" maaş döneminden maaşa sayılır (bkz. Temel Kararlar, Dönem). Varsayılan kategoriler belirlendi (E3).
