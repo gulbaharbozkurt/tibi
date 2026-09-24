@@ -29,7 +29,7 @@ Tek kişinin kullanacağı Android uygulaması. Harcamaları, taksitleri, gelirl
 
 ### 3.2 Harcama
 - **E1.** Harcama kaydında şu alanlar olur: tutar, kategori, hesap, cüzdan (isteğe bağlı), tarih (varsayılan: bugün), not (isteğe bağlı).
-- **E2.** Kredi kartı harcaması tek çekim ya da N taksit olabilir.
+- **E2.** Kredi kartı harcaması tek çekim ya da N taksit olabilir. Taksitli harcamada erteleme girilebilir (ör. "ilk taksit 3 ay sonra"); ilk taksit o kadar ay ileri kayar.
 - **E3.** Kategoriler kullanıcı tarafından tanımlanır, düzenlenir ve silinir. Hazır bir başlangıç seti gelir.
 - **E4.** Hızlı giriş formunda en sık kullanılan kategoriler önde durur.
 
@@ -40,15 +40,18 @@ Tek kişinin kullanacağı Android uygulaması. Harcamaları, taksitleri, gelirl
 - **T4.** Aynı uygulama kısa sürede tekrar açılıp kapatılırsa bildirim tekrarlanmaz. Bekleme süresi ayarlanabilir, varsayılanı 10 dakika.
 
 ### 3.4 Kredi kartı
-- **K1.** Kartın şu bilgileri tutulur: ad, son 4 hane, kesim günü, son ödeme günü, banka limiti, kullanıcının kendi limiti.
+- **K1.** Kartın şu bilgileri tutulur: ad, renk, son 4 hane, bağlı banka uygulaması, kesim günü, son ödeme günü, banka limiti, kullanıcının kendi limiti. Kart numarasının tamamı, son kullanma tarihi ve CVV istenmez ve saklanmaz.
 - **K2.** Taksitli bir harcama, kesim gününe göre gelecek ekstrelere otomatik olarak dağıtılır.
-- **K3.** Kesim gününde ekstre tutarı hesaplanır. Asgari ödeme tutarı elle girilir.
+- **K3.** Kesim gününde ekstre tutarı hesaplanır. Asgari ödeme tutarı kartın asgari oranından (ör. %40) hesaplanır, istenirse elle düzeltilir.
 - **K4.** Ödeme üç şekilde işaretlenebilir: tamamı, asgari veya kısmi. Ödeme bir banka hesabından yapılır. Ödenmeyen kalan bir sonraki döneme devreder.
 - **K5.** Kart ekranında şunlar görünür: toplam borç, kendi limitine göre kalan tutar, dönem içi harcamalar, aktif taksitler (ör. 5/12). Banka limiti küçük yazıyla görünür.
 - **K6.** Son ödeme gününden 3 gün ve 1 gün önce hatırlatma gelir. Gün sayıları ayarlanabilir.
 - **K7.** Faiz hesabı yapılmaz.
-- **K8. Geçmişe dönük taksit:** Uygulamaya başlamadan önce yapılmış ve hâlâ ekstreye yansıyan taksitler girilebilir. Şu alanlar olur: açıklama, kart, kategori, aylık taksit tutarı ya da toplam tutar, toplam taksit sayısı, sıradaki ekstrede kaçıncı taksit olduğu (ya da ilk taksit ayı). Kalan taksitler gelecek ekstrelere dağıtılır ve kalan plan hemen gösterilir. Ödenmiş taksitler geçmiş aylara gider olarak yazılmaz, raporları bozmaz.
+- **K8. Geçmişe dönük taksit:** Uygulamaya başlamadan önce yapılmış ve hâlâ ekstreye yansıyan taksitler girilebilir. Taksit türü seçilir: alışveriş, ekstre taksitlendirme veya nakit avans; raporlarda ayrı gösterilir. Tutar üç yoldan biriyle girilir: aylık taksit tutarı + toplam taksit sayısı, toplam tutar + toplam taksit sayısı, ya da kalan borç + kalan taksit sayısı. İlk iki yolda sıradaki ekstrede kaçıncı taksit olduğu (ya da ilk taksit ayı) ve varsa erteleme de girilir. Ayrıca açıklama, kart ve kategori girilir. Kalan taksitler gelecek ekstrelere dağıtılır ve kalan plan hemen gösterilir. Ödenmiş taksitler geçmiş aylara gider olarak yazılmaz, raporları bozmaz.
 - **K9. Açılış borcu:** Kart eklenirken kesilmiş ama ödenmemiş ekstre tutarı ve dönem içindeki tek çekimlerin toplamı girilir. Son ödeme tarihi kartın son ödeme gününden hesaplanır. Uygulama bugünkü durumdan başlar.
+- **K10. Ortak limit:** Kart türü ana, ek veya sanal olabilir. Ek ve sanal kart bir ana karta bağlanır ve onun limitini paylaşır; limit ve borç ana kartta birlikte hesaplanır, iki kez sayılmaz. Harcamalar yine hangi karttan yapıldıysa o kartta listelenir.
+- **K11. Otomatik ödeme talimatı:** Kartta talimat işaretliyse son ödeme gününde ekstre bağlı banka hesabından "tamamı ödendi" olarak kendiliğinden işaretlenir. Kullanıcı sonradan düzeltebilir.
+- **K12. Yıllık aidat:** Aidat ayı ve tutarı girilirse o aydan önce hatırlatma gelir (iade istemek ya da kartı kapatmak için).
 
 ### 3.5 Harcama freni
 - **F1. Kendi limitin:** Her karta banka limitinden bağımsız bir kişisel sınır konur. Kalan tutar bu sınıra göre gösterilir.
@@ -98,10 +101,12 @@ Tek kişinin kullanacağı Android uygulaması. Harcamaları, taksitleri, gelirl
 - **R5.** Kartlara göre borç gelişimi
 
 ### 3.11 İlk kurulum
-- **S1.** İlk açılışta 5 adımlı kurulum çalışır: Gelir, Kartlar, Hesaplar ve nakit, Devam eden taksitler, Harcama freni. Her adım atlanabilir ve sonradan Ayarlar'dan açılabilir.
+- **S0.** Hoş geldin adımında hitap adı girilir (bildirimlerde kullanılır) ve uygulama kilidi kurulur: PIN zorunlu, parmak izi isteğe bağlı, arka plana alınınca kilitlenme süresi.
+- **S1.** İlk açılışta 7 adımlı kurulum çalışır: Hoş geldin, Gelir, Kartlar, Hesaplar ve nakit, Devam eden taksitler, Harcama freni, İzinler. Hoş geldin dışındaki her adım atlanabilir ve sonradan Ayarlar'dan açılabilir.
 - **S2.** Kart sayısında sınır yoktur. Her kart için K1 ve K9'daki alanlar girilir.
 - **S3.** Banka hesapları ve nakit için açılış bakiyesi girilir.
 - **S4.** Harcama freni değerleri (F2, F3, F6) kullanıcı tarafından belirlenir. Önerilen başlangıç değerleri dolu gelir: tavan net gelirin %40'ı, uyarı eşikleri %70 ve %90, bekleme eşiği 2.000 ₺, süre 48 saat.
+- **S5.** İzinler adımında bildirim izni ve kullanım erişimi izni istenir; her iznin neden gerektiği tek cümleyle açıklanır. Kullanım erişimi verilmezse yalnızca banka tetikleyicisi çalışmaz.
 
 ### 3.12 Güvenlik ve veri
 - **V1.** Uygulama açılırken parmak izi veya PIN istenir.
