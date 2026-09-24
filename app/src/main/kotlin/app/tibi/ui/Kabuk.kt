@@ -1,6 +1,5 @@
 package app.tibi.ui
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -34,14 +33,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import app.tibi.core.donem.DonemHesaplayici
-import app.tibi.core.donem.MaasKurali
-import app.tibi.core.tarih.HaftaSonuKurali
 import app.tibi.ui.giris.HizliGirisSayfasi
+import app.tibi.ui.ozet.OzetEkrani
 import kotlinx.coroutines.launch
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.util.Locale
 
 enum class Sekme(val rota: String, val baslik: String, val ikon: ImageVector) {
     OZET("ozet", "Özet", Icons.Filled.Home),
@@ -86,23 +80,13 @@ fun Kabuk() {
         },
     ) { ic ->
         NavHost(nav, startDestination = Sekme.OZET.rota, modifier = Modifier.padding(ic)) {
-            composable(Sekme.OZET.rota) { OzetYerTutucu() }
+            composable(Sekme.OZET.rota) { OzetEkrani() }
             Sekme.entries.drop(1).forEach { s -> composable(s.rota) { YerTutucu(s.baslik) } }
         }
     }
     if (giris) HizliGirisSayfasi { kaydedildi ->
         giris = false
         if (kaydedildi) kapsam.launch { bildirim.showSnackbar("Kaydedildi") }
-    }
-}
-
-@Composable
-private fun OzetYerTutucu() {
-    val d = DonemHesaplayici.donem(MaasKurali(30, HaftaSonuKurali.ONCEKI), LocalDate.now())
-    val f = DateTimeFormatter.ofPattern("d MMM", Locale.forLanguageTag("tr"))
-    Column(Modifier.fillMaxSize().padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text("Özet", style = MaterialTheme.typography.headlineSmall)
-        Text("Bu dönem: ${d.baslangic.format(f)} – ${d.bitis.format(f)} (örnek maaş günü: 30)")
     }
 }
 
