@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "ea567cb2c27215a81ee1042258ed1d39",
+    "identityHash": "8445bb13a516f87fc93273f3d3f230f3",
     "entities": [
       {
         "tableName": "hesap",
@@ -71,12 +71,211 @@
         },
         "indices": [],
         "foreignKeys": []
+      },
+      {
+        "tableName": "kart",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`hesapId` INTEGER NOT NULL, `kartTuru` TEXT NOT NULL, `anaKartId` INTEGER, `son4` TEXT NOT NULL, `kesimGunu` INTEGER NOT NULL, `sonOdemeGunu` INTEGER NOT NULL, `bankaLimitiKurus` INTEGER, `kendiLimitiKurus` INTEGER, `asgariOranBinde` INTEGER NOT NULL, `otoOdeme` INTEGER NOT NULL, `odemeHesapId` INTEGER, `aidatAy` INTEGER, `aidatTutarKurus` INTEGER, PRIMARY KEY(`hesapId`), FOREIGN KEY(`hesapId`) REFERENCES `hesap`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`anaKartId`) REFERENCES `hesap`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`odemeHesapId`) REFERENCES `hesap`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "fields": [
+          {
+            "fieldPath": "hesapId",
+            "columnName": "hesapId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "kartTuru",
+            "columnName": "kartTuru",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "anaKartId",
+            "columnName": "anaKartId",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "son4",
+            "columnName": "son4",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "kesimGunu",
+            "columnName": "kesimGunu",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sonOdemeGunu",
+            "columnName": "sonOdemeGunu",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "bankaLimitiKurus",
+            "columnName": "bankaLimitiKurus",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "kendiLimitiKurus",
+            "columnName": "kendiLimitiKurus",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "asgariOranBinde",
+            "columnName": "asgariOranBinde",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "otoOdeme",
+            "columnName": "otoOdeme",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "odemeHesapId",
+            "columnName": "odemeHesapId",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "aidatAy",
+            "columnName": "aidatAy",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "aidatTutarKurus",
+            "columnName": "aidatTutarKurus",
+            "affinity": "INTEGER",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "hesapId"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_kart_anaKartId",
+            "unique": false,
+            "columnNames": [
+              "anaKartId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_kart_anaKartId` ON `${TABLE_NAME}` (`anaKartId`)"
+          },
+          {
+            "name": "index_kart_odemeHesapId",
+            "unique": false,
+            "columnNames": [
+              "odemeHesapId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_kart_odemeHesapId` ON `${TABLE_NAME}` (`odemeHesapId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "hesap",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "hesapId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          },
+          {
+            "table": "hesap",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "anaKartId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          },
+          {
+            "table": "hesap",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "odemeHesapId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "kategori",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `ad` TEXT NOT NULL, `yon` TEXT NOT NULL, `sira` INTEGER NOT NULL, `arsiv` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ad",
+            "columnName": "ad",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "yon",
+            "columnName": "yon",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sira",
+            "columnName": "sira",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "arsiv",
+            "columnName": "arsiv",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_kategori_ad",
+            "unique": true,
+            "columnNames": [
+              "ad"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_kategori_ad` ON `${TABLE_NAME}` (`ad`)"
+          }
+        ],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'ea567cb2c27215a81ee1042258ed1d39')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '8445bb13a516f87fc93273f3d3f230f3')"
     ]
   }
 }
