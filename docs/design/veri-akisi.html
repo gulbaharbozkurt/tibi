@@ -93,7 +93,7 @@ code{font-family:var(--mono);font-size:.88em}
 
       <rect class="box" x="20" y="540" width="160" height="44" rx="8"/>
       <text class="t" x="100" y="559" text-anchor="middle">Uygulama izleyici</text>
-      <text class="s" x="100" y="574" text-anchor="middle">banka uyg. kapandı mı?</text>
+      <text class="s" x="100" y="574" text-anchor="middle">erişilebilirlik, anlık</text>
 
       <!-- col2 writers -->
       <rect class="box" x="250" y="110" width="170" height="44" rx="8"/>
@@ -234,11 +234,5 @@ code{font-family:var(--mono);font-size:.88em}
     <div><b>İnternet tek yönlü</b><span>İnternete yalnızca Kur çekici çıkar ve yalnızca fiyat okur. İstekte kullanıcı verisi yok. Kur çekilemezse son bilinen kur tarihiyle kullanılır; uygulama çevrimdışı tam çalışır.</span></div>
   </div>
 
-  <div class="open">
-    <b>Karar gerekiyor: uygulama izleyici nasıl çalışsın?</b>
-    <ul>
-      <li><b>A) Kullanım erişimi + arka plan servisi.</b> Gereksinimdeki yol. Ekran açıkken birkaç saniyede bir “en son hangi uygulama açıktı” diye bakar. Bildirim çubuğunda sürekli küçük bir tibi ikonu durur; biraz pil harcar; bildirim 2–5 sn gecikebilir.</li>
-      <li><b>B) Erişilebilirlik servisi.</b> Android uygulama değiştiğinde anında haber verir; pil neredeyse harcamaz, sürekli ikon yok. Ama izin ekranı “ekranınızı okuyabilir” der (tibi yalnızca uygulama adını dinler), ve elle kurulan uygulamada ayarlardan bir kez “kısıtlı ayara izin ver” demek gerekir.</li>
-    </ul>
-  </div>
+  <div class="dec" style="margin-top:12px"><div><b>Uygulama izleyici: erişilebilirlik servisi</b><span>Android ön plandaki uygulama değişince anında haber verir; pil neredeyse harcanmaz, sürekli bildirim ikonu yok. Servis yalnızca “pencere değişti” olayını ve uygulama paket adını alır; ekran içeriğini okuma yetkisi istenmez (<code>canRetrieveWindowContent=false</code>). Android'in izin ekranındaki genel uyarı sistem metnidir, değiştirilemez; tibi'nin İzinler adımı gerçekte ne yapıldığını yazar.</span></div></div>
 </div>

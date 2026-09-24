@@ -36,7 +36,7 @@ Tek kişinin kullanacağı Android uygulaması. Harcamaları, taksitleri, gelirl
 
 ### 3.3 Banka uygulaması tetikleyicisi
 - **T1.** Kullanıcı ayarlardan izlenecek banka uygulamalarını seçer ve her uygulamayı bir hesaba veya karta bağlar.
-- **T2.** Seçili bir banka uygulaması kapatıldığında "Harcama yaptın mı?" bildirimi gelir. Bunun için Kullanım Erişimi (UsageStats) izni kullanılır.
+- **T2.** Seçili bir banka uygulaması kapatıldığında "Harcama yaptın mı?" bildirimi gelir. Bunun için Erişilebilirlik servisi kullanılır ve yalnızca "ön plandaki uygulama değişti" olayını dinler; ekran içeriğini okuma yetkisi istenmez (`canRetrieveWindowContent=false`). Android'in kendi izin ekranındaki genel uyarı metni değiştirilemez; tibi'nin İzinler adımı gerçekte ne yapıldığını açıkça yazar.
 - **T3.** Bildirimde "Evet" seçilince hızlı giriş formu açılır, bağlı kart önceden seçili gelir. "Hayır" seçilince bildirim kapanır.
 - **T4.** Aynı uygulama kısa sürede tekrar açılıp kapatılırsa bildirim tekrarlanmaz. Bekleme süresi ayarlanabilir, varsayılanı 10 dakika.
 
@@ -108,7 +108,7 @@ Tek kişinin kullanacağı Android uygulaması. Harcamaları, taksitleri, gelirl
 - **S2.** Kart sayısında sınır yoktur. Her kart için K1 ve K9'daki alanlar girilir.
 - **S3.** Banka hesapları ve nakit için açılış bakiyesi girilir.
 - **S4.** Harcama freni değerleri (F2, F3, F6) kullanıcı tarafından belirlenir. Önerilen başlangıç değerleri dolu gelir: tavan net gelirin %40'ı, uyarı eşikleri %70 ve %90, bekleme eşiği 2.000 ₺, süre 48 saat.
-- **S5.** İzinler adımında bildirim izni ve kullanım erişimi izni istenir; her iznin neden gerektiği tek cümleyle açıklanır. Kullanım erişimi verilmezse yalnızca banka tetikleyicisi çalışmaz.
+- **S5.** İzinler adımında bildirim izni ve erişilebilirlik izni istenir; her iznin neden gerektiği tek cümleyle açıklanır. Elle kurulan uygulamada Android önce "kısıtlı ayara izin ver" onayı ister; İzinler adımı bu adımı da gösterir. Erişilebilirlik izni verilmezse yalnızca banka tetikleyicisi çalışmaz.
 
 ### 3.12 Güvenlik ve veri
 - **V1.** Uygulama her açılışta ve arka plandan dönünce (ayarlanan süreden sonra) kilit ekranı gösterir: parmak izi ya da PIN. Kilit ekranında tutar veya bakiye görünmez.
