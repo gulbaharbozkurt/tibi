@@ -53,4 +53,12 @@ class KurulumFormlariTest {
         assertTrue(TaksitGirdisi(tutar = "1.850").doluMu())
         assertTrue(TaksitGirdisi(sayi = "6").doluMu())
     }
+
+    @org.junit.Test
+    fun `acilis borcu banka limitini asinca uyari`() {
+        kotlin.test.assertFalse(KartGirdisi(bankaLimiti = "15.000", kesilmisEkstre = "12.340").borcLimitiAsiyor())
+        kotlin.test.assertTrue(KartGirdisi(bankaLimiti = "15.000", kesilmisEkstre = "12.340", donemIci = "5.980").borcLimitiAsiyor())
+        kotlin.test.assertFalse(KartGirdisi(bankaLimiti = "", kesilmisEkstre = "99.999").borcLimitiAsiyor())
+        kotlin.test.assertFalse(KartGirdisi(bankaLimiti = "abc", kesilmisEkstre = "10").borcLimitiAsiyor())
+    }
 }

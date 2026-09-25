@@ -65,6 +65,7 @@ fun KartFormu(
         if (!duzenleme) Bolum("Şu anki borç") {
             TutarAlani(g.kesilmisEkstre, { degisti(g.copy(kesilmisEkstre = it)) }, "Kesilmiş ekstre (ödenmemiş)")
             TutarAlani(g.donemIci, { degisti(g.copy(donemIci = it)) }, "Dönem içi tek çekimler")
+            if (g.borcLimitiAsiyor()) Text("Borç banka limitinden yüksek görünüyor, tutarı kontrol et.", color = MaterialTheme.colorScheme.error)
             Text("Taksitler kurulumun son adımında ayrıca girilir.", color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }

@@ -1,5 +1,6 @@
 package app.tibi.ui.kurulum
 
+import app.tibi.core.para.kurusCoz
 import app.tibi.ui.Sonuc
 import app.tibi.veri.tablo.HesapTuru
 
@@ -32,3 +33,11 @@ suspend fun HesapFormu.kaydet(vm: KurulumVm): Sonuc =
 fun KartGirdisi?.doluMu(): Boolean = this != null && (ad.isNotBlank() || son4.isNotBlank())
 
 fun TaksitGirdisi.doluMu(): Boolean = tutar.isNotBlank() || sayi.isNotBlank()
+
+/** Açılış borcu (kesilmiş ekstre + dönem içi) banka limitini aşıyor mu? Yazım hatasını yakalamak için; kaydı engellemez. */
+fun KartGirdisi.borcLimitiAsiyor(): Boolean {
+    val limit = kurusCoz(bankaLimiti)?.deger ?: return false
+    if (limit <= 0) return false
+    val borc = (kurusCoz(kesilmisEkstre)?.deger ?: 0L) + (kurusCoz(donemIci)?.deger ?: 0L)
+    return borc > limit
+}
