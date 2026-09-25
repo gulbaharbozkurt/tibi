@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AlertDialog
@@ -52,19 +54,36 @@ fun HareketlerEkrani() {
     val donem by vm.donem.collectAsStateWithLifecycle(null)
     val filtre by vm.filtre.collectAsStateWithLifecycle()
     val arama by vm.arama.collectAsStateWithLifecycle()
+    val kaydirma by vm.kaydirma.collectAsStateWithLifecycle()
     var silinecek by remember { mutableStateOf<HareketSatiri?>(null) }
     val kapsam = rememberCoroutineScope()
     val bugun = remember { LocalDate.now() }
 
     Column(Modifier.fillMaxSize().padding(horizontal = 16.dp)) {
         Text("Hareketler", style = MaterialTheme.typography.headlineSmall, modifier = Modifier.padding(top = 16.dp))
-        donem?.let { Text("${it.aralik()} dönemi · ${gruplar.sumOf { g -> g.satirlar.size }} kayıt", color = MaterialTheme.colorScheme.onSurfaceVariant) }
+        donem?.let { d ->
+            Row(Modifier.fillMaxWidth().padding(top = 4.dp), verticalAlignment = Alignment.CenterVertically) {
+                IconButton({ vm.onceki() }) { Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = "Önceki dönem") }
+                Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
+                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                        Text(d.aralik(), style = MaterialTheme.typography.titleMedium)
+                        if (kaydirma == 0) Text("Bu dönem", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
+                    }
+                    Text("${gruplar.sumOf { g -> g.satirlar.size }} kayıt", style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
+                IconButton({ vm.sonraki() }, enabled = kaydirma < 0) {
+                    Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = "Sonraki dönem")
+                }
+            }
+        }
         OutlinedTextField(arama, { vm.arama.value = it }, leadingIcon = { Icon(Icons.Filled.Search, null) },
             placeholder = { Text("Ara: not, kategori, hesap, tutar") }, singleLine = true, modifier = Modifier.fillMaxWidth().padding(top = 8.dp))
         Row(horizontalArrangement = Arrangement.spacedBy(6.dp), modifier = Modifier.padding(vertical = 8.dp)) {
             HareketFiltresi.entries.forEach { f -> FilterChip(filtre == f, { vm.filtre.value = f }, label = { Text(FILTRE_ADI.getValue(f)) }) }
         }
-        if (gruplar.isEmpty()) Text("Bu dönemde kayıt yok. \"+\" ile ekleyebilirsin.", color = MaterialTheme.colorScheme.onSurfaceVariant)
+        if (gruplar.isEmpty()) Text(if (kaydirma == 0) "Bu dönemde kayıt yok. \"+\" ile ekleyebilirsin." else "Bu dönemde kayıt yok.",
+            color = MaterialTheme.colorScheme.onSurfaceVariant)
         LazyColumn(contentPadding = PaddingValues(bottom = 88.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             gruplar.forEach { g ->
                 item(key = "g${g.tarih}") {

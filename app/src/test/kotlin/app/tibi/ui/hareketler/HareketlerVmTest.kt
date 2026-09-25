@@ -78,4 +78,35 @@ class HareketlerVmTest {
         assertEquals(false, avansDurumu()[300000L])
         assertEquals(null, avansDurumu()[4_000_000L])
     }
+
+    @Test
+    fun `onceki donemdeki harcama yalnizca oncekiye gecince gorunur`() = runTest {
+        val kayit = KayitServisi(db) { Instant.parse("2026-09-24T09:00:00Z") }
+        val nakit = db.hesapDao().ekle(Hesap(ad = "Cüzdan", tur = HesapTuru.NAKIT, acilisTarihi = t("2026-08-01")))
+        kayit.harcama(Kurus(7777), t("2026-08-20"), nakit, db.kategoriDao().adIle("Market")!!.id)
+        assertEquals(false, 7777L in vm.gruplar.first().flatMap { it.satirlar }.map { it.tutarKurus })
+        assertEquals(true, vm.buDonemMi.first())
+
+        vm.onceki()
+        assertEquals(-1, vm.kaydirma.value)
+        assertEquals(false, vm.buDonemMi.first())
+        assertEquals(t("2026-08-01"), vm.donem.first().baslangic)
+        assertEquals(listOf(7777L), vm.gruplar.first().flatMap { it.satirlar }.map { it.tutarKurus })
+        vm.arama.value = "market"
+        assertEquals(listOf(7777L), vm.gruplar.first().flatMap { it.satirlar }.map { it.tutarKurus })
+        vm.arama.value = ""
+
+        vm.sonraki()
+        assertEquals(0, vm.kaydirma.value)
+        assertEquals(false, 7777L in vm.gruplar.first().flatMap { it.satirlar }.map { it.tutarKurus })
+    }
+
+    @Test
+    fun `bu donemde sonraki bir sey yapmaz`() = runTest {
+        val once = vm.donem.first()
+        vm.sonraki()
+        assertEquals(0, vm.kaydirma.value)
+        assertEquals(once, vm.donem.first())
+        assertEquals(4, vm.gruplar.first().sumOf { it.satirlar.size })
+    }
 }

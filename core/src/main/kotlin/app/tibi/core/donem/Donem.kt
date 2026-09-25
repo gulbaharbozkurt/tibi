@@ -36,3 +36,16 @@ object DonemHesaplayici {
         return Donem(kural.tarih(ay), sonraki.minusDays(1))
     }
 }
+
+/**
+ * [baslangic] döneminden [adim] dönem ileri (+) ya da geri (−) gider.
+ * Önceki dönem: başlangıçtan bir gün önceyi içeren dönem; sonraki: bitişten bir gün sonrayı içeren.
+ * [bul] bir tarihi içeren dönemi verir (maaş kuralı ya da takvim ayı).
+ */
+fun kaydir(baslangic: Donem, adim: Int, bul: (LocalDate) -> Donem): Donem {
+    var d = baslangic
+    repeat(kotlin.math.abs(adim)) {
+        d = if (adim < 0) bul(d.baslangic.minusDays(1)) else bul(d.bitis.plusDays(1))
+    }
+    return d
+}
