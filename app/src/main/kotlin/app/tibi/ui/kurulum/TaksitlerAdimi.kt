@@ -36,11 +36,11 @@ import java.time.format.DateTimeFormatter
 private val AY_YIL = DateTimeFormatter.ofPattern("MMMM yyyy", TR)
 
 @Composable
-fun TaksitlerAdimi(vm: KurulumVm) {
-    val kartlar by vm.kartlar.collectAsStateWithLifecycle(emptyList())
+fun TaksitlerAdimi(vm: KurulumVm, g: TaksitGirdisi, degisti: (TaksitGirdisi) -> Unit) {
+    val kartListesi by vm.kartlar.collectAsStateWithLifecycle(null)
+    val kartlar = kartListesi.orEmpty()
     val taksitler by vm.taksitler.collectAsStateWithLifecycle(emptyList())
     val kapsam = rememberCoroutineScope()
-    var g by remember { mutableStateOf(TaksitGirdisi()) }
     var plan by remember { mutableStateOf<List<PlanliTaksit>?>(null) }
     var hata by remember { mutableStateOf<String?>(null) }
     LaunchedEffect(g) { plan = vm.planOnizleme(g) }
@@ -56,22 +56,23 @@ fun TaksitlerAdimi(vm: KurulumVm) {
             }
         }
         Bolum("Yeni taksit") {
-            Secici("Kart", kartlar, kartlar.firstOrNull { it.hesapId == g.kartId }, { "${it.ad} ··${it.son4}" }, { g = g.copy(kartId = it.hesapId) })
-            OutlinedTextField(g.aciklama, { g = g.copy(aciklama = it) }, label = { Text("Ne? (ör. Telefon)") }, singleLine = true, modifier = Modifier.fillMaxWidth())
+            if (kartListesi != null && kartlar.isEmpty()) Text("Önce bir kart ekle ya da bu adımı geç.", color = MaterialTheme.colorScheme.error)
+            else if (kartlar.isNotEmpty()) Secici("Kart", kartlar, kartlar.firstOrNull { it.hesapId == g.kartId }, { kartEtiketi(it) }, { degisti(g.copy(kartId = it.hesapId)) })
+            OutlinedTextField(g.aciklama, { degisti(g.copy(aciklama = it)) }, label = { Text("Ne? (ör. Telefon)") }, singleLine = true, modifier = Modifier.fillMaxWidth())
             Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 listOf(TaksitTuru.ALISVERIS to "Alışveriş", TaksitTuru.EKSTRE_TAKSIT to "Ekstre taksit", TaksitTuru.NAKIT_AVANS to "Nakit avans").forEach { (t, ad) ->
-                    FilterChip(g.tur == t, { g = g.copy(tur = t) }, label = { Text(ad) })
+                    FilterChip(g.tur == t, { degisti(g.copy(tur = t)) }, label = { Text(ad) })
                 }
             }
             Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 listOf(TaksitModu.AYLIK to "Aylık tutar", TaksitModu.TOPLAM to "Toplam tutar", TaksitModu.KALAN to "Kalan borç").forEach { (m, ad) ->
-                    FilterChip(g.mod == m, { g = g.copy(mod = m) }, label = { Text(ad) })
+                    FilterChip(g.mod == m, { degisti(g.copy(mod = m)) }, label = { Text(ad) })
                 }
             }
-            TutarAlani(g.tutar, { g = g.copy(tutar = it) }, when (g.mod) { TaksitModu.AYLIK -> "Aylık taksit"; TaksitModu.TOPLAM -> "Toplam tutar"; TaksitModu.KALAN -> "Kalan borç" })
+            TutarAlani(g.tutar, { degisti(g.copy(tutar = it)) }, when (g.mod) { TaksitModu.AYLIK -> "Aylık taksit"; TaksitModu.TOPLAM -> "Toplam tutar"; TaksitModu.KALAN -> "Kalan borç" })
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                SayiAlani(g.sayi, { g = g.copy(sayi = it) }, if (g.mod == TaksitModu.KALAN) "Kalan taksit" else "Toplam taksit", Modifier.weight(1f))
-                if (g.mod != TaksitModu.KALAN) SayiAlani(g.siradaki, { g = g.copy(siradaki = it) }, "Sıradaki kaçıncı?", Modifier.weight(1f))
+                SayiAlani(g.sayi, { degisti(g.copy(sayi = it)) }, if (g.mod == TaksitModu.KALAN) "Kalan taksit" else "Toplam taksit", Modifier.weight(1f))
+                if (g.mod != TaksitModu.KALAN) SayiAlani(g.siradaki, { degisti(g.copy(siradaki = it)) }, "Sıradaki kaçıncı?", Modifier.weight(1f))
             }
             plan?.let { p ->
                 val kalan = p.filterNot { it.oncedenOdendi }
@@ -80,9 +81,10 @@ fun TaksitlerAdimi(vm: KurulumVm) {
             }
             hata?.let { Text(it, color = MaterialTheme.colorScheme.error) }
             Button({
+                val f = g
                 kapsam.launch {
-                    when (val s = vm.taksitEkle(g)) {
-                        Sonuc.Tamam -> { g = TaksitGirdisi(kartId = g.kartId); hata = null }
+                    when (val s = vm.taksitEkle(f)) {
+                        Sonuc.Tamam -> { degisti(TaksitGirdisi(kartId = f.kartId)); hata = null }
                         is Sonuc.Hata -> hata = s.mesaj
                     }
                 }

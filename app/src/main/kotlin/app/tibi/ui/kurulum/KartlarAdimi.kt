@@ -25,11 +25,10 @@ import app.tibi.veri.tablo.KartTuru
 import kotlinx.coroutines.launch
 
 @Composable
-fun KartlarAdimi(vm: KurulumVm) {
+fun KartlarAdimi(vm: KurulumVm, form: KartGirdisi?, degisti: (KartGirdisi?) -> Unit) {
     val kartlar by vm.kartlar.collectAsStateWithLifecycle(emptyList())
     val bankalar by vm.bankalar.collectAsStateWithLifecycle(emptyList())
     val kapsam = rememberCoroutineScope()
-    var form by remember { mutableStateOf<KartGirdisi?>(null) }
     var hata by remember { mutableStateOf<String?>(null) }
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -44,16 +43,16 @@ fun KartlarAdimi(vm: KurulumVm) {
         }
         val f = form
         if (f == null) {
-            OutlinedButton({ form = KartGirdisi(); hata = null }, Modifier.fillMaxWidth()) { Text("+ Kart ekle") }
+            OutlinedButton({ degisti(KartGirdisi()); hata = null }, Modifier.fillMaxWidth()) { Text("+ Kart ekle") }
         } else {
-            KartFormu(f, kartlar.filter { it.kartTuru == KartTuru.ANA }, bankalar) { form = it }
+            KartFormu(f, kartlar.filter { it.kartTuru == KartTuru.ANA }, bankalar) { degisti(it) }
             hata?.let { Text(it, color = MaterialTheme.colorScheme.error) }
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedButton({ form = null; hata = null }, Modifier.weight(1f)) { Text("Vazgeç") }
+                OutlinedButton({ degisti(null); hata = null }, Modifier.weight(1f)) { Text("Vazgeç") }
                 Button({
                     kapsam.launch {
                         when (val s = vm.kartEkle(f)) {
-                            Sonuc.Tamam -> { form = null; hata = null }
+                            Sonuc.Tamam -> { degisti(null); hata = null }
                             is Sonuc.Hata -> hata = s.mesaj
                         }
                     }

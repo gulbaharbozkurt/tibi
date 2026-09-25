@@ -34,16 +34,12 @@ import app.tibi.veri.tablo.HesapTuru
 import kotlinx.coroutines.launch
 
 @Composable
-fun HesaplarAdimi(vm: KurulumVm) {
+fun HesaplarAdimi(vm: KurulumVm, form: HesapFormu, degisti: (HesapFormu) -> Unit) {
     val hesaplar by vm.hesaplar.collectAsStateWithLifecycle(emptyList())
     val bankalar by vm.bankalar.collectAsStateWithLifecycle(emptyList())
     val kapsam = rememberCoroutineScope()
-    var banka by remember { mutableStateOf("") }
-    var ad by remember { mutableStateOf("") }
-    var tur by remember { mutableStateOf(HesapTuru.BANKA) }
-    var bakiye by remember { mutableStateOf("") }
-    var maas by remember { mutableStateOf(hesaplar.none { it.maasHesabi }) }
     var hata by remember { mutableStateOf<String?>(null) }
+    val tur = form.tur
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text("Bugünkü bakiyeleri gir; uygulama buradan başlar. Kredi kartları sonraki adımda.",
@@ -57,26 +53,27 @@ fun HesaplarAdimi(vm: KurulumVm) {
         }
         Bolum("Yeni hesap") {
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                FilterChip(tur == HesapTuru.BANKA, { tur = HesapTuru.BANKA }, label = { Text("Banka hesabı") })
-                FilterChip(tur == HesapTuru.NAKIT, { tur = HesapTuru.NAKIT }, label = { Text("Elde nakit") })
+                FilterChip(tur == HesapTuru.BANKA, { degisti(form.copy(tur = HesapTuru.BANKA)) }, label = { Text("Banka hesabı") })
+                FilterChip(tur == HesapTuru.NAKIT, { degisti(form.copy(tur = HesapTuru.NAKIT)) }, label = { Text("Elde nakit") })
             }
             if (tur == HesapTuru.BANKA) {
-                OutlinedTextField(banka, { banka = it }, label = { Text("Banka") }, placeholder = { Text("Garanti BBVA") },
+                OutlinedTextField(form.banka, { degisti(form.copy(banka = it)) }, label = { Text("Banka") }, placeholder = { Text("Garanti BBVA") },
                     singleLine = true, modifier = Modifier.fillMaxWidth())
-                BankaCipleri(bankalar, banka) { banka = it }
+                BankaCipleri(bankalar, form.banka) { degisti(form.copy(banka = it)) }
             }
-            OutlinedTextField(ad, { ad = it }, label = { Text("Hesap adı") },
+            OutlinedTextField(form.ad, { degisti(form.copy(ad = it)) }, label = { Text("Hesap adı") },
                 placeholder = { Text(if (tur == HesapTuru.BANKA) "Vadesiz hesap" else "Elde nakit") },
                 singleLine = true, modifier = Modifier.fillMaxWidth())
-            TutarAlani(bakiye, { bakiye = it }, "Bugünkü bakiye")
+            TutarAlani(form.bakiye, { degisti(form.copy(bakiye = it)) }, "Bugünkü bakiye")
             if (tur == HesapTuru.BANKA) Row(verticalAlignment = Alignment.CenterVertically) {
-                Checkbox(maas, { maas = it }); Text("Maaşım bu hesaba yatıyor")
+                Checkbox(form.maas, { degisti(form.copy(maas = it)) }); Text("Maaşım bu hesaba yatıyor")
             }
             hata?.let { Text(it, color = MaterialTheme.colorScheme.error) }
             Button(onClick = {
+                val f = form
                 kapsam.launch {
-                    when (val s = vm.hesapEkle(banka, ad, tur, bakiye, maas && tur == HesapTuru.BANKA)) {
-                        Sonuc.Tamam -> { ad = ""; bakiye = ""; maas = false; hata = null }
+                    when (val s = f.kaydet(vm)) {
+                        Sonuc.Tamam -> { degisti(f.eklendiktenSonra()); hata = null }
                         is Sonuc.Hata -> hata = s.mesaj
                     }
                 }

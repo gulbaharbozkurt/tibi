@@ -1,5 +1,6 @@
 package app.tibi.ui.ozet
 
+import app.tibi.ui.ortak.hesapEtiketi
 import androidx.lifecycle.ViewModel
 import app.tibi.core.donem.Donem
 import app.tibi.veri.Anahtarlar
@@ -56,7 +57,7 @@ class OzetVm(
             giderKurus = toplam.giderKurus,
             kalanKurus = toplam.gelirKurus - toplam.giderKurus,
             hesaplar = hesaplar,
-            kartlar = kartlar.filter { it.anaKartId == null }.map { KartOzeti(it.ad, it.kullanimKurus, it.kendiLimitiKurus) },
+            kartlar = kartlar.filter { it.anaKartId == null }.map { KartOzeti(hesapEtiketi(it.bankaAdi, it.ad), it.kullanimKurus, it.kendiLimitiKurus) },
             taksitYuku = yuk.take(3),
             dusulecekAvansKurus = avans,
         )

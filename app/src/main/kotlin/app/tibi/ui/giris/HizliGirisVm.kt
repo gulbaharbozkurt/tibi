@@ -25,10 +25,10 @@ class HizliGirisVm(
 ) : ViewModel() {
     val giderKategorileri: Flow<List<Kategori>> = db.kategoriDao().kullanimSirali(KategoriYonu.GIDER)
     val gelirKategorileri: Flow<List<Kategori>> = db.kategoriDao().kullanimSirali(KategoriYonu.GELIR)
-    /** Önce banka hesapları ve nakit ("Garanti BBVA · Vadesiz"), sonra kartlar (kendi adıyla). */
+    /** Önce banka hesapları ve nakit ("Garanti BBVA · Vadesiz"), sonra kartlar ("Yapı Kredi · WorldCard"; bankasız kart yalnızca adıyla). */
     val hesaplar: Flow<List<HesapSecenegi>> = combine(db.hesapDao().bakiyeler(), db.kartDao().kartlar()) { hesaplar, kartlar ->
         hesaplar.map { HesapSecenegi(it.id, hesapEtiketi(it.bankaAdi, it.ad), false) } +
-            kartlar.map { HesapSecenegi(it.hesapId, it.ad, true) }
+            kartlar.map { HesapSecenegi(it.hesapId, hesapEtiketi(it.bankaAdi, it.ad), true) }
     }
 
     suspend fun kaydet(

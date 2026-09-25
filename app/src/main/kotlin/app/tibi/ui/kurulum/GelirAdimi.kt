@@ -17,6 +17,7 @@ import app.tibi.ui.ortak.SayiAlani
 import app.tibi.ui.ortak.Secici
 import app.tibi.ui.ortak.TutarAlani
 import app.tibi.ui.ortak.aralik
+import app.tibi.ui.ortak.hesapEtiketi
 
 /** Form alanları dışarıda tutulur; "Devam" butonu KurulumAkisi'nde maasKaydet'i çağırır. */
 class GelirFormu(val tutar: String = "", val gun: String = "", val haftaSonu: HaftaSonuKurali = HaftaSonuKurali.ONCEKI, val hesapId: Long? = null) {
@@ -32,8 +33,8 @@ private val HAFTA_SONU_ADI = mapOf(
 
 @Composable
 fun GelirAdimi(vm: KurulumVm, form: GelirFormu, degisti: (GelirFormu) -> Unit) {
-    val hesaplar by vm.hesaplar.collectAsStateWithLifecycle(emptyList())
-    val bankalar = hesaplar.filter { it.tur == app.tibi.veri.tablo.HesapTuru.BANKA }
+    val hesaplar by vm.hesaplar.collectAsStateWithLifecycle(null)
+    val bankalar = hesaplar.orEmpty().filter { it.tur == app.tibi.veri.tablo.HesapTuru.BANKA }
     androidx.compose.runtime.LaunchedEffect(bankalar) {
         if (form.hesapId == null) bankalar.firstOrNull { it.maasHesabi }?.let { degisti(form.kopya(hesapId = it.id)) }
     }
@@ -49,8 +50,13 @@ fun GelirAdimi(vm: KurulumVm, form: GelirFormu, degisti: (GelirFormu) -> Unit) {
             }
             Secici("Hafta sonuna denk gelirse", HaftaSonuKurali.entries, form.haftaSonu, { HAFTA_SONU_ADI.getValue(it) },
                 { degisti(form.kopya(haftaSonu = it)) })
-            Secici("Yattığı hesap", bankalar, bankalar.firstOrNull { it.id == form.hesapId }, { it.ad },
-                { degisti(form.kopya(hesapId = it.id)) })
+            when {
+                hesaplar == null -> Unit
+                bankalar.isEmpty() -> Text("Önce bir banka hesabı ekle. Geri'ye basıp Bankalar ve nakit adımında ekleyebilirsin.",
+                    color = MaterialTheme.colorScheme.error)
+                else -> Secici("Yattığı hesap", bankalar, bankalar.firstOrNull { it.id == form.hesapId }, { hesapEtiketi(it.bankaAdi, it.ad) },
+                    { degisti(form.kopya(hesapId = it.id)) })
+            }
         }
         donem?.let {
             Bolum("Bu dönem") {
