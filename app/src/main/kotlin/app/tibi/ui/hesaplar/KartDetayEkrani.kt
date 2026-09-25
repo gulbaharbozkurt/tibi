@@ -20,12 +20,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.tibi.core.para.Kurus
 import app.tibi.core.para.bicimle
 import app.tibi.ui.ortak.Bolum
 import app.tibi.ui.ortak.kisa
+import app.tibi.ui.ortak.limitMetni
 import app.tibi.ui.tibiVm
 
 @Composable
@@ -48,7 +50,9 @@ fun KartDetayEkrani(kartId: Long, geri: () -> Unit, duzenle: () -> Unit) {
                 val oran = if (limit > 0) (x.kart.kullanimKurus.toFloat() / limit).coerceIn(0f, 1f) else 1f
                 LinearProgressIndicator(progress = { oran }, modifier = Modifier.fillMaxWidth(),
                     color = if (oran >= 0.9f) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary)
-                Text("${Kurus(x.kalanKurus ?: 0).bicimle()} kaldı / ${Kurus(limit).bicimle()}")
+                val kalan = x.kalanKurus ?: 0
+                Text("${limitMetni(kalan)} / ${Kurus(limit).bicimle()}",
+                    color = if (kalan < 0) MaterialTheme.colorScheme.error else Color.Unspecified)
             }
             x.ana.bankaLimitiKurus?.let {
                 Text("Banka limiti ${Kurus(it).bicimle()}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)

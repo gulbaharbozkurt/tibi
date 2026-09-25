@@ -105,4 +105,14 @@ class HizliGirisVmTest {
             vm.kaydet(GirisTuru.AVANS, "100", bonus, null, null, 1, 0, bugun, ""))
         assertEquals(1, db.hareketDao().sayi())
     }
+
+    @Test
+    fun `gecmis tarih kaydedilir, ileri tarih reddedilir`() = runTest {
+        val gecmis = LocalDate.parse("2026-09-12")
+        assertEquals(Sonuc.Tamam, vm.kaydet(GirisTuru.HARCAMA, "100", nakit, null, null, 1, 0, gecmis, ""))
+        assertEquals(gecmis, db.hareketDao().satirlar(gecmis, gecmis).first().single().tarih)
+        assertEquals(Sonuc.Hata("İleri bir tarih seçilemez."),
+            vm.kaydet(GirisTuru.HARCAMA, "100", nakit, null, null, 1, 0, bugun.plusDays(1), ""))
+        assertEquals(1, db.hareketDao().sayi())
+    }
 }

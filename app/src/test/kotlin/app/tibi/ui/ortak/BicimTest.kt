@@ -28,4 +28,18 @@ class BicimTest {
         assertEquals("Garanti BBVA · Vadesiz", hesapEtiketi("Garanti BBVA", "Vadesiz"))
         assertEquals("Nakit", hesapEtiketi(null, "Nakit"))
     }
+
+    @Test fun limitMetni() {
+        assertEquals("1.294,26 ₺ kaldı", limitMetni(129426L))
+        assertEquals("1.705,74 ₺ aşıldı", limitMetni(-170574L))
+        assertEquals("0,00 ₺ kaldı", limitMetni(0L))
+    }
+
+    @Test fun utcMilisTarih() {
+        val gun = t("2026-09-25")
+        assertEquals(1790294400000L, gun.utcMillis())
+        assertEquals(gun, 1790294400000L.utcTarih())
+        assertEquals(gun, (1790294400000L + 86_399_999L).utcTarih())
+        listOf("2000-01-01", "2024-02-29", "2026-03-29", "2026-10-25", "2027-12-31").forEach { assertEquals(t(it), t(it).utcMillis().utcTarih()) }
+    }
 }

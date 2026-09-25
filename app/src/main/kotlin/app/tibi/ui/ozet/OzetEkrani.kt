@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.tibi.core.para.Kurus
@@ -22,6 +23,7 @@ import app.tibi.ui.ortak.Bolum
 import app.tibi.ui.ortak.aralik
 import app.tibi.ui.ortak.hesapEtiketi
 import app.tibi.ui.ortak.kisa
+import app.tibi.ui.ortak.limitMetni
 import app.tibi.ui.tibiVm
 
 @Composable
@@ -51,7 +53,8 @@ fun OzetEkrani() {
             o.kartlar.forEach { k ->
                 val limit = k.kendiLimitiKurus
                 if (limit != null && limit > 0) {
-                    Satir(k.ad, "${Kurus(limit - k.kullanimKurus).bicimle()} kaldı")
+                    val kalan = limit - k.kullanimKurus
+                    Satir(k.ad, limitMetni(kalan), if (kalan < 0) MaterialTheme.colorScheme.error else Color.Unspecified)
                     val oran = (k.kullanimKurus.toFloat() / limit).coerceIn(0f, 1f)
                     LinearProgressIndicator(progress = { oran }, modifier = Modifier.fillMaxWidth(),
                         color = if (oran >= 0.9f) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary)
@@ -70,8 +73,8 @@ fun OzetEkrani() {
 }
 
 @Composable
-internal fun Satir(sol: String, sag: String) {
+internal fun Satir(sol: String, sag: String, renk: Color = Color.Unspecified) {
     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-        Text(sol); Text(sag, style = MaterialTheme.typography.bodyLarge)
+        Text(sol); Text(sag, style = MaterialTheme.typography.bodyLarge, color = renk)
     }
 }

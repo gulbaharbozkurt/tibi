@@ -12,15 +12,20 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -36,8 +41,11 @@ import app.tibi.ui.Sonuc
 import app.tibi.ui.ortak.Secici
 import app.tibi.ui.ortak.TutarAlani
 import app.tibi.ui.ortak.kisa
+import app.tibi.ui.ortak.utcMillis
+import app.tibi.ui.ortak.utcTarih
 import app.tibi.ui.tibiVm
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 
 private val TAKSITLER = listOf(1, 2, 3, 4, 5, 6, 9, 12, 18, 24)
 
@@ -58,7 +66,9 @@ fun HizliGirisSayfasi(kapat: (kaydedildi: Boolean) -> Unit) {
     var kategoriId by remember { mutableStateOf<Long?>(null) }
     var taksit by remember { mutableIntStateOf(1) }
     var erteleme by remember { mutableIntStateOf(0) }
-    var dun by remember { mutableStateOf(false) }
+    val bugun = remember { vm.bugun() }
+    var tarih by remember { mutableStateOf(bugun) }
+    var takvimAcik by remember { mutableStateOf(false) }
     var aciklama by remember { mutableStateOf("") }
     var hata by remember { mutableStateOf<String?>(null) }
 
@@ -102,14 +112,16 @@ fun HizliGirisSayfasi(kapat: (kaydedildi: Boolean) -> Unit) {
                 Secici("Erteleme", listOf(0, 1, 2, 3), erteleme, { if (it == 0) "Yok" else "$it ay" }, { erteleme = it }, Modifier.weight(1f))
             }
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                FilterChip(!dun, { dun = false }, label = { Text("Bugün · ${vm.bugun().kisa()}") })
-                FilterChip(dun, { dun = true }, label = { Text("Dün") })
+                val dun = bugun.minusDays(1)
+                val ozel = tarih != bugun && tarih != dun
+                FilterChip(tarih == bugun, { tarih = bugun }, label = { Text("Bugün · ${bugun.kisa()}") })
+                FilterChip(tarih == dun, { tarih = dun }, label = { Text("Dün") })
+                FilterChip(ozel, { takvimAcik = true }, label = { Text(if (ozel) tarih.kisa() else "Tarih seç") })
             }
             OutlinedTextField(aciklama, { aciklama = it }, label = { Text("Not (isteğe bağlı)") }, singleLine = true, modifier = Modifier.fillMaxWidth())
             hata?.let { Text(it, color = MaterialTheme.colorScheme.error) }
             Button(onClick = {
                 kapsam.launch {
-                    val tarih = if (dun) vm.bugun().minusDays(1) else vm.bugun()
                     when (val s = vm.kaydet(tur, tutar, hesapId, hedefId, kategoriId, taksit, erteleme, tarih, aciklama)) {
                         Sonuc.Tamam -> { durum.hide(); kapat(true) }
                         is Sonuc.Hata -> hata = s.mesaj
@@ -117,5 +129,30 @@ fun HizliGirisSayfasi(kapat: (kaydedildi: Boolean) -> Unit) {
                 }
             }, modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp)) { Text("Kaydet") }
         }
+    }
+    if (takvimAcik) TarihSecici(tarih, bugun, { tarih = it; takvimAcik = false }, { takvimAcik = false })
+}
+
+/** Takvimden geçmiş bir gün seçtirir; bugünden sonrası seçilemez. DatePicker UTC gece yarısıyla çalışır. */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun TarihSecici(secili: LocalDate, bugun: LocalDate, sec: (LocalDate) -> Unit, vazgec: () -> Unit) {
+    val sinir = bugun.utcMillis()
+    val durum = rememberDatePickerState(
+        initialSelectedDateMillis = secili.utcMillis(),
+        yearRange = 2000..bugun.year,
+        selectableDates = object : SelectableDates {
+            override fun isSelectableDate(utcTimeMillis: Long) = utcTimeMillis <= sinir
+            override fun isSelectableYear(year: Int) = year <= bugun.year
+        },
+    )
+    DatePickerDialog(
+        onDismissRequest = vazgec,
+        confirmButton = {
+            TextButton({ durum.selectedDateMillis?.let { sec(it.utcTarih()) } ?: vazgec() }) { Text("Tamam") }
+        },
+        dismissButton = { TextButton(vazgec) { Text("Vazgeç") } },
+    ) {
+        DatePicker(durum, title = { Text("Tarih seç", Modifier.padding(start = 24.dp, end = 12.dp, top = 16.dp)) })
     }
 }

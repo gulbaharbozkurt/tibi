@@ -35,6 +35,7 @@ class HizliGirisVm(
         tur: GirisTuru, tutarMetni: String, hesapId: Long?, hedefHesapId: Long?, kategoriId: Long?,
         taksit: Int, erteleme: Int, tarih: LocalDate, aciklama: String,
     ): Sonuc {
+        if (tarih.isAfter(bugun())) return Sonuc.Hata("İleri bir tarih seçilemez.")
         val tutar = kurusCoz(tutarMetni)?.takeIf { it.deger > 0 } ?: return Sonuc.Hata("Tutarı 1.249,90 biçiminde yaz.")
         val kaynak = hesapId ?: return Sonuc.Hata("Hesap ya da kart seç.")
         val not = aciklama.trim().ifEmpty { null }

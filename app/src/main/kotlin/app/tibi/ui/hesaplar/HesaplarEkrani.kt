@@ -14,11 +14,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.tibi.core.para.Kurus
 import app.tibi.core.para.bicimle
 import app.tibi.ui.ortak.Bolum
+import app.tibi.ui.ortak.limitMetni
 import app.tibi.ui.tibiVm
 import app.tibi.veri.dao.HesapBakiyesi
 import app.tibi.veri.dao.KartBilgisi
@@ -62,7 +64,10 @@ private fun KartSatiri(k: KartBilgisi, kartAc: (Long) -> Unit) {
             Text(if (k.kartTuru == KartTuru.ANA) "Kesim ${k.kesimGunu} · Son ödeme ${k.sonOdemeGunu}" else "Ortak limit",
                 style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
-        if (k.kartTuru == KartTuru.ANA) Text(k.kendiLimitiKurus?.let { "${Kurus(it - k.kullanimKurus).bicimle()} kaldı" }
-            ?: "borç ${Kurus(k.kullanimKurus).bicimle()}")
+        if (k.kartTuru == KartTuru.ANA) {
+            val kalan = k.kendiLimitiKurus?.let { it - k.kullanimKurus }
+            Text(kalan?.let { limitMetni(it) } ?: "borç ${Kurus(k.kullanimKurus).bicimle()}",
+                color = if (kalan != null && kalan < 0) MaterialTheme.colorScheme.error else Color.Unspecified)
+        }
     }
 }
