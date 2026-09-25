@@ -18,6 +18,7 @@ data class KartTaksidi(
     val aylikKurus: Long,
     val kalanKurus: Long,
     val sonKesim: LocalDate,
+    val kalem: String? = null,
 )
 
 @Dao
@@ -60,7 +61,8 @@ interface TaksitDao {
     @Query(
         """
         SELECT t.hareketId, h.aciklama, k.ad AS kategoriAdi, MAX(t.toplam) AS toplam, MIN(t.sira) AS siradakiSira,
-               MIN(t.tutarKurus) AS aylikKurus, SUM(t.tutarKurus) AS kalanKurus, MAX(t.ekstreKesimTarihi) AS sonKesim
+               MIN(t.tutarKurus) AS aylikKurus, SUM(t.tutarKurus) AS kalanKurus, MAX(t.ekstreKesimTarihi) AS sonKesim,
+               h.kalem
         FROM taksit_satiri t
         JOIN hareket h ON h.id = t.hareketId
         LEFT JOIN kategori k ON k.id = h.kategoriId

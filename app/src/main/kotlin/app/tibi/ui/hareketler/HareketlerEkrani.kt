@@ -40,7 +40,6 @@ import app.tibi.ui.ortak.gunBasligi
 import app.tibi.ui.tibiVm
 import app.tibi.veri.dao.HareketSatiri
 import app.tibi.veri.kalemAnahtari
-import app.tibi.veri.tablo.HareketTuru
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
@@ -113,17 +112,18 @@ fun HareketlerEkrani(kalemAc: (kalemAnahtar: String) -> Unit = {}) {
 @Composable
 /** [ac] doluysa (kalemli satır) satıra dokunmak kalem özetini açar; çöp kutusu kendi tıklamasını alır. */
 private fun HareketSatirKutusu(s: HareketSatiri, ac: (() -> Unit)?, sil: () -> Unit) {
-    val duzeltme = s.tur == HareketTuru.DUZELTME
-    val giris = s.tur in setOf(HareketTuru.GELIR, HareketTuru.TAHSILAT, HareketTuru.AVANS) || (duzeltme && s.hedefAdi != null)
-    val cikis = s.tur == HareketTuru.HARCAMA || (duzeltme && s.kaynakAdi != null)
+    val (tutar, renk) = satirTutari(s)
     val alt = satirAltMetni(s)
     Row(Modifier.fillMaxWidth().then(if (ac != null) Modifier.clickable(onClick = ac) else Modifier).padding(vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
         Column(Modifier.weight(1f)) {
             Text(satirBasligi(s))
             if (alt.isNotEmpty()) Text(alt, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
-        Text((if (giris) "+" else if (cikis) "−" else "") + Kurus(s.tutarKurus).bicimle(),
-            color = if (giris) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface)
+        Text(tutar, color = when (renk) {
+            TutarRengi.GIRIS -> MaterialTheme.colorScheme.primary
+            TutarRengi.NORMAL -> MaterialTheme.colorScheme.onSurface
+            TutarRengi.SOLUK -> MaterialTheme.colorScheme.onSurfaceVariant
+        })
         IconButton(sil) { Icon(Icons.Filled.Delete, contentDescription = "Sil", tint = MaterialTheme.colorScheme.onSurfaceVariant) }
     }
 }

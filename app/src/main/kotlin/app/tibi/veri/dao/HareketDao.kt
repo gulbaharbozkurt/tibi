@@ -24,6 +24,12 @@ data class HareketSatiri(
     /** Yalnızca avansta dolu: true = maaştan düşülecek, false = düşüldü. */
     val avansAcik: Boolean? = null,
     val kalem: String? = null,
+    /** Banka hesabının bankası; kart ve nakitte null (kart kendi adıyla gösterilir). */
+    val kaynakBankaAdi: String? = null,
+    val hedefBankaAdi: String? = null,
+    /** Karta yazılmış hareketlerde: önceden ödenmemiş taksit satırlarının toplamı ve sayısı; kart dışında null. */
+    val kalanKurus: Long? = null,
+    val kalanTaksit: Int? = null,
 )
 
 /** Hızlı girişte öneri: kalemin en son yazılışı, en son kategorisi ve tutarı, kaç kez girildiği. */
@@ -54,12 +60,21 @@ interface HareketDao {
         """
         SELECT h.id, h.tur, h.tarih, h.tutarKurus, k.ad AS kategoriAdi, ks.ad AS kaynakAdi, hd.ad AS hedefAdi,
                h.taksitSayisi, h.aciklama, h.gecmisAktarim, h.kalem,
-               CASE WHEN a.hareketId IS NULL THEN NULL WHEN a.mahsupHareketId IS NULL THEN 1 ELSE 0 END AS avansAcik
+               CASE WHEN a.hareketId IS NULL THEN NULL WHEN a.mahsupHareketId IS NULL THEN 1 ELSE 0 END AS avansAcik,
+               kb.ad AS kaynakBankaAdi, hb.ad AS hedefBankaAdi, ts.kalanKurus, ts.kalanTaksit
         FROM hareket h
         LEFT JOIN avans a ON a.hareketId = h.id
         LEFT JOIN kategori k ON k.id = h.kategoriId
         LEFT JOIN hesap ks ON ks.id = h.kaynakHesapId
         LEFT JOIN hesap hd ON hd.id = h.hedefHesapId
+        LEFT JOIN banka kb ON kb.id = ks.bankaId AND ks.tur = 'BANKA'
+        LEFT JOIN banka hb ON hb.id = hd.bankaId AND hd.tur = 'BANKA'
+        LEFT JOIN (
+          SELECT hareketId,
+                 COALESCE(SUM(CASE WHEN oncedenOdendi = 0 THEN tutarKurus END), 0) AS kalanKurus,
+                 SUM(CASE WHEN oncedenOdendi = 0 THEN 1 ELSE 0 END) AS kalanTaksit
+          FROM taksit_satiri GROUP BY hareketId
+        ) ts ON ts.hareketId = h.id
         WHERE h.tarih BETWEEN :bas AND :bit
         ORDER BY h.tarih DESC, h.id DESC
         """

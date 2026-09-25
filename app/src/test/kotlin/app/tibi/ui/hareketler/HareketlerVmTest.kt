@@ -4,10 +4,13 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import app.tibi.core.para.Kurus
 import app.tibi.veri.DonemServisi
+import app.tibi.veri.GecmisTaksitGirisi
 import app.tibi.veri.KayitServisi
 import app.tibi.veri.TibiVeritabani
 import app.tibi.veri.tablo.Hesap
 import app.tibi.veri.tablo.HesapTuru
+import app.tibi.veri.tablo.Kart
+import app.tibi.veri.tablo.TaksitTuru
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.After
@@ -124,5 +127,65 @@ class HareketlerVmTest {
         val eski = vm.gruplar.first().flatMap { it.satirlar }.single()
         assertEquals("Market", satirBasligi(eski))
         assertEquals("Nakit · haftalık", satirAltMetni(eski))
+    }
+
+    private suspend fun satir(tutar: Long) = vm.gruplar.first().flatMap { it.satirlar }.single { it.tutarKurus == tutar }
+
+    @Test
+    fun `banka hesabi banka adiyla, kart kendi adiyla gorunur ve banka adiyla aranir`() = runTest {
+        val kayit = KayitServisi(db) { Instant.parse("2026-09-24T09:00:00Z") }
+        val garanti = kayit.bankaBulVeyaEkle("Garanti BBVA")
+        val vadesiz = db.hesapDao().ekle(Hesap(ad = "Vadesiz hesap", tur = HesapTuru.BANKA, acilisTarihi = bugun, bankaId = garanti))
+        val elde = db.hesapDao().ekle(Hesap(ad = "Elde nakit", tur = HesapTuru.NAKIT, acilisTarihi = bugun))
+        val bonus = db.hesapDao().ekle(Hesap(ad = "Bonus", tur = HesapTuru.KREDI_KARTI, acilisTarihi = bugun, bankaId = garanti))
+        db.kartDao().ekle(Kart(hesapId = bonus, son4 = "4821", kesimGunu = 12, sonOdemeGunu = 22))
+        kayit.transfer(Kurus(20000), bugun, vadesiz, elde)
+        kayit.harcama(Kurus(4400), bugun, vadesiz, db.kategoriDao().adIle("Market")!!.id)
+        kayit.harcama(Kurus(5500), bugun, bonus, db.kategoriDao().adIle("Market")!!.id)
+
+        val transfer = satir(20000)
+        assertEquals("Garanti BBVA", transfer.kaynakBankaAdi)
+        assertEquals(null, transfer.hedefBankaAdi)
+        assertEquals("Garanti BBVA · Vadesiz hesap → Elde nakit", satirAltMetni(transfer))
+        assertEquals("Garanti BBVA · Vadesiz hesap", satirAltMetni(satir(4400)))
+        assertEquals(null, satir(5500).kaynakBankaAdi)
+        assertEquals("Bonus", satirAltMetni(satir(5500)))
+
+        vm.arama.value = "garanti"
+        assertEquals(setOf(20000L, 4400L), vm.gruplar.first().flatMap { it.satirlar }.map { it.tutarKurus }.toSet())
+    }
+
+    @Test
+    fun `kurulumda girilen taksit kalan tutariyla isaretsiz ve soluk gorunur`() = runTest {
+        val kayit = KayitServisi(db) { Instant.parse("2026-09-24T09:00:00Z") }
+        val bonus = db.hesapDao().ekle(Hesap(ad = "Bonus", tur = HesapTuru.KREDI_KARTI, acilisTarihi = bugun))
+        db.kartDao().ekle(Kart(hesapId = bonus, son4 = "4821", kesimGunu = 12, sonOdemeGunu = 22))
+        kayit.gecmisTaksit(GecmisTaksitGirisi.Aylik(Kurus(185000), 12, 6), bonus, null, TaksitTuru.ALISVERIS, bugun, "Telefon")
+        kayit.gecmisTaksit(GecmisTaksitGirisi.KalanBorc(Kurus(64000), 1), bonus, null, TaksitTuru.ALISVERIS, bugun,
+            "Kurulum: dönem içi harcamalar")
+        kayit.harcama(Kurus(90000), bugun, bonus, null, taksitSayisi = 3, kalem = "Mont")
+
+        val telefon = satir(12 * 185000L)
+        assertEquals(7 * 185000L, telefon.kalanKurus)
+        assertEquals(7, telefon.kalanTaksit)
+        assertEquals("Telefon", satirBasligi(telefon))
+        assertEquals("Kurulumda girilen taksit · 7 taksit kaldı", satirAltMetni(telefon))
+        assertEquals("12.950,00 ₺" to TutarRengi.SOLUK, satirTutari(telefon))
+
+        val donemIci = satir(64000)
+        assertEquals("Kurulum: dönem içi harcamalar", satirBasligi(donemIci))
+        assertEquals("Kurulumda girilen taksit · tek çekim", satirAltMetni(donemIci))
+        assertEquals("640,00 ₺" to TutarRengi.SOLUK, satirTutari(donemIci))
+
+        val mont = satir(90000)
+        assertEquals(90000L, mont.kalanKurus)
+        assertEquals("Bonus · 3 taksit", satirAltMetni(mont))
+        assertEquals("−900,00 ₺" to TutarRengi.NORMAL, satirTutari(mont))
+
+        assertEquals(null, satir(38650).kalanKurus)
+        assertEquals(null, satir(38650).kalanTaksit)
+        assertEquals("−386,50 ₺" to TutarRengi.NORMAL, satirTutari(satir(38650)))
+        assertEquals("+1.050,00 ₺" to TutarRengi.GIRIS, satirTutari(satir(105000)))
+        assertEquals("500,00 ₺" to TutarRengi.NORMAL, satirTutari(satir(50000)))
     }
 }

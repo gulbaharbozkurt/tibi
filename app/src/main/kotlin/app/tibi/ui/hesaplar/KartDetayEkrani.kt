@@ -65,7 +65,7 @@ fun KartDetayEkrani(kartId: Long, geri: () -> Unit, duzenle: () -> Unit) {
         if (x.taksitler.isNotEmpty()) Bolum("Taksitler") {
             x.taksitler.forEach { t ->
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                    Text("${t.aciklama ?: t.kategoriAdi ?: "Taksit"} · ${t.siradakiSira}/${t.toplam}")
+                    Text(taksitEtiketi(t))
                     Text("${Kurus(t.aylikKurus).bicimle()} / ay")
                 }
             }

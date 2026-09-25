@@ -39,18 +39,21 @@ class KartDetayVmTest {
         db.kartDao().ekle(Kart(hesapId = sanal, kartTuru = KartTuru.SANAL, anaKartId = bonus, son4 = "9054", kesimGunu = 12, sonOdemeGunu = 22))
         kayit.gecmisTaksit(GecmisTaksitGirisi.Aylik(Kurus(185000), 12, 6), bonus, null, TaksitTuru.ALISVERIS, bugun, "Telefon")
         kayit.harcama(Kurus(7999), bugun, sanal, null)
+        kayit.harcama(Kurus(90000), bugun, bonus, db.kategoriDao().adIle("Market")!!.id, taksitSayisi = 3, aciklama = "kışlık", kalem = "Mont")
+        kayit.harcama(Kurus(60000), bugun, bonus, db.kategoriDao().adIle("Market")!!.id, taksitSayisi = 2)
     }
     @After fun kapat() { db.close() }
 
     @Test
     fun `ana kart detayi`() = runTest {
         val d = KartDetayVm(db, bonus) { bugun }.detay.filterNotNull().first()
-        assertEquals(7 * 185000L + 7999L, d.kart.kullanimKurus)
-        assertEquals(1_500_000L - (7 * 185000L + 7999L), d.kalanKurus)
+        assertEquals(7 * 185000L + 7999L + 150000L, d.kart.kullanimKurus)
+        assertEquals(1_500_000L - (7 * 185000L + 7999L + 150000L), d.kalanKurus)
         assertEquals(t("2026-10-12"), d.siradakiKesim)
         assertEquals(t("2026-10-22"), d.sonOdeme)
-        assertEquals(185000L + 7999L, d.acikDonemKurus)
-        assertEquals(listOf("Telefon"), d.taksitler.map { it.aciklama })
+        assertEquals(185000L + 7999L + 60000L, d.acikDonemKurus)
+        assertEquals(listOf("Market · 1/2", "Mont · 1/3", "Telefon · 6/12"), d.taksitler.map(::taksitEtiketi))
+        assertEquals("Mont", d.taksitler[1].kalem)
         assertEquals(listOf("Bonus Sanal"), d.bagliKartlar.map { it.ad })
     }
 
@@ -59,7 +62,7 @@ class KartDetayVmTest {
         val d = KartDetayVm(db, sanal) { bugun }.detay.filterNotNull().first()
         assertEquals("Bonus Sanal", d.kart.ad)
         assertEquals("Bonus", d.ana.ad)
-        assertEquals(1_500_000L - (7 * 185000L + 7999L), d.kalanKurus)
-        assertEquals(185000L + 7999L, d.acikDonemKurus)
+        assertEquals(1_500_000L - (7 * 185000L + 7999L + 150000L), d.kalanKurus)
+        assertEquals(185000L + 7999L + 60000L, d.acikDonemKurus)
     }
 }

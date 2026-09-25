@@ -44,3 +44,7 @@ class KartDetayVm(db: TibiVeritabani, kartId: Long, bugun: () -> LocalDate = Loc
         }
     }
 }
+
+/** Kart detayındaki taksit satırı: "Mont · 1/3"; ad önceliği kalem → not → kategori → "Taksit". */
+fun taksitEtiketi(t: KartTaksidi): String =
+    "${t.kalem ?: t.aciklama ?: t.kategoriAdi ?: "Taksit"} · ${t.siradakiSira}/${t.toplam}"
