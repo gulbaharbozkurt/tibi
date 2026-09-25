@@ -79,7 +79,7 @@ class KurulumVmTest {
         assertEquals(Sonuc.Tamam, vm.hesapEkle("Garanti BBVA", "  ", HesapTuru.BANKA, "", false))
         assertEquals(Sonuc.Tamam, vm.hesapEkle("Garanti BBVA", "", HesapTuru.NAKIT, "", false))
         val h = vm.hesaplar.first()
-        assertEquals(listOf("Vadesiz", "Nakit"), h.map { it.ad })
+        assertEquals(listOf("Vadesiz hesap", "Elde nakit"), h.map { it.ad })
         assertEquals(null, h.last().bankaId)   // nakit bankayı yok sayar
         assertEquals(1, vm.bankalar.first().size)
     }

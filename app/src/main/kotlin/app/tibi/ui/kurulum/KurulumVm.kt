@@ -91,13 +91,13 @@ class KurulumVm(
         return Sonuc.Tamam
     }
 
-    /** Banka hesabı bir bankaya bağlanır (yoksa açılır); nakit bankayı yok sayar. Boş ad "Vadesiz" / "Nakit" olur. */
+    /** Banka hesabı bir bankaya bağlanır (yoksa açılır); nakit bankayı yok sayar. Boş ad "Vadesiz hesap" / "Elde nakit" olur. */
     suspend fun hesapEkle(bankaAdi: String, ad: String, tur: HesapTuru, bakiyeMetni: String, maasHesabi: Boolean): Sonuc {
         if (tur == HesapTuru.KREDI_KARTI) return Sonuc.Hata("Kredi kartları Kartlar adımında eklenir.")
         if (tur == HesapTuru.BANKA && bankaAdi.isBlank()) return Sonuc.Hata("Hesabın bağlı olduğu bankayı yaz.")
         val bakiye = if (bakiyeMetni.isBlank()) Kurus.SIFIR else kurusCoz(bakiyeMetni)
             ?: return Sonuc.Hata("Bakiyeyi 8.450,00 biçiminde yaz.")
-        val temizAd = ad.trim().ifEmpty { if (tur == HesapTuru.BANKA) "Vadesiz" else "Nakit" }
+        val temizAd = ad.trim().ifEmpty { if (tur == HesapTuru.BANKA) "Vadesiz hesap" else "Elde nakit" }
         return try {
             db.withTransaction {
                 val bankaId = if (tur == HesapTuru.BANKA) kayit.bankaBulVeyaEkle(bankaAdi) else null

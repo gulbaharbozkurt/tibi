@@ -58,7 +58,7 @@ fun HesaplarAdimi(vm: KurulumVm) {
         Bolum("Yeni hesap") {
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 FilterChip(tur == HesapTuru.BANKA, { tur = HesapTuru.BANKA }, label = { Text("Banka hesabı") })
-                FilterChip(tur == HesapTuru.NAKIT, { tur = HesapTuru.NAKIT }, label = { Text("Nakit") })
+                FilterChip(tur == HesapTuru.NAKIT, { tur = HesapTuru.NAKIT }, label = { Text("Elde nakit") })
             }
             if (tur == HesapTuru.BANKA) {
                 OutlinedTextField(banka, { banka = it }, label = { Text("Banka") }, placeholder = { Text("Garanti BBVA") },
@@ -66,7 +66,7 @@ fun HesaplarAdimi(vm: KurulumVm) {
                 BankaCipleri(bankalar, banka) { banka = it }
             }
             OutlinedTextField(ad, { ad = it }, label = { Text("Hesap adı") },
-                placeholder = { Text(if (tur == HesapTuru.BANKA) "Vadesiz" else "Nakit") },
+                placeholder = { Text(if (tur == HesapTuru.BANKA) "Vadesiz hesap" else "Elde nakit") },
                 singleLine = true, modifier = Modifier.fillMaxWidth())
             TutarAlani(bakiye, { bakiye = it }, "Bugünkü bakiye")
             if (tur == HesapTuru.BANKA) Row(verticalAlignment = Alignment.CenterVertically) {

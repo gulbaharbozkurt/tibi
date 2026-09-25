@@ -41,7 +41,7 @@ fun HesaplarEkrani(kartAc: (Long) -> Unit) {
                 g.kartlar.forEach { KartSatiri(it, kartAc) }
             }
         }
-        if (durum.nakit.isNotEmpty()) Bolum("Nakit") { durum.nakit.forEach { HesapSatiri(it) } }
+        if (durum.nakit.isNotEmpty()) Bolum("Elde nakit") { durum.nakit.forEach { HesapSatiri(it) } }
         if (durum.bankasizKartlar.isNotEmpty()) Bolum("Diğer kartlar") { durum.bankasizKartlar.forEach { KartSatiri(it, kartAc) } }
     }
 }
