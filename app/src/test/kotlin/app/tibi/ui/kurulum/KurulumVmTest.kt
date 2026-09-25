@@ -44,20 +44,85 @@ class KurulumVmTest {
 
     @Test
     fun `hesap eklenir, bakiye virgullu okunur`() = runTest {
-        assertEquals(Sonuc.Tamam, vm.hesapEkle("Garanti vadesiz", HesapTuru.BANKA, "8.450,00", maasHesabi = true))
-        assertEquals(Sonuc.Tamam, vm.hesapEkle("Nakit", HesapTuru.NAKIT, "", maasHesabi = false))
+        assertEquals(Sonuc.Tamam, vm.hesapEkle("Garanti BBVA", "Vadesiz", HesapTuru.BANKA, "8.450,00", maasHesabi = true))
+        assertEquals(Sonuc.Tamam, vm.hesapEkle("", "Nakit", HesapTuru.NAKIT, "", maasHesabi = false))
         val h = vm.hesaplar.first()
-        assertEquals(listOf("Garanti vadesiz", "Nakit"), h.map { it.ad })
+        assertEquals(listOf("Vadesiz", "Nakit"), h.map { it.ad })
         assertEquals(listOf(845000L, 0L), h.map { it.bakiyeKurus })
         assertTrue(h.first().maasHesabi)
+        assertEquals(listOf("Garanti BBVA", null), h.map { it.bankaAdi })
     }
 
     @Test
     fun `hatali hesap girisleri`() = runTest {
-        assertIs<Sonuc.Hata>(vm.hesapEkle("", HesapTuru.BANKA, "100", false))
-        assertIs<Sonuc.Hata>(vm.hesapEkle("X", HesapTuru.BANKA, "12,345", false))
-        assertIs<Sonuc.Hata>(vm.hesapEkle("X", HesapTuru.KREDI_KARTI, "100", false))
+        assertIs<Sonuc.Hata>(vm.hesapEkle("", "X", HesapTuru.BANKA, "100", false))
+        assertIs<Sonuc.Hata>(vm.hesapEkle("Garanti", "X", HesapTuru.BANKA, "12,345", false))
+        assertIs<Sonuc.Hata>(vm.hesapEkle("Garanti", "X", HesapTuru.KREDI_KARTI, "100", false))
         assertEquals(0, vm.hesaplar.first().size)
+        assertEquals(0, vm.bankalar.first().size)
+    }
+
+    @Test
+    fun `banka bulunur ya da eklenir, buyuk kucuk harf fark etmez`() = runTest {
+        assertEquals(Sonuc.Tamam, vm.hesapEkle(" Garanti BBVA ", "Vadesiz", HesapTuru.BANKA, "100", false))
+        assertEquals(Sonuc.Tamam, vm.hesapEkle("garanti bbva", "Birikim", HesapTuru.BANKA, "200", false))
+        assertEquals(Sonuc.Tamam, vm.hesapEkle("İŞ BANKASI", "Vadesiz", HesapTuru.BANKA, "300", false))
+        assertEquals(Sonuc.Tamam, vm.hesapEkle("iş bankası", "Maaş", HesapTuru.BANKA, "300", false))
+        assertEquals(listOf("Garanti BBVA", "İŞ BANKASI"), vm.bankalar.first().map { it.ad })
+        val h = vm.hesaplar.first()
+        assertEquals(2, h.map { it.bankaId }.toSet().size)
+        assertEquals(listOf("Garanti BBVA", "Garanti BBVA", "İŞ BANKASI", "İŞ BANKASI"), h.map { it.bankaAdi })
+    }
+
+    @Test
+    fun `bos hesap adi varsayilan olur`() = runTest {
+        assertEquals(Sonuc.Tamam, vm.hesapEkle("Garanti BBVA", "  ", HesapTuru.BANKA, "", false))
+        assertEquals(Sonuc.Tamam, vm.hesapEkle("Garanti BBVA", "", HesapTuru.NAKIT, "", false))
+        val h = vm.hesaplar.first()
+        assertEquals(listOf("Vadesiz", "Nakit"), h.map { it.ad })
+        assertEquals(null, h.last().bankaId)   // nakit bankayı yok sayar
+        assertEquals(1, vm.bankalar.first().size)
+    }
+
+    @Test
+    fun `banka hesabi bankasiz eklenemez`() = runTest {
+        assertEquals(Sonuc.Hata("Hesabın bağlı olduğu bankayı yaz."), vm.hesapEkle("  ", "Vadesiz", HesapTuru.BANKA, "100", false))
+        assertEquals(0, vm.hesaplar.first().size)
+        assertEquals(0, vm.bankalar.first().size)
+    }
+
+    @Test
+    fun `ana kart bankaya baglanir, bos banka bankasiz birakir`() = runTest {
+        vm.hesapEkle("Garanti BBVA", "Vadesiz", HesapTuru.BANKA, "0", false)
+        assertEquals(Sonuc.Tamam, vm.kartEkle(KartGirdisi(ad = "Bonus", bankaAdi = "garanti BBVA", son4 = "4821", kesimGunu = "12", sonOdemeGunu = "22")))
+        assertEquals(Sonuc.Tamam, vm.kartEkle(KartGirdisi(ad = "Maximum", bankaAdi = "İş Bankası", son4 = "1190", kesimGunu = "5", sonOdemeGunu = "15")))
+        assertEquals(Sonuc.Tamam, vm.kartEkle(KartGirdisi(ad = "Diğer", bankaAdi = " ", son4 = "0001", kesimGunu = "5", sonOdemeGunu = "15")))
+        val garanti = vm.bankalar.first().first { it.ad == "Garanti BBVA" }.id
+        val k = vm.kartlar.first()
+        assertEquals(garanti, k.first { it.ad == "Bonus" }.bankaId)
+        assertEquals("Garanti BBVA", k.first { it.ad == "Bonus" }.bankaAdi)
+        assertEquals("İş Bankası", k.first { it.ad == "Maximum" }.bankaAdi)
+        assertEquals(null, k.first { it.ad == "Diğer" }.bankaId)
+        assertEquals(listOf("Garanti BBVA", "İş Bankası"), vm.bankalar.first().map { it.ad })
+    }
+
+    @Test
+    fun `sanal kart ana kartin bankasini alir`() = runTest {
+        vm.kartEkle(KartGirdisi(ad = "Bonus", bankaAdi = "Garanti BBVA", son4 = "4821", kesimGunu = "12", sonOdemeGunu = "22"))
+        val ana = vm.kartlar.first().single()
+        assertEquals(Sonuc.Tamam, vm.kartEkle(KartGirdisi(ad = "Bonus Sanal", tur = KartTuru.SANAL, anaKartId = ana.hesapId,
+            bankaAdi = "Akbank", son4 = "9054")))
+        val s = vm.kartlar.first().first { it.ad == "Bonus Sanal" }
+        assertEquals(ana.bankaId, s.bankaId)
+        assertEquals("Garanti BBVA", s.bankaAdi)
+        assertEquals(listOf("Garanti BBVA"), vm.bankalar.first().map { it.ad })
+    }
+
+    @Test
+    fun `hatali kartta banka da yazilmaz`() = runTest {
+        assertIs<Sonuc.Hata>(vm.kartEkle(KartGirdisi(ad = "X", bankaAdi = "Akbank", son4 = "4821", kesimGunu = "12", sonOdemeGunu = "22",
+            kesilmisEkstre = "-")))
+        assertEquals(0, vm.bankalar.first().size)
     }
 
     @Test
@@ -68,7 +133,7 @@ class KurulumVmTest {
 
     @Test
     fun `maas kurali kaydedilir ve donem hesaplanir`() = runTest {
-        vm.hesapEkle("Garanti", HesapTuru.BANKA, "0", true)
+        vm.hesapEkle("Garanti", "Vadesiz", HesapTuru.BANKA, "0", true)
         val hesap = vm.hesaplar.first().single().id
         assertEquals(Donem(LocalDate.parse("2026-08-28"), LocalDate.parse("2026-09-29")), vm.donemOnizleme("30", HaftaSonuKurali.ONCEKI))
         assertEquals(Sonuc.Tamam, vm.maasKaydet("45.000", "30", HaftaSonuKurali.ONCEKI, hesap))
@@ -80,7 +145,7 @@ class KurulumVmTest {
 
     @Test
     fun `maas yeniden kaydedilince eskisi pasif olur`() = runTest {
-        vm.hesapEkle("Garanti", HesapTuru.BANKA, "0", true)
+        vm.hesapEkle("Garanti", "Vadesiz", HesapTuru.BANKA, "0", true)
         val hesap = vm.hesaplar.first().single().id
         vm.maasKaydet("45.000", "30", HaftaSonuKurali.ONCEKI, hesap)
         vm.maasKaydet("47.500", "1", HaftaSonuKurali.SONRAKI, hesap)
@@ -90,7 +155,7 @@ class KurulumVmTest {
 
     @Test
     fun `hatali maas girisleri`() = runTest {
-        vm.hesapEkle("Garanti", HesapTuru.BANKA, "0", true)
+        vm.hesapEkle("Garanti", "Vadesiz", HesapTuru.BANKA, "0", true)
         val hesap = vm.hesaplar.first().single().id
         assertIs<Sonuc.Hata>(vm.maasKaydet("", "30", HaftaSonuKurali.ONCEKI, hesap))
         assertIs<Sonuc.Hata>(vm.maasKaydet("45.000", "32", HaftaSonuKurali.ONCEKI, hesap))

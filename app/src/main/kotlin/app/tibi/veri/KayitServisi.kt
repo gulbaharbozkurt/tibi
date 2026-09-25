@@ -6,6 +6,7 @@ import app.tibi.core.kart.PlanliTaksit
 import app.tibi.core.kart.TaksitPlanlayici
 import app.tibi.core.para.Kurus
 import app.tibi.core.para.topla
+import app.tibi.veri.tablo.Banka
 import app.tibi.veri.tablo.Ekstre
 import app.tibi.veri.tablo.Hareket
 import app.tibi.veri.tablo.HareketTuru
@@ -16,6 +17,9 @@ import app.tibi.veri.tablo.TaksitTuru
 import java.time.Instant
 import java.time.LocalDate
 import java.time.YearMonth
+import java.util.Locale
+
+private val TURKCE: Locale = Locale.forLanguageTag("tr")
 
 class KayitHatasi(mesaj: String) : IllegalArgumentException(mesaj)
 
@@ -78,6 +82,16 @@ class KayitServisi(
                     kaynakHesapId = kaynakHesapId, hedefHesapId = hedefHesapId, aciklama = aciklama, olusturma = saat())
             )
         }
+
+    /** Adı büyük/küçük harf farkı gözetmeden (Türkçe kurallarla) eşleşen bankanın id'si; yoksa yeni banka açar. */
+    suspend fun bankaBulVeyaEkle(ad: String): Long = db.withTransaction {
+        val temiz = ad.trim()
+        if (temiz.isEmpty()) throw KayitHatasi("Banka adını yaz.")
+        val anahtar = temiz.lowercase(TURKCE)
+        db.bankaDao().adIle(temiz)?.id
+            ?: db.bankaDao().hepsi().firstOrNull { it.ad.trim().lowercase(TURKCE) == anahtar }?.id
+            ?: db.bankaDao().ekle(Banka(ad = temiz))
+    }
 
     internal suspend fun kartaYansit(hareketId: Long, kartId: Long, tutar: Kurus, taksitSayisi: Int, ertelemeAy: Int, tarih: LocalDate) {
         val plan = try {

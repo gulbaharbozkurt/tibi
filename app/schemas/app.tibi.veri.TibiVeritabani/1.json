@@ -2,11 +2,59 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "321070c961bcd38867dccdb40dc413c3",
+    "identityHash": "58cd6ab55b724bb6577932cc816f8728",
     "entities": [
       {
+        "tableName": "banka",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `ad` TEXT NOT NULL, `sira` INTEGER NOT NULL, `arsiv` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ad",
+            "columnName": "ad",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sira",
+            "columnName": "sira",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "arsiv",
+            "columnName": "arsiv",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_banka_ad",
+            "unique": true,
+            "columnNames": [
+              "ad"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_banka_ad` ON `${TABLE_NAME}` (`ad`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
         "tableName": "hesap",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `ad` TEXT NOT NULL, `tur` TEXT NOT NULL, `acilisBakiyeKurus` INTEGER NOT NULL, `acilisTarihi` INTEGER NOT NULL, `maasHesabi` INTEGER NOT NULL, `renk` INTEGER, `sira` INTEGER NOT NULL, `arsiv` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `ad` TEXT NOT NULL, `tur` TEXT NOT NULL, `acilisBakiyeKurus` INTEGER NOT NULL, `acilisTarihi` INTEGER NOT NULL, `maasHesabi` INTEGER NOT NULL, `renk` INTEGER, `sira` INTEGER NOT NULL, `arsiv` INTEGER NOT NULL, `bankaId` INTEGER, FOREIGN KEY(`bankaId`) REFERENCES `banka`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
         "fields": [
           {
             "fieldPath": "id",
@@ -61,6 +109,12 @@
             "columnName": "arsiv",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "bankaId",
+            "columnName": "bankaId",
+            "affinity": "INTEGER",
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -69,8 +123,30 @@
             "id"
           ]
         },
-        "indices": [],
-        "foreignKeys": []
+        "indices": [
+          {
+            "name": "index_hesap_bankaId",
+            "unique": false,
+            "columnNames": [
+              "bankaId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_hesap_bankaId` ON `${TABLE_NAME}` (`bankaId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "banka",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "bankaId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
       },
       {
         "tableName": "kart",
@@ -901,7 +977,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '321070c961bcd38867dccdb40dc413c3')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '58cd6ab55b724bb6577932cc816f8728')"
     ]
   }
 }

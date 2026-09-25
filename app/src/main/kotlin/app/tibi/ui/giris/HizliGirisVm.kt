@@ -3,6 +3,7 @@ package app.tibi.ui.giris
 import androidx.lifecycle.ViewModel
 import app.tibi.core.para.kurusCoz
 import app.tibi.ui.Sonuc
+import app.tibi.ui.ortak.hesapEtiketi
 import app.tibi.veri.KayitHatasi
 import app.tibi.veri.KayitServisi
 import app.tibi.veri.TibiVeritabani
@@ -10,7 +11,7 @@ import app.tibi.veri.tablo.HesapTuru
 import app.tibi.veri.tablo.Kategori
 import app.tibi.veri.tablo.KategoriYonu
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
 import java.time.LocalDate
 
 enum class GirisTuru { HARCAMA, GELIR, TRANSFER }
@@ -24,8 +25,10 @@ class HizliGirisVm(
 ) : ViewModel() {
     val giderKategorileri: Flow<List<Kategori>> = db.kategoriDao().kullanimSirali(KategoriYonu.GIDER)
     val gelirKategorileri: Flow<List<Kategori>> = db.kategoriDao().kullanimSirali(KategoriYonu.GELIR)
-    val hesaplar: Flow<List<HesapSecenegi>> = db.hesapDao().tumu().map { liste ->
-        liste.sortedBy { it.tur == HesapTuru.KREDI_KARTI }.map { HesapSecenegi(it.id, it.ad, it.tur == HesapTuru.KREDI_KARTI) }
+    /** Önce banka hesapları ve nakit ("Garanti BBVA · Vadesiz"), sonra kartlar (kendi adıyla). */
+    val hesaplar: Flow<List<HesapSecenegi>> = combine(db.hesapDao().bakiyeler(), db.kartDao().kartlar()) { hesaplar, kartlar ->
+        hesaplar.map { HesapSecenegi(it.id, hesapEtiketi(it.bankaAdi, it.ad), false) } +
+            kartlar.map { HesapSecenegi(it.hesapId, it.ad, true) }
     }
 
     suspend fun kaydet(

@@ -70,4 +70,14 @@ class KayitServisiTest {
         assertEquals(0, db.hareketDao().sayi())
         assertEquals(130000L, bakiye(nakit))
     }
+
+    @Test
+    fun `banka bul veya ekle turkce harfleri esler`() = runTest {
+        val garanti = servis.bankaBulVeyaEkle("  Garanti BBVA ")
+        assertEquals(garanti, servis.bankaBulVeyaEkle("garanti bbva"))
+        val is1 = servis.bankaBulVeyaEkle("İŞ BANKASI")
+        assertEquals(is1, servis.bankaBulVeyaEkle("iş bankası"))
+        assertEquals(listOf("Garanti BBVA", "İŞ BANKASI"), db.bankaDao().tumu().first().map { it.ad })
+        assertEquals("Banka adını yaz.", assertFailsWith<KayitHatasi> { servis.bankaBulVeyaEkle("  ") }.message)
+    }
 }

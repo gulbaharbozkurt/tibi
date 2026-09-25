@@ -27,6 +27,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun KartlarAdimi(vm: KurulumVm) {
     val kartlar by vm.kartlar.collectAsStateWithLifecycle(emptyList())
+    val bankalar by vm.bankalar.collectAsStateWithLifecycle(emptyList())
     val kapsam = rememberCoroutineScope()
     var form by remember { mutableStateOf<KartGirdisi?>(null) }
     var hata by remember { mutableStateOf<String?>(null) }
@@ -36,7 +37,7 @@ fun KartlarAdimi(vm: KurulumVm) {
         if (kartlar.isNotEmpty()) Bolum("Eklenen kartlar") {
             kartlar.forEach { k ->
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                    Text("${k.ad} ··${k.son4}" + if (k.kartTuru != KartTuru.ANA) " (ortak limit)" else "")
+                    Text(kartEtiketi(k) + if (k.kartTuru != KartTuru.ANA) " (ortak limit)" else "")
                     Text(k.kendiLimitiKurus?.let { Kurus(it).bicimle() } ?: "")
                 }
             }
@@ -45,7 +46,7 @@ fun KartlarAdimi(vm: KurulumVm) {
         if (f == null) {
             OutlinedButton({ form = KartGirdisi(); hata = null }, Modifier.fillMaxWidth()) { Text("+ Kart ekle") }
         } else {
-            KartFormu(f, kartlar.filter { it.kartTuru == KartTuru.ANA }) { form = it }
+            KartFormu(f, kartlar.filter { it.kartTuru == KartTuru.ANA }, bankalar) { form = it }
             hata?.let { Text(it, color = MaterialTheme.colorScheme.error) }
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 OutlinedButton({ form = null; hata = null }, Modifier.weight(1f)) { Text("Vazgeç") }

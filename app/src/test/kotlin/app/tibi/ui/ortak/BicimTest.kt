@@ -23,4 +23,9 @@ class BicimTest {
     @Test fun aralik() {
         assertEquals("28 Ağu – 29 Eyl", Donem(t("2026-08-28"), t("2026-09-29")).aralik())
     }
+
+    @Test fun hesapEtiketi() {
+        assertEquals("Garanti BBVA · Vadesiz", hesapEtiketi("Garanti BBVA", "Vadesiz"))
+        assertEquals("Nakit", hesapEtiketi(null, "Nakit"))
+    }
 }

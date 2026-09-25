@@ -18,3 +18,6 @@ fun LocalDate.gunBasligi(bugun: LocalDate): String = when (this) {
 }
 
 fun Donem.aralik(): String = "${baslangic.kisa()} – ${bitis.kisa()}"
+
+/** Bankaya bağlı hesabı "Garanti BBVA · Vadesiz" diye, bankasızı yalnızca adıyla gösterir. */
+fun hesapEtiketi(bankaAdi: String?, ad: String): String = if (bankaAdi != null) "$bankaAdi · $ad" else ad

@@ -20,6 +20,8 @@ data class KartBilgisi(
     val kendiLimitiKurus: Long?,
     val asgariOranBinde: Int,
     val kullanimKurus: Long,
+    val bankaId: Long? = null,
+    val bankaAdi: String? = null,
 )
 
 @Dao
@@ -36,7 +38,7 @@ interface KartDao {
     @Query(
         """
         SELECT h.id AS hesapId, h.ad, k.son4, k.kartTuru, k.anaKartId, k.kesimGunu, k.sonOdemeGunu,
-               k.bankaLimitiKurus, k.kendiLimitiKurus, k.asgariOranBinde,
+               k.bankaLimitiKurus, k.kendiLimitiKurus, k.asgariOranBinde, h.bankaId, b.ad AS bankaAdi,
                CASE WHEN k.anaKartId IS NULL THEN
                    COALESCE((SELECT SUM(t.tutarKurus) FROM taksit_satiri t WHERE t.oncedenOdendi = 0
                              AND (t.kartId = k.hesapId OR t.kartId IN (SELECT e.hesapId FROM kart e WHERE e.anaKartId = k.hesapId))), 0)
@@ -44,7 +46,7 @@ interface KartDao {
                  - COALESCE((SELECT SUM(o.tutarKurus) FROM hareket o WHERE o.tur = 'KART_ODEME'
                              AND (o.hedefHesapId = k.hesapId OR o.hedefHesapId IN (SELECT e.hesapId FROM kart e WHERE e.anaKartId = k.hesapId))), 0)
                ELSE 0 END AS kullanimKurus
-        FROM kart k JOIN hesap h ON h.id = k.hesapId
+        FROM kart k JOIN hesap h ON h.id = k.hesapId LEFT JOIN banka b ON b.id = h.bankaId
         WHERE h.arsiv = 0 ORDER BY h.sira, h.id
         """
     )

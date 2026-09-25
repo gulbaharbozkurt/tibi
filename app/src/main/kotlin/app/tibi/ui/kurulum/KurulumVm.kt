@@ -18,6 +18,7 @@ import app.tibi.veri.KayitHatasi
 import app.tibi.veri.KayitServisi
 import app.tibi.veri.TibiVeritabani
 import app.tibi.veri.dao.HesapBakiyesi
+import app.tibi.veri.tablo.Banka
 import app.tibi.veri.dao.KartBilgisi
 import app.tibi.veri.dao.KartTaksidi
 import app.tibi.veri.tablo.Ayar
@@ -39,7 +40,7 @@ import java.time.LocalDate
 
 enum class KurulumAdimi(val baslik: String) {
     HOS_GELDIN("Hoş geldin"),
-    HESAPLAR("Hesaplar ve nakit"),
+    HESAPLAR("Bankalar ve nakit"),
     GELIR("Gelir"),
     KARTLAR("Kartlar"),
     TAKSITLER("Devam eden taksitler"),
@@ -47,6 +48,8 @@ enum class KurulumAdimi(val baslik: String) {
 
 data class KartGirdisi(
     val ad: String = "",
+    /** Yalnızca ana kartta okunur; boşsa kart bankasız kalır. Ek/sanal kart ana kartın bankasını alır. */
+    val bankaAdi: String = "",
     val tur: KartTuru = KartTuru.ANA,
     val anaKartId: Long? = null,
     val son4: String = "",
@@ -79,6 +82,7 @@ class KurulumVm(
     val hesaplar: Flow<List<HesapBakiyesi>> = db.hesapDao().bakiyeler()
     val kartlar: Flow<List<KartBilgisi>> = db.kartDao().kartlar()
     val maasKurali: Flow<DuzenliKural?> = db.duzenliKuralDao().maasKuraliAkisi()
+    val bankalar: Flow<List<Banka>> = db.bankaDao().tumu()
 
     suspend fun hitapKaydet(ad: String): Sonuc {
         val temiz = ad.trim()
@@ -87,13 +91,23 @@ class KurulumVm(
         return Sonuc.Tamam
     }
 
-    suspend fun hesapEkle(ad: String, tur: HesapTuru, bakiyeMetni: String, maasHesabi: Boolean): Sonuc {
-        if (ad.isBlank()) return Sonuc.Hata("Hesaba bir ad ver, ör. \"Garanti vadesiz\".")
+    /** Banka hesabı bir bankaya bağlanır (yoksa açılır); nakit bankayı yok sayar. Boş ad "Vadesiz" / "Nakit" olur. */
+    suspend fun hesapEkle(bankaAdi: String, ad: String, tur: HesapTuru, bakiyeMetni: String, maasHesabi: Boolean): Sonuc {
         if (tur == HesapTuru.KREDI_KARTI) return Sonuc.Hata("Kredi kartları Kartlar adımında eklenir.")
+        if (tur == HesapTuru.BANKA && bankaAdi.isBlank()) return Sonuc.Hata("Hesabın bağlı olduğu bankayı yaz.")
         val bakiye = if (bakiyeMetni.isBlank()) Kurus.SIFIR else kurusCoz(bakiyeMetni)
             ?: return Sonuc.Hata("Bakiyeyi 8.450,00 biçiminde yaz.")
-        db.hesapDao().ekle(Hesap(ad = ad.trim(), tur = tur, acilisBakiyeKurus = bakiye.deger, acilisTarihi = bugun(), maasHesabi = maasHesabi))
-        return Sonuc.Tamam
+        val temizAd = ad.trim().ifEmpty { if (tur == HesapTuru.BANKA) "Vadesiz" else "Nakit" }
+        return try {
+            db.withTransaction {
+                val bankaId = if (tur == HesapTuru.BANKA) kayit.bankaBulVeyaEkle(bankaAdi) else null
+                db.hesapDao().ekle(Hesap(ad = temizAd, tur = tur, acilisBakiyeKurus = bakiye.deger, acilisTarihi = bugun(),
+                    maasHesabi = maasHesabi, bankaId = bankaId))
+            }
+            Sonuc.Tamam
+        } catch (e: KayitHatasi) {
+            Sonuc.Hata(e.message ?: "Hesap kaydedilemedi.")
+        }
     }
 
     fun donemOnizleme(gunMetni: String, haftaSonu: HaftaSonuKurali): Donem? {
@@ -141,7 +155,9 @@ class KurulumVm(
         val kesilmis = if (ana == null) tutarVeyaBos(g.kesilmisEkstre, "Kesilmiş ekstre") else null
         val donemIci = if (ana == null) tutarVeyaBos(g.donemIci, "Dönem içi harcama") else null
         db.withTransaction {
-            val id = db.hesapDao().ekle(Hesap(ad = g.ad.trim(), tur = HesapTuru.KREDI_KARTI, acilisTarihi = bugun()))
+            val bankaId = if (ana != null) db.hesapDao().getir(ana.hesapId)?.bankaId
+                else g.bankaAdi.takeIf { it.isNotBlank() }?.let { kayit.bankaBulVeyaEkle(it) }
+            val id = db.hesapDao().ekle(Hesap(ad = g.ad.trim(), tur = HesapTuru.KREDI_KARTI, acilisTarihi = bugun(), bankaId = bankaId))
             db.kartDao().ekle(
                 Kart(hesapId = id, kartTuru = g.tur, anaKartId = ana?.hesapId, son4 = g.son4, kesimGunu = kesim, sonOdemeGunu = sonOdeme,
                     bankaLimitiKurus = bankaLimiti, kendiLimitiKurus = kendiLimiti, asgariOranBinde = oran * 10)

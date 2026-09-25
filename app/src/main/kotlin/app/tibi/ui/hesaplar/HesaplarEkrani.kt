@@ -20,37 +20,49 @@ import app.tibi.core.para.Kurus
 import app.tibi.core.para.bicimle
 import app.tibi.ui.ortak.Bolum
 import app.tibi.ui.tibiVm
+import app.tibi.veri.dao.HesapBakiyesi
+import app.tibi.veri.dao.KartBilgisi
 import app.tibi.veri.tablo.HesapTuru
 import app.tibi.veri.tablo.KartTuru
 
 @Composable
 fun HesaplarEkrani(kartAc: (Long) -> Unit) {
     val vm = tibiVm { HesaplarVm(it.veritabani) }
-    val hesaplar by vm.hesaplar.collectAsStateWithLifecycle(emptyList())
-    val kartlar by vm.kartlar.collectAsStateWithLifecycle(emptyList())
+    val d by vm.durum.collectAsStateWithLifecycle(null)
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
         Text("Hesaplar", style = MaterialTheme.typography.headlineSmall)
-        Bolum("Kredi kartları") {
-            if (kartlar.isEmpty()) Text("Kart yok.", color = MaterialTheme.colorScheme.onSurfaceVariant)
-            kartlar.forEach { k ->
-                Row(Modifier.fillMaxWidth().clickable { kartAc(k.hesapId) }.padding(vertical = 6.dp), horizontalArrangement = Arrangement.SpaceBetween) {
-                    Column {
-                        Text("${k.ad} ··${k.son4}")
-                        Text(if (k.kartTuru == KartTuru.ANA) "Kesim ${k.kesimGunu} · Son ödeme ${k.sonOdemeGunu}" else "Ortak limit",
-                            style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                    }
-                    if (k.kartTuru == KartTuru.ANA) Text(k.kendiLimitiKurus?.let { "${Kurus(it - k.kullanimKurus).bicimle()} kaldı" }
-                        ?: "borç ${Kurus(k.kullanimKurus).bicimle()}")
-                }
+        val durum = d ?: return@Column
+        if (durum.bankalar.isEmpty() && durum.nakit.isEmpty() && durum.bankasizKartlar.isEmpty()) {
+            Text("Hesap ya da kart yok.", color = MaterialTheme.colorScheme.onSurfaceVariant)
+        }
+        durum.bankalar.forEach { g ->
+            Bolum(g.banka.ad) {
+                g.hesaplar.forEach { HesapSatiri(it) }
+                g.kartlar.forEach { KartSatiri(it, kartAc) }
             }
         }
-        Bolum("Banka hesapları ve nakit") {
-            hesaplar.forEach { h ->
-                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                    Text(h.ad + if (h.tur == HesapTuru.NAKIT) "" else if (h.maasHesabi) " · maaş" else "")
-                    Text(Kurus(h.bakiyeKurus).bicimle())
-                }
-            }
+        if (durum.nakit.isNotEmpty()) Bolum("Nakit") { durum.nakit.forEach { HesapSatiri(it) } }
+        if (durum.bankasizKartlar.isNotEmpty()) Bolum("Diğer kartlar") { durum.bankasizKartlar.forEach { KartSatiri(it, kartAc) } }
+    }
+}
+
+@Composable
+private fun HesapSatiri(h: HesapBakiyesi) {
+    Row(Modifier.fillMaxWidth().padding(vertical = 6.dp), horizontalArrangement = Arrangement.SpaceBetween) {
+        Text(h.ad + if (h.tur != HesapTuru.NAKIT && h.maasHesabi) " · maaş" else "")
+        Text(Kurus(h.bakiyeKurus).bicimle())
+    }
+}
+
+@Composable
+private fun KartSatiri(k: KartBilgisi, kartAc: (Long) -> Unit) {
+    Row(Modifier.fillMaxWidth().clickable { kartAc(k.hesapId) }.padding(vertical = 6.dp), horizontalArrangement = Arrangement.SpaceBetween) {
+        Column {
+            Text("${k.ad} ··${k.son4}")
+            Text(if (k.kartTuru == KartTuru.ANA) "Kesim ${k.kesimGunu} · Son ödeme ${k.sonOdemeGunu}" else "Ortak limit",
+                style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
+        if (k.kartTuru == KartTuru.ANA) Text(k.kendiLimitiKurus?.let { "${Kurus(it - k.kullanimKurus).bicimle()} kaldı" }
+            ?: "borç ${Kurus(k.kullanimKurus).bicimle()}")
     }
 }

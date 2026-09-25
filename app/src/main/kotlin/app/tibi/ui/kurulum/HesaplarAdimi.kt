@@ -2,8 +2,11 @@ package app.tibi.ui.kurulum
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.FilterChip
@@ -25,13 +28,17 @@ import app.tibi.core.para.bicimle
 import app.tibi.ui.Sonuc
 import app.tibi.ui.ortak.Bolum
 import app.tibi.ui.ortak.TutarAlani
+import app.tibi.veri.dao.HesapBakiyesi
+import app.tibi.veri.tablo.Banka
 import app.tibi.veri.tablo.HesapTuru
 import kotlinx.coroutines.launch
 
 @Composable
 fun HesaplarAdimi(vm: KurulumVm) {
     val hesaplar by vm.hesaplar.collectAsStateWithLifecycle(emptyList())
+    val bankalar by vm.bankalar.collectAsStateWithLifecycle(emptyList())
     val kapsam = rememberCoroutineScope()
+    var banka by remember { mutableStateOf("") }
     var ad by remember { mutableStateOf("") }
     var tur by remember { mutableStateOf(HesapTuru.BANKA) }
     var bakiye by remember { mutableStateOf("") }
@@ -42,19 +49,25 @@ fun HesaplarAdimi(vm: KurulumVm) {
         Text("Bugünkü bakiyeleri gir; uygulama buradan başlar. Kredi kartları sonraki adımda.",
             color = MaterialTheme.colorScheme.onSurfaceVariant)
         if (hesaplar.isNotEmpty()) Bolum("Eklenenler") {
-            hesaplar.forEach { h ->
-                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                    Text(h.ad + if (h.maasHesabi) " · maaş" else "")
-                    Text(Kurus(h.bakiyeKurus).bicimle())
-                }
+            hesaplar.filter { it.bankaId != null }.groupBy { it.bankaAdi.orEmpty() }.forEach { (bankaAdi, liste) ->
+                Text(bankaAdi, style = MaterialTheme.typography.titleSmall)
+                liste.forEach { EklenenHesap(it, Modifier.padding(start = 16.dp)) }
             }
+            hesaplar.filter { it.bankaId == null }.forEach { EklenenHesap(it) }
         }
         Bolum("Yeni hesap") {
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 FilterChip(tur == HesapTuru.BANKA, { tur = HesapTuru.BANKA }, label = { Text("Banka hesabı") })
-                FilterChip(tur == HesapTuru.NAKIT, { tur = HesapTuru.NAKIT; if (ad.isBlank()) ad = "Nakit" }, label = { Text("Nakit") })
+                FilterChip(tur == HesapTuru.NAKIT, { tur = HesapTuru.NAKIT }, label = { Text("Nakit") })
             }
-            OutlinedTextField(ad, { ad = it }, label = { Text("Ad") }, singleLine = true, modifier = Modifier.fillMaxWidth())
+            if (tur == HesapTuru.BANKA) {
+                OutlinedTextField(banka, { banka = it }, label = { Text("Banka") }, placeholder = { Text("Garanti BBVA") },
+                    singleLine = true, modifier = Modifier.fillMaxWidth())
+                BankaCipleri(bankalar, banka) { banka = it }
+            }
+            OutlinedTextField(ad, { ad = it }, label = { Text("Hesap adı") },
+                placeholder = { Text(if (tur == HesapTuru.BANKA) "Vadesiz" else "Nakit") },
+                singleLine = true, modifier = Modifier.fillMaxWidth())
             TutarAlani(bakiye, { bakiye = it }, "Bugünkü bakiye")
             if (tur == HesapTuru.BANKA) Row(verticalAlignment = Alignment.CenterVertically) {
                 Checkbox(maas, { maas = it }); Text("Maaşım bu hesaba yatıyor")
@@ -62,12 +75,32 @@ fun HesaplarAdimi(vm: KurulumVm) {
             hata?.let { Text(it, color = MaterialTheme.colorScheme.error) }
             Button(onClick = {
                 kapsam.launch {
-                    when (val s = vm.hesapEkle(ad, tur, bakiye, maas && tur == HesapTuru.BANKA)) {
+                    when (val s = vm.hesapEkle(banka, ad, tur, bakiye, maas && tur == HesapTuru.BANKA)) {
                         Sonuc.Tamam -> { ad = ""; bakiye = ""; maas = false; hata = null }
                         is Sonuc.Hata -> hata = s.mesaj
                     }
                 }
             }, modifier = Modifier.fillMaxWidth()) { Text("Hesabı ekle") }
+        }
+    }
+}
+
+@Composable
+private fun EklenenHesap(h: HesapBakiyesi, modifier: Modifier = Modifier) {
+    Row(modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+        Text(h.ad + if (h.maasHesabi) " · maaş" else "")
+        Text(Kurus(h.bakiyeKurus).bicimle())
+    }
+}
+
+/** Daha önce yazılmış bankalar; dokununca alana yazılır. */
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+internal fun BankaCipleri(bankalar: List<Banka>, secili: String, secildi: (String) -> Unit) {
+    if (bankalar.isEmpty()) return
+    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        bankalar.forEach { b ->
+            FilterChip(b.ad.equals(secili.trim(), ignoreCase = true), { secildi(b.ad) }, label = { Text(b.ad) })
         }
     }
 }

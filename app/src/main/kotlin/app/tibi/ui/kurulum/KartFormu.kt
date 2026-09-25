@@ -14,20 +14,27 @@ import app.tibi.ui.ortak.Bolum
 import app.tibi.ui.ortak.SayiAlani
 import app.tibi.ui.ortak.Secici
 import app.tibi.ui.ortak.TutarAlani
+import app.tibi.ui.ortak.hesapEtiketi
 import app.tibi.veri.dao.KartBilgisi
+import app.tibi.veri.tablo.Banka
 import app.tibi.veri.tablo.KartTuru
 
 @Composable
-fun KartFormu(g: KartGirdisi, anaKartlar: List<KartBilgisi>, degisti: (KartGirdisi) -> Unit) {
+fun KartFormu(g: KartGirdisi, anaKartlar: List<KartBilgisi>, bankalar: List<Banka>, degisti: (KartGirdisi) -> Unit) {
     Bolum("Kart") {
         OutlinedTextField(g.ad, { degisti(g.copy(ad = it)) }, label = { Text("Kart adı") }, singleLine = true, modifier = Modifier.fillMaxWidth())
+        if (g.tur == KartTuru.ANA) {
+            OutlinedTextField(g.bankaAdi, { degisti(g.copy(bankaAdi = it)) }, label = { Text("Banka (isteğe bağlı)") },
+                placeholder = { Text("Garanti BBVA") }, singleLine = true, modifier = Modifier.fillMaxWidth())
+            BankaCipleri(bankalar, g.bankaAdi) { degisti(g.copy(bankaAdi = it)) }
+        }
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             listOf(KartTuru.ANA to "Ana kart", KartTuru.EK to "Ek kart", KartTuru.SANAL to "Sanal kart").forEach { (t, ad) ->
                 FilterChip(g.tur == t, { degisti(g.copy(tur = t)) }, label = { Text(ad) })
             }
         }
         if (g.tur != KartTuru.ANA) {
-            Secici("Limitini paylaştığı ana kart", anaKartlar, anaKartlar.firstOrNull { it.hesapId == g.anaKartId }, { "${it.ad} ··${it.son4}" },
+            Secici("Limitini paylaştığı ana kart", anaKartlar, anaKartlar.firstOrNull { it.hesapId == g.anaKartId }, { kartEtiketi(it) },
                 { degisti(g.copy(anaKartId = it.hesapId)) })
             Text("Ek ve sanal kart ana kartın limitini, kesim ve son ödeme günlerini kullanır.", color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
@@ -53,3 +60,6 @@ fun KartFormu(g: KartGirdisi, anaKartlar: List<KartBilgisi>, degisti: (KartGirdi
         }
     }
 }
+
+/** "Garanti BBVA · Bonus ··4821"; bankasız kartta yalnızca "Bonus ··4821". */
+internal fun kartEtiketi(k: KartBilgisi): String = hesapEtiketi(k.bankaAdi, "${k.ad} ··${k.son4}")

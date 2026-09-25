@@ -20,6 +20,7 @@ import app.tibi.core.para.Kurus
 import app.tibi.core.para.bicimle
 import app.tibi.ui.ortak.Bolum
 import app.tibi.ui.ortak.aralik
+import app.tibi.ui.ortak.hesapEtiketi
 import app.tibi.ui.ortak.kisa
 import app.tibi.ui.tibiVm
 
@@ -54,7 +55,7 @@ fun OzetEkrani() {
             o.taksitYuku.forEach { Satir(it.ekstreKesimTarihi.kisa(), Kurus(it.toplamKurus).bicimle()) }
         }
         if (o.hesaplar.isNotEmpty()) Bolum("Hesaplar") {
-            o.hesaplar.forEach { Satir(it.ad, Kurus(it.bakiyeKurus).bicimle()) }
+            o.hesaplar.forEach { Satir(hesapEtiketi(it.bankaAdi, it.ad), Kurus(it.bakiyeKurus).bicimle()) }
         }
     }
 }

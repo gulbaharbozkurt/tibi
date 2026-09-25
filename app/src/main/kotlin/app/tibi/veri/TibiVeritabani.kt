@@ -7,6 +7,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
 import app.tibi.veri.dao.AyarDao
+import app.tibi.veri.dao.BankaDao
 import app.tibi.veri.dao.DuzenliKuralDao
 import app.tibi.veri.dao.EkstreDao
 import app.tibi.veri.dao.HareketDao
@@ -15,6 +16,7 @@ import app.tibi.veri.dao.KartDao
 import app.tibi.veri.dao.KategoriDao
 import app.tibi.veri.dao.TaksitDao
 import app.tibi.veri.tablo.Ayar
+import app.tibi.veri.tablo.Banka
 import app.tibi.veri.tablo.DuzenliKural
 import app.tibi.veri.tablo.Ekstre
 import app.tibi.veri.tablo.Hareket
@@ -25,7 +27,7 @@ import app.tibi.veri.tablo.TaksitSatiri
 
 @Database(
     entities = [
-        Hesap::class, Kart::class, Kategori::class, Hareket::class, TaksitSatiri::class,
+        Banka::class, Hesap::class, Kart::class, Kategori::class, Hareket::class, TaksitSatiri::class,
         Ekstre::class, DuzenliKural::class, Ayar::class,
     ],
     version = 1,
@@ -33,6 +35,7 @@ import app.tibi.veri.tablo.TaksitSatiri
 )
 @TypeConverters(Donusturuculer::class)
 abstract class TibiVeritabani : RoomDatabase() {
+    abstract fun bankaDao(): BankaDao
     abstract fun hesapDao(): HesapDao
     abstract fun kartDao(): KartDao
     abstract fun kategoriDao(): KategoriDao

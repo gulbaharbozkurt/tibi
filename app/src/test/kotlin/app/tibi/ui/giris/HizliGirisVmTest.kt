@@ -81,4 +81,16 @@ class HizliGirisVmTest {
         assertIs<Sonuc.Hata>(vm.kaydet(GirisTuru.GELIR, "10", bonus, null, null, 1, 0, bugun, ""))
         assertEquals(0, db.hareketDao().sayi())
     }
+
+    @Test
+    fun `bankali hesap secenegi banka adiyla gorunur, kart kendi adiyla`() = runTest {
+        val garanti = KayitServisi(db).bankaBulVeyaEkle("Garanti BBVA")
+        db.hesapDao().ekle(Hesap(ad = "Vadesiz", tur = HesapTuru.BANKA, acilisTarihi = bugun, bankaId = garanti))
+        val max = db.hesapDao().ekle(Hesap(ad = "Maximum", tur = HesapTuru.KREDI_KARTI, acilisTarihi = bugun, bankaId = garanti))
+        db.kartDao().ekle(Kart(hesapId = max, son4 = "1190", kesimGunu = 5, sonOdemeGunu = 15))
+        assertEquals(
+            listOf("Garanti" to false, "Nakit" to false, "Garanti BBVA · Vadesiz" to false, "Bonus" to true, "Maximum" to true),
+            vm.hesaplar.first().map { it.ad to it.kart },
+        )
+    }
 }

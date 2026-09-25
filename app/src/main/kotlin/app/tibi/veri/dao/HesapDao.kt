@@ -8,7 +8,15 @@ import app.tibi.veri.tablo.Hesap
 import app.tibi.veri.tablo.HesapTuru
 import kotlinx.coroutines.flow.Flow
 
-data class HesapBakiyesi(val id: Long, val ad: String, val tur: HesapTuru, val maasHesabi: Boolean, val bakiyeKurus: Long)
+data class HesapBakiyesi(
+    val id: Long,
+    val ad: String,
+    val tur: HesapTuru,
+    val maasHesabi: Boolean,
+    val bakiyeKurus: Long,
+    val bankaId: Long? = null,
+    val bankaAdi: String? = null,
+)
 
 @Dao
 interface HesapDao {
@@ -29,11 +37,12 @@ interface HesapDao {
 
     @Query(
         """
-        SELECT h.id, h.ad, h.tur, h.maasHesabi,
+        SELECT h.id, h.ad, h.tur, h.maasHesabi, h.bankaId, b.ad AS bankaAdi,
                h.acilisBakiyeKurus
              + COALESCE((SELECT SUM(g.tutarKurus) FROM hareket g WHERE g.hedefHesapId = h.id), 0)
              - COALESCE((SELECT SUM(c.tutarKurus) FROM hareket c WHERE c.kaynakHesapId = h.id), 0) AS bakiyeKurus
-        FROM hesap h WHERE h.arsiv = 0 AND h.tur != 'KREDI_KARTI' ORDER BY h.sira, h.id
+        FROM hesap h LEFT JOIN banka b ON b.id = h.bankaId
+        WHERE h.arsiv = 0 AND h.tur != 'KREDI_KARTI' ORDER BY h.sira, h.id
         """
     )
     fun bakiyeler(): Flow<List<HesapBakiyesi>>
