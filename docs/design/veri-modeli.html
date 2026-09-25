@@ -60,6 +60,7 @@ code{font-family:var(--mono);font-size:.88em}
     <div class="scroll">
 <pre class="mermaid">
 erDiagram
+  BANKA |o--o{ HESAP : "hesap ve kartları"
   HESAP ||--o| KART : "kredi kartıysa"
   KART |o--o{ KART : "ek/sanal → ana"
   HESAP ||--o{ HAREKET : "kaynak / hedef"
@@ -112,7 +113,17 @@ erDiagram
     <tr><td>acilisBakiye</td><td>Long</td><td>Kurulum anındaki bakiye</td></tr>
     <tr><td>acilisTarihi</td><td>LocalDate</td><td></td></tr>
     <tr><td>maasHesabi</td><td>Boolean</td><td></td></tr>
+    <tr><td>bankaId</td><td>Long?</td><td>Bağlı banka; nakitte boş</td></tr>
     <tr><td>renk, sira, arsiv</td><td>…</td><td></td></tr>
+  </table></div>
+  </div>
+
+  <div>
+  <h3>Banka</h3>
+  <div class="tw"><table><tr><th>Alan</th><th>Tür</th><th>Açıklama</th></tr>
+    <tr><td>id</td><td>Long</td><td></td></tr>
+    <tr><td>ad</td><td>String (tekil)</td><td>“Garanti BBVA”; hesap ve kartları gruplar</td></tr>
+    <tr><td>sira, arsiv</td><td>…</td><td></td></tr>
   </table></div>
   </div>
 

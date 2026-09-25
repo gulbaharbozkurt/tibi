@@ -25,6 +25,7 @@ Tek kişinin kullanacağı Android uygulaması. Harcamaları, taksitleri, gelirl
 
 ### 3.1 Hesaplar
 - **H1.** Üç hesap türü olacak: kredi kartı, banka hesabı (vadesiz veya banka kartı) ve nakit.
+- **H1a. Banka gruplaması:** Banka hesapları ve kredi kartları bir bankaya bağlanır (ör. Garanti BBVA → Vadesiz + Bonus). Hesaplar ekranı bankaya göre gruplu gösterilir; nakit ve bankası belirtilmemiş kartlar ayrı bölümde durur. Ek/sanal kart ana kartın bankasını alır. Banka adı yazılırken var olan bankayla (büyük/küçük harf duyarsız) eşleştirilir, yoksa yeni banka açılır.
 - **H2.** Her hesabın güncel bakiyesi veya borcu görünür.
 - **H3.** Hesaplar arasında transfer yapılabilir: hesaptan hesaba, hesaptan cüzdana, hesaptan kart ödemesine.
 
