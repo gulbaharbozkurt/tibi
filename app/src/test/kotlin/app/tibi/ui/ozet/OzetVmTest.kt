@@ -61,4 +61,17 @@ class OzetVmTest {
         assertEquals(41664L, d.taksitYuku.first().toplamKurus)
         assertEquals(listOf(845000L + 4_500_000L - 10000L), d.hesaplar.map { it.bakiyeKurus })
     }
+
+    @Test
+    fun `dusulecek avans acik avanslarin toplami`() = runTest {
+        val kayit = KayitServisi(db) { Instant.parse("2026-09-24T09:00:00Z") }
+        val banka = db.hesapDao().ekle(Hesap(ad = "Garanti", tur = HesapTuru.BANKA, acilisTarihi = bugun))
+        assertEquals(0L, OzetVm(db, DonemServisi(db)) { bugun }.durum.first().dusulecekAvansKurus)
+        kayit.avans(Kurus(300000), t("2026-09-10"), banka)
+        kayit.avans(Kurus(200000), bugun, banka)
+        val d = OzetVm(db, DonemServisi(db)) { bugun }.durum.first()
+        assertEquals(500000L, d.dusulecekAvansKurus)
+        assertEquals(0L, d.gelirKurus)
+        assertEquals(0L, d.kalanKurus)
+    }
 }

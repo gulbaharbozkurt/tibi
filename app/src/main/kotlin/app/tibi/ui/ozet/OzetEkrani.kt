@@ -37,6 +37,15 @@ fun OzetEkrani() {
                 color = if (o.kalanKurus < 0) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface)
             Satir("Gelir", Kurus(o.gelirKurus).bicimle())
             Satir("Gider", Kurus(o.giderKurus).bicimle())
+            if (o.dusulecekAvansKurus > 0) {
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                    Text("Maaştan düşülecek avans")
+                    Text("−" + Kurus(o.dusulecekAvansKurus).bicimle(), style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.error)
+                }
+                Text("Bir sonraki maaşın bu kadar az yatar.", style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
         }
         if (o.kartlar.isNotEmpty()) Bolum("Kartlar · kendi limitine göre") {
             o.kartlar.forEach { k ->

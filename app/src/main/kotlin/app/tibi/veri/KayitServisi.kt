@@ -1,11 +1,13 @@
 package app.tibi.veri
 
 import androidx.room.withTransaction
+import app.tibi.core.donem.MaasKurali
 import app.tibi.core.kart.KartTakvimi
 import app.tibi.core.kart.PlanliTaksit
 import app.tibi.core.kart.TaksitPlanlayici
 import app.tibi.core.para.Kurus
 import app.tibi.core.para.topla
+import app.tibi.veri.tablo.Avans
 import app.tibi.veri.tablo.Banka
 import app.tibi.veri.tablo.Ekstre
 import app.tibi.veri.tablo.Hareket
@@ -20,6 +22,7 @@ import java.time.YearMonth
 import java.util.Locale
 
 private val TURKCE: Locale = Locale.forLanguageTag("tr")
+private const val MAAS_KATEGORISI = "Maaş"
 
 class KayitHatasi(mesaj: String) : IllegalArgumentException(mesaj)
 
@@ -61,15 +64,43 @@ class KayitServisi(
         hareketId
     }
 
+    /** A2: "Maaş" kategorisindeki gelir, tarihi o güne kadar olan bütün açık avansları mahsup eder. */
     suspend fun gelir(tutar: Kurus, tarih: LocalDate, hesapId: Long, kategoriId: Long?, aciklama: String? = null): Long =
         db.withTransaction {
             pozitif(tutar)
             hesapGetir(hesapId)
-            db.hareketDao().ekle(
+            val id = db.hareketDao().ekle(
                 Hareket(tur = HareketTuru.GELIR, tarih = tarih, tutarKurus = tutar.deger, hedefHesapId = hesapId,
                     kategoriId = kategoriId, aciklama = aciklama, olusturma = saat())
             )
+            val maas = kategoriId?.let { db.kategoriDao().getir(it) }?.ad == MAAS_KATEGORISI
+            if (maas) {
+                val acik = db.avansDao().acikAvansIdleri(tarih)
+                if (acik.isNotEmpty()) db.avansDao().mahsupEt(acik, id)
+            }
+            id
         }
+
+    /** A1: avans hesaba yatar, bakiye artar; gelir sayılmaz, bir sonraki maaştan düşülecek diye işaretlenir. */
+    suspend fun avans(tutar: Kurus, tarih: LocalDate, hesapId: Long, aciklama: String? = null): Long =
+        db.withTransaction {
+            pozitif(tutar)
+            if (hesapGetir(hesapId).tur == HesapTuru.KREDI_KARTI) throw KayitHatasi("Avans bir banka hesabına ya da elde nakde yatar.")
+            val id = db.hareketDao().ekle(
+                Hareket(tur = HareketTuru.AVANS, tarih = tarih, tutarKurus = tutar.deger, hedefHesapId = hesapId,
+                    aciklama = aciklama, olusturma = saat())
+            )
+            db.avansDao().ekle(Avans(hareketId = id, dusulecekMaasTarihi = sonrakiMaas(tarih)))
+            id
+        }
+
+    /** Maaş kuralına göre verilen tarihten kesin sonraki ilk maaş günü; kural yoksa null. */
+    private suspend fun sonrakiMaas(tarih: LocalDate): LocalDate? {
+        val k = db.duzenliKuralDao().maasKurali() ?: return null
+        val kural = MaasKurali(k.gun, k.haftaSonuKurali)
+        val ay = YearMonth.from(tarih)
+        return listOf(ay, ay.plusMonths(1), ay.plusMonths(2)).map(kural::tarih).first { it.isAfter(tarih) }
+    }
 
     suspend fun transfer(tutar: Kurus, tarih: LocalDate, kaynakHesapId: Long, hedefHesapId: Long, aciklama: String? = null): Long =
         db.withTransaction {

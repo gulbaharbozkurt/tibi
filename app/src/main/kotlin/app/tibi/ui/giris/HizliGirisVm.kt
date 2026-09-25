@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import java.time.LocalDate
 
-enum class GirisTuru { HARCAMA, GELIR, TRANSFER }
+enum class GirisTuru { HARCAMA, GELIR, TRANSFER, AVANS }
 
 data class HesapSecenegi(val id: Long, val ad: String, val kart: Boolean)
 
@@ -48,6 +48,7 @@ class HizliGirisVm(
                     if (db.hesapDao().getir(kaynak)?.tur == HesapTuru.KREDI_KARTI) return Sonuc.Hata("Gelir bir banka hesabına ya da nakde girer.")
                     kayit.gelir(tutar, tarih, kaynak, kategoriId, not)
                 }
+                GirisTuru.AVANS -> kayit.avans(tutar, tarih, kaynak, not)
                 GirisTuru.TRANSFER -> {
                     val hedef = hedefHesapId ?: return Sonuc.Hata("Paranın gideceği hesabı seç.")
                     if (db.hesapDao().getir(hedef)?.tur == HesapTuru.KREDI_KARTI) kayit.kartOdemesi(tutar, tarih, kaynak, hedef)

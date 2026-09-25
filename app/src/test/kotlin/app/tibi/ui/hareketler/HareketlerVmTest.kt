@@ -38,6 +38,8 @@ class HareketlerVmTest {
     }
     @After fun kapat() { db.close() }
 
+    private suspend fun avansDurumu() = vm.gruplar.first().flatMap { it.satirlar }.associate { it.tutarKurus to it.avansAcik }
+
     @Test
     fun `gunlere gore gruplar yeniden eskiye`() = runTest {
         val g = vm.gruplar.first()
@@ -63,5 +65,17 @@ class HareketlerVmTest {
         val id = vm.gruplar.first().first().satirlar.first().id
         vm.sil(id)
         assertEquals(3, vm.gruplar.first().sumOf { it.satirlar.size })
+    }
+
+    @Test
+    fun `avans satiri acik ya da mahsup edilmis olarak isaretlenir`() = runTest {
+        val kayit = KayitServisi(db) { Instant.parse("2026-09-24T09:00:00Z") }
+        val banka = db.hesapDao().ekle(Hesap(ad = "Garanti", tur = HesapTuru.BANKA, acilisTarihi = bugun))
+        kayit.avans(Kurus(300000), t("2026-09-10"), banka)
+        assertEquals(true, avansDurumu()[300000L])
+        assertEquals(null, avansDurumu()[38650L])
+        kayit.gelir(Kurus(4_000_000), t("2026-09-20"), banka, db.kategoriDao().adIle("Maaş")!!.id)
+        assertEquals(false, avansDurumu()[300000L])
+        assertEquals(null, avansDurumu()[4_000_000L])
     }
 }

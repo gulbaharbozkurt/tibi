@@ -108,7 +108,8 @@ private fun HareketSatirKutusu(s: HareketSatiri, sil: () -> Unit) {
             else -> (s.kaynakAdi ?: s.hedefAdi)?.let(::add)
         }
         if (s.taksitSayisi > 1) add("${s.taksitSayisi} taksit")
-        if (s.kategoriAdi != null) s.aciklama?.let(::add)
+        when (s.avansAcik) { true -> add("maaştan düşülecek"); false -> add("maaştan düşüldü"); null -> Unit }
+        if (s.kategoriAdi != null || s.tur == HareketTuru.AVANS) s.aciklama?.let(::add)
     }.joinToString(" · ")
     Row(Modifier.fillMaxWidth().padding(vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
         Column(Modifier.weight(1f)) {

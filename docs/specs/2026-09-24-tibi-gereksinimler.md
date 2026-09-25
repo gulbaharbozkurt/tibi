@@ -82,6 +82,7 @@ Tek kişinin kullanacağı Android uygulaması. Harcamaları, taksitleri, gelirl
 - **A2.** Avans her zaman bir sonraki maaştan tek seferde düşülür. Beklenen maaş tutarı kendiliğinden azalır ve "Yattı mı?" hatırlatması bu azalmış tutarla gelir.
 - **A3.** Özet ekranında "Maaştan düşülecek avans" satırı görünür.
 - **A4.** F2 ve F4'teki oranlar, maaşın avans düşülmüş hâline göre hesaplanır.
+- **A5.** v0.2.0: avans kaydı, Özet satırı ve maaş gelirinde otomatik mahsup; maaş 'yattı mı?' hatırlatmasındaki düşülmüş tutar Plan 8'de.
 
 ### 3.8 Özel ders
 - **D1.** Öğrenci kaydında şunlar tutulur: ad, saatlik ücret, ödeme şekli (ders başı, ay sonu veya N derslik paket).

@@ -21,6 +21,8 @@ data class HareketSatiri(
     val taksitSayisi: Int,
     val aciklama: String?,
     val gecmisAktarim: Boolean,
+    /** Yalnızca avansta dolu: true = maaştan düşülecek, false = düşüldü. */
+    val avansAcik: Boolean? = null,
 )
 
 @Dao
@@ -44,8 +46,10 @@ interface HareketDao {
     @Query(
         """
         SELECT h.id, h.tur, h.tarih, h.tutarKurus, k.ad AS kategoriAdi, ks.ad AS kaynakAdi, hd.ad AS hedefAdi,
-               h.taksitSayisi, h.aciklama, h.gecmisAktarim
+               h.taksitSayisi, h.aciklama, h.gecmisAktarim,
+               CASE WHEN a.hareketId IS NULL THEN NULL WHEN a.mahsupHareketId IS NULL THEN 1 ELSE 0 END AS avansAcik
         FROM hareket h
+        LEFT JOIN avans a ON a.hareketId = h.id
         LEFT JOIN kategori k ON k.id = h.kategoriId
         LEFT JOIN hesap ks ON ks.id = h.kaynakHesapId
         LEFT JOIN hesap hd ON hd.id = h.hedefHesapId

@@ -93,4 +93,16 @@ class HizliGirisVmTest {
             vm.hesaplar.first().map { it.ad to it.kart },
         )
     }
+
+    @Test
+    fun `avans hesaba yazilir, karta yazilmaz`() = runTest {
+        assertEquals(Sonuc.Tamam, vm.kaydet(GirisTuru.AVANS, "5.000", banka, null, null, 1, 0, bugun, " eylül "))
+        val h = db.hareketDao().satirlar(bugun, bugun).first().single()
+        assertEquals(HareketTuru.AVANS, h.tur)
+        assertEquals("eylül", h.aciklama)
+        assertEquals(500000L, db.avansDao().acikToplam().first())
+        assertEquals(Sonuc.Hata("Avans bir banka hesabına ya da elde nakde yatar."),
+            vm.kaydet(GirisTuru.AVANS, "100", bonus, null, null, 1, 0, bugun, ""))
+        assertEquals(1, db.hareketDao().sayi())
+    }
 }

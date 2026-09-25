@@ -11,7 +11,7 @@ Gereksinimler (`docs/specs/2026-09-24-tibi-gereksinimler.md`) birçok ayrı alt 
 | 5 | Ekstre, ödeme, hatırlatma | Kesimde ekstre kapatma, ödeme işaretleme (tam/asgari/kısmi), otomatik ödeme, bildirim altyapısı, son ödeme ve aidat hatırlatması | K3, K4, K6, K11, K12, Bildirimler |
 | 6 | Harcama freni | Kendi limitin, toplam tavan, kademeli uyarı, kayıt anında etki, taksit uyarısı, bekleme listesi ve etkisi, vazgeçilenler, harcama hızı, fren ayarları | F1–F9, S4 |
 | 7 | Banka tetikleyicisi | Erişilebilirlik servisi, izlenen uygulama → kart eşlemesi, 10 dk kuralı, İzinler adımı | T1–T4, S5 |
-| 8 | Düzenli gider/gelir ve avans | Düzenli kurallar, otomatik kayıt ya da "önce sor", maaş "yattı mı?", avans mahsubu | E5–E8, G2, G5, A1–A4 |
+| 8 | Düzenli gider/gelir ve avans | Düzenli kurallar, otomatik kayıt ya da "önce sor", maaş "yattı mı?" (avans düşülmüş tutarla). Avans kaydı ve maaş gelirinde mahsup v0.2.0'a taşındı (A5); burada yalnızca hatırlatma kısmı kalır. | E5–E8, G2, G5, A2, A4 |
 | 9 | Cüzdanlar ve birikim | Zarf, kasa, hedef; varlıklar; kur çekici ve önbellek | C1–C5 |
 | 10 | Dersler | Öğrenci, ücret geçmişi, ders takvimi, alacak, tahsilat hatırlatması | D1–D7 |
 | 11 | Raporlar | Kategori, gelir-gider, taksit yükü, ders, kart borcu raporları | R1–R5 |

@@ -26,6 +26,8 @@ data class OzetDurumu(
     val hesaplar: List<HesapBakiyesi>,
     val kartlar: List<KartOzeti>,
     val taksitYuku: List<AylikYuk>,
+    /** A3: maaştan henüz düşülmemiş avans toplamı. */
+    val dusulecekAvansKurus: Long = 0,
 )
 
 class OzetVm(
@@ -37,14 +39,16 @@ class OzetVm(
     private val donemVeToplam: Flow<Pair<Donem, DonemToplami>> = donemServisi.donem(bugun()).flatMapLatest { d ->
         db.hareketDao().donemToplami(d.baslangic, d.bitis).map { d to it }
     }
+    private val donemToplamAvans: Flow<Triple<Donem, DonemToplami, Long>> =
+        combine(donemVeToplam, db.avansDao().acikToplam()) { (d, t), avans -> Triple(d, t, avans) }
 
     val durum: Flow<OzetDurumu> = combine(
-        donemVeToplam,
+        donemToplamAvans,
         db.ayarDao().okuAkis(Anahtarlar.HITAP),
         db.hesapDao().bakiyeler(),
         db.kartDao().kartlar(),
         db.taksitDao().aylikYuk(bugun()),
-    ) { (donem, toplam), hitap, hesaplar, kartlar, yuk ->
+    ) { (donem, toplam, avans), hitap, hesaplar, kartlar, yuk ->
         OzetDurumu(
             hitap = hitap,
             donem = donem,
@@ -54,6 +58,7 @@ class OzetVm(
             hesaplar = hesaplar,
             kartlar = kartlar.filter { it.anaKartId == null }.map { KartOzeti(it.ad, it.kullanimKurus, it.kendiLimitiKurus) },
             taksitYuku = yuk.take(3),
+            dusulecekAvansKurus = avans,
         )
     }
 }

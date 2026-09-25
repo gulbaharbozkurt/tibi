@@ -73,16 +73,26 @@ fun HizliGirisSayfasi(kapat: (kaydedildi: Boolean) -> Unit) {
         ) {
             SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
                 GirisTuru.entries.forEachIndexed { i, t ->
-                    SegmentedButton(tur == t, { tur = t; kategoriId = null; hata = null }, SegmentedButtonDefaults.itemShape(i, GirisTuru.entries.size)) {
-                        Text(when (t) { GirisTuru.HARCAMA -> "Harcama"; GirisTuru.GELIR -> "Gelir"; GirisTuru.TRANSFER -> "Transfer" })
+                    // Dört bölüm telefon genişliğine sığsın diye seçim işareti gösterilmez, etiket tek satır kalır.
+                    SegmentedButton(tur == t, { tur = t; kategoriId = null; hata = null }, SegmentedButtonDefaults.itemShape(i, GirisTuru.entries.size), icon = {}) {
+                        Text(when (t) {
+                            GirisTuru.HARCAMA -> "Harcama"; GirisTuru.GELIR -> "Gelir"
+                            GirisTuru.TRANSFER -> "Transfer"; GirisTuru.AVANS -> "Avans"
+                        }, maxLines = 1, softWrap = false, style = MaterialTheme.typography.labelMedium)
                     }
                 }
             }
             TutarAlani(tutar, { tutar = it }, "Tutar", buyuk = true)
-            if (tur != GirisTuru.TRANSFER) FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+            if (tur == GirisTuru.HARCAMA || tur == GirisTuru.GELIR) FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 kategoriler.forEach { k -> FilterChip(kategoriId == k.id, { kategoriId = if (kategoriId == k.id) null else k.id }, label = { Text(k.ad) }) }
             }
-            Secici(if (tur == GirisTuru.TRANSFER) "Nereden" else "Hesap / kart", hesapListesi, secili, { it.ad }, { hesapId = it.id })
+            if (tur == GirisTuru.AVANS) Text("Avans gelir sayılmaz; bir sonraki maaştan düşülür.",
+                style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            val hesapEtiketi = when (tur) {
+                GirisTuru.TRANSFER -> "Nereden"; GirisTuru.HARCAMA -> "Hesap / kart"
+                GirisTuru.GELIR -> "Hesap"; GirisTuru.AVANS -> "Yattığı hesap"
+            }
+            Secici(hesapEtiketi, hesapListesi, secili, { it.ad }, { hesapId = it.id })
             if (tur == GirisTuru.TRANSFER) {
                 val hedefler = hesaplar.filter { it.id != hesapId }
                 Secici("Nereye (kart seçersen kart ödemesi olur)", hedefler, hedefler.firstOrNull { it.id == hedefId }, { it.ad }, { hedefId = it.id })

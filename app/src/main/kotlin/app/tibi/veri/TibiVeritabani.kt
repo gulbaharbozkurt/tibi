@@ -6,6 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
+import app.tibi.veri.dao.AvansDao
 import app.tibi.veri.dao.AyarDao
 import app.tibi.veri.dao.BankaDao
 import app.tibi.veri.dao.DuzenliKuralDao
@@ -15,6 +16,7 @@ import app.tibi.veri.dao.HesapDao
 import app.tibi.veri.dao.KartDao
 import app.tibi.veri.dao.KategoriDao
 import app.tibi.veri.dao.TaksitDao
+import app.tibi.veri.tablo.Avans
 import app.tibi.veri.tablo.Ayar
 import app.tibi.veri.tablo.Banka
 import app.tibi.veri.tablo.DuzenliKural
@@ -28,7 +30,7 @@ import app.tibi.veri.tablo.TaksitSatiri
 @Database(
     entities = [
         Banka::class, Hesap::class, Kart::class, Kategori::class, Hareket::class, TaksitSatiri::class,
-        Ekstre::class, DuzenliKural::class, Ayar::class,
+        Ekstre::class, DuzenliKural::class, Ayar::class, Avans::class,
     ],
     version = 1,
     exportSchema = true,
@@ -44,6 +46,7 @@ abstract class TibiVeritabani : RoomDatabase() {
     abstract fun ekstreDao(): EkstreDao
     abstract fun duzenliKuralDao(): DuzenliKuralDao
     abstract fun ayarDao(): AyarDao
+    abstract fun avansDao(): AvansDao
 
     companion object {
         /** İlk oluşturmada varsayılan kategorileri yazar. */
