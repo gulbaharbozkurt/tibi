@@ -38,7 +38,9 @@ import androidx.navigation.navArgument
 import app.tibi.ui.giris.HizliGirisSayfasi
 import app.tibi.ui.hareketler.HareketlerEkrani
 import app.tibi.ui.hesaplar.HesaplarEkrani
+import app.tibi.ui.hesaplar.HesapDuzenleEkrani
 import app.tibi.ui.hesaplar.KartDetayEkrani
+import app.tibi.ui.hesaplar.KartDuzenleEkrani
 import app.tibi.ui.ozet.OzetEkrani
 import kotlinx.coroutines.launch
 
@@ -69,7 +71,7 @@ fun Kabuk() {
             NavigationBar {
                 Sekme.entries.forEach { s ->
                     NavigationBarItem(
-                        selected = aktif == s.rota || (s == Sekme.HESAPLAR && aktif?.startsWith("kart/") == true),
+                        selected = aktif == s.rota || (s == Sekme.HESAPLAR && (aktif?.startsWith("kart/") == true || aktif?.startsWith("hesap/") == true)),
                         onClick = {
                             nav.navigate(s.rota) {
                                 popUpTo(nav.graph.findStartDestination().id) { saveState = true }
@@ -87,9 +89,19 @@ fun Kabuk() {
         NavHost(nav, startDestination = Sekme.OZET.rota, modifier = Modifier.padding(ic)) {
             composable(Sekme.OZET.rota) { OzetEkrani() }
             composable(Sekme.HAREKETLER.rota) { HareketlerEkrani() }
-            composable(Sekme.HESAPLAR.rota) { HesaplarEkrani(kartAc = { nav.navigate("kart/$it") }) }
+            composable(Sekme.HESAPLAR.rota) {
+                HesaplarEkrani(kartAc = { nav.navigate("kart/$it") }, hesapAc = { nav.navigate("hesap/$it") })
+            }
             composable("kart/{id}", arguments = listOf(navArgument("id") { type = NavType.LongType })) { giris ->
-                KartDetayEkrani(giris.arguments!!.getLong("id"), geri = { nav.popBackStack() })
+                val id = giris.arguments!!.getLong("id")
+                KartDetayEkrani(id, geri = { nav.popBackStack() }, duzenle = { nav.navigate("kart/$id/duzenle") })
+            }
+            composable("kart/{id}/duzenle", arguments = listOf(navArgument("id") { type = NavType.LongType })) { giris ->
+                KartDuzenleEkrani(giris.arguments!!.getLong("id"), geri = { nav.popBackStack() },
+                    kapatildi = { nav.popBackStack(Sekme.HESAPLAR.rota, inclusive = false) })
+            }
+            composable("hesap/{id}", arguments = listOf(navArgument("id") { type = NavType.LongType })) { giris ->
+                HesapDuzenleEkrani(giris.arguments!!.getLong("id"), geri = { nav.popBackStack() })
             }
             listOf(Sekme.CUZDANLAR, Sekme.DERSLER).forEach { s -> composable(s.rota) { YerTutucu(s.baslik) } }
         }

@@ -10,6 +10,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -28,13 +29,14 @@ import app.tibi.ui.ortak.kisa
 import app.tibi.ui.tibiVm
 
 @Composable
-fun KartDetayEkrani(kartId: Long, geri: () -> Unit) {
+fun KartDetayEkrani(kartId: Long, geri: () -> Unit, duzenle: () -> Unit) {
     val vm = tibiVm { KartDetayVm(it.veritabani, kartId) }
     val d by vm.detay.collectAsStateWithLifecycle(null)
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             IconButton(geri) { Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Geri") }
-            Text(d?.let { "${it.kart.ad} ··${it.kart.son4}" } ?: "", style = MaterialTheme.typography.headlineSmall)
+            Text(d?.let { "${it.kart.ad} ··${it.kart.son4}" } ?: "", style = MaterialTheme.typography.headlineSmall, modifier = Modifier.weight(1f))
+            if (d != null) IconButton(duzenle) { Icon(Icons.Filled.Edit, contentDescription = "Düzenle") }
         }
         val x = d ?: return
         Text("Kesim ${x.ana.kesimGunu} · Son ödeme ${x.ana.sonOdemeGunu}" + if (x.kart.hesapId != x.ana.hesapId) " · ${x.ana.ad} ile ortak limit" else "",

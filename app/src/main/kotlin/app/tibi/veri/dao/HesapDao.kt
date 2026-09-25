@@ -24,6 +24,8 @@ interface HesapDao {
     @Update suspend fun guncelle(hesap: Hesap)
     @Query("SELECT * FROM hesap WHERE id = :id") suspend fun getir(id: Long): Hesap?
     @Query("SELECT * FROM hesap WHERE arsiv = 0 ORDER BY sira, id") fun tumu(): Flow<List<Hesap>>
+    /** Tek maaş hesabı kuralı: verilen hesap dışındakilerin maaş işaretini kaldırır. */
+    @Query("UPDATE hesap SET maasHesabi = 0 WHERE id != :hesapId") suspend fun maasIsaretiniKaldir(hesapId: Long)
     /** açılış + girenler − çıkanlar. Banka ve nakit için anlamlı; kartlar için limit kullanımı ayrı hesaplanır. */
     @Query(
         """

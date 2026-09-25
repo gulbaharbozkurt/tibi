@@ -20,7 +20,14 @@ import app.tibi.veri.tablo.Banka
 import app.tibi.veri.tablo.KartTuru
 
 @Composable
-fun KartFormu(g: KartGirdisi, anaKartlar: List<KartBilgisi>, bankalar: List<Banka>, degisti: (KartGirdisi) -> Unit) {
+/** duzenleme: tür/ana kart seçimi ve "Şu anki borç" bölümü gizlenir (bunlar kart eklenirken bir kez girilir). */
+fun KartFormu(
+    g: KartGirdisi,
+    anaKartlar: List<KartBilgisi>,
+    bankalar: List<Banka>,
+    duzenleme: Boolean = false,
+    degisti: (KartGirdisi) -> Unit,
+) {
     Bolum("Kart") {
         OutlinedTextField(g.ad, { degisti(g.copy(ad = it)) }, label = { Text("Kart adı") }, singleLine = true, modifier = Modifier.fillMaxWidth())
         if (g.tur == KartTuru.ANA) {
@@ -28,13 +35,13 @@ fun KartFormu(g: KartGirdisi, anaKartlar: List<KartBilgisi>, bankalar: List<Bank
                 placeholder = { Text("Garanti BBVA") }, singleLine = true, modifier = Modifier.fillMaxWidth())
             BankaCipleri(bankalar, g.bankaAdi) { degisti(g.copy(bankaAdi = it)) }
         }
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        if (!duzenleme) Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             listOf(KartTuru.ANA to "Ana kart", KartTuru.EK to "Ek kart", KartTuru.SANAL to "Sanal kart").forEach { (t, ad) ->
                 FilterChip(g.tur == t, { degisti(g.copy(tur = t)) }, label = { Text(ad) })
             }
         }
         if (g.tur != KartTuru.ANA) {
-            Secici("Limitini paylaştığı ana kart", anaKartlar, anaKartlar.firstOrNull { it.hesapId == g.anaKartId }, { kartEtiketi(it) },
+            if (!duzenleme) Secici("Limitini paylaştığı ana kart", anaKartlar, anaKartlar.firstOrNull { it.hesapId == g.anaKartId }, { kartEtiketi(it) },
                 { degisti(g.copy(anaKartId = it.hesapId)) })
             Text("Ek ve sanal kart ana kartın limitini, kesim ve son ödeme günlerini kullanır.", color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
@@ -52,8 +59,10 @@ fun KartFormu(g: KartGirdisi, anaKartlar: List<KartBilgisi>, bankalar: List<Bank
             TutarAlani(g.kendiLimiti, { degisti(g.copy(kendiLimiti = it)) }, "Kendi limitin")
             Text("Ekranda bu sınır görünür, uyarılar buna göre çalışır.", color = MaterialTheme.colorScheme.onSurfaceVariant)
             SayiAlani(g.asgariOran, { degisti(g.copy(asgariOran = it)) }, "Asgari ödeme oranı (%)", Modifier.fillMaxWidth())
+            if (duzenleme) Text("Kesim günü değişirse mevcut taksitler eski tarihlerinde kalır.",
+                style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
-        Bolum("Şu anki borç") {
+        if (!duzenleme) Bolum("Şu anki borç") {
             TutarAlani(g.kesilmisEkstre, { degisti(g.copy(kesilmisEkstre = it)) }, "Kesilmiş ekstre (ödenmemiş)")
             TutarAlani(g.donemIci, { degisti(g.copy(donemIci = it)) }, "Dönem içi tek çekimler")
             Text("Taksitler kurulumun son adımında ayrıca girilir.", color = MaterialTheme.colorScheme.onSurfaceVariant)

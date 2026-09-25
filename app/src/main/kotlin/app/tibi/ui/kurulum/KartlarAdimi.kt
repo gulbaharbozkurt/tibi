@@ -33,7 +33,7 @@ fun KartlarAdimi(vm: KurulumVm) {
     var hata by remember { mutableStateOf<String?>(null) }
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        Text("İstediğin kadar kart ekle; sonra da değiştirebilirsin.", color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Text("İstediğin kadar kart ekle. Kartları sonra Hesaplar sekmesinden düzenleyebilirsin.", color = MaterialTheme.colorScheme.onSurfaceVariant)
         if (kartlar.isNotEmpty()) Bolum("Eklenen kartlar") {
             kartlar.forEach { k ->
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {

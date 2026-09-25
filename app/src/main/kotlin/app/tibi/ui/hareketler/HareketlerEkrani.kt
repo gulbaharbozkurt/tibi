@@ -93,13 +93,15 @@ private fun baslik(s: HareketSatiri) = s.kategoriAdi ?: when (s.tur) {
     HareketTuru.GELIR -> "Gelir"
     HareketTuru.AVANS -> "Avans"
     HareketTuru.TAHSILAT -> "Tahsilat"
+    HareketTuru.DUZELTME -> "Bakiye düzeltme"
     else -> s.aciklama ?: "Harcama"
 }
 
 @Composable
 private fun HareketSatirKutusu(s: HareketSatiri, sil: () -> Unit) {
-    val giris = s.tur in setOf(HareketTuru.GELIR, HareketTuru.TAHSILAT, HareketTuru.AVANS)
-    val cikis = s.tur == HareketTuru.HARCAMA
+    val duzeltme = s.tur == HareketTuru.DUZELTME
+    val giris = s.tur in setOf(HareketTuru.GELIR, HareketTuru.TAHSILAT, HareketTuru.AVANS) || (duzeltme && s.hedefAdi != null)
+    val cikis = s.tur == HareketTuru.HARCAMA || (duzeltme && s.kaynakAdi != null)
     val alt = buildList {
         when {
             s.kaynakAdi != null && s.hedefAdi != null -> add("${s.kaynakAdi} → ${s.hedefAdi}")

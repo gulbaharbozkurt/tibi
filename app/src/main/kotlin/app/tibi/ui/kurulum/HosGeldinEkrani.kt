@@ -24,7 +24,7 @@ fun HosGeldinEkrani(hitap: String, degisti: (String) -> Unit) {
         OutlinedTextField(
             value = hitap, onValueChange = degisti, singleLine = true,
             label = { Text("Sana nasıl hitap edelim?") },
-            supportingText = { Text("Bildirimlerde kullanılır: \"$hitap, Bonus'un son ödemesine 3 gün var.\"") },
+            supportingText = { Text("Bildirimlerde kullanılır: \"${hitap.trim().ifEmpty { "Adın" }}, Bonus'un son ödemesine 3 gün var.\"") },
             modifier = Modifier.fillMaxWidth(),
         )
     }

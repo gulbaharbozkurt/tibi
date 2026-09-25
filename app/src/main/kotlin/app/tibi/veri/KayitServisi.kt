@@ -83,6 +83,17 @@ class KayitServisi(
             )
         }
 
+    /** Bakiyeyi gerçeğe eşitleyen düzeltme; artis ise para hesaba girer, değilse çıkar. Dönem toplamına sayılmaz. */
+    suspend fun duzeltme(tutar: Kurus, tarih: LocalDate, hesapId: Long, artis: Boolean): Long = db.withTransaction {
+        pozitif(tutar)
+        if (hesapGetir(hesapId).tur == HesapTuru.KREDI_KARTI) throw KayitHatasi("Kredi kartında bakiye düzeltilmez")
+        db.hareketDao().ekle(
+            Hareket(tur = HareketTuru.DUZELTME, tarih = tarih, tutarKurus = tutar.deger,
+                hedefHesapId = if (artis) hesapId else null, kaynakHesapId = if (artis) null else hesapId,
+                aciklama = "Bakiye düzeltme", olusturma = saat())
+        )
+    }
+
     /** Adı büyük/küçük harf farkı gözetmeden (Türkçe kurallarla) eşleşen bankanın id'si; yoksa yeni banka açar. */
     suspend fun bankaBulVeyaEkle(ad: String): Long = db.withTransaction {
         val temiz = ad.trim()

@@ -26,7 +26,7 @@ import app.tibi.veri.tablo.HesapTuru
 import app.tibi.veri.tablo.KartTuru
 
 @Composable
-fun HesaplarEkrani(kartAc: (Long) -> Unit) {
+fun HesaplarEkrani(kartAc: (Long) -> Unit, hesapAc: (Long) -> Unit) {
     val vm = tibiVm { HesaplarVm(it.veritabani) }
     val d by vm.durum.collectAsStateWithLifecycle(null)
     Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -37,18 +37,18 @@ fun HesaplarEkrani(kartAc: (Long) -> Unit) {
         }
         durum.bankalar.forEach { g ->
             Bolum(g.banka.ad) {
-                g.hesaplar.forEach { HesapSatiri(it) }
+                g.hesaplar.forEach { HesapSatiri(it, hesapAc) }
                 g.kartlar.forEach { KartSatiri(it, kartAc) }
             }
         }
-        if (durum.nakit.isNotEmpty()) Bolum("Elde nakit") { durum.nakit.forEach { HesapSatiri(it) } }
+        if (durum.nakit.isNotEmpty()) Bolum("Elde nakit") { durum.nakit.forEach { HesapSatiri(it, hesapAc) } }
         if (durum.bankasizKartlar.isNotEmpty()) Bolum("Diğer kartlar") { durum.bankasizKartlar.forEach { KartSatiri(it, kartAc) } }
     }
 }
 
 @Composable
-private fun HesapSatiri(h: HesapBakiyesi) {
-    Row(Modifier.fillMaxWidth().padding(vertical = 6.dp), horizontalArrangement = Arrangement.SpaceBetween) {
+private fun HesapSatiri(h: HesapBakiyesi, hesapAc: (Long) -> Unit) {
+    Row(Modifier.fillMaxWidth().clickable { hesapAc(h.id) }.padding(vertical = 6.dp), horizontalArrangement = Arrangement.SpaceBetween) {
         Text(h.ad + if (h.tur != HesapTuru.NAKIT && h.maasHesabi) " · maaş" else "")
         Text(Kurus(h.bakiyeKurus).bicimle())
     }

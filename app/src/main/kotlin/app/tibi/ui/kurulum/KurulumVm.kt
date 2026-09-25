@@ -132,35 +132,24 @@ class KurulumVm(
         return Sonuc.Tamam
     }
 
-    private class GirdiHatasi(mesaj: String) : Exception(mesaj)
-
-    private fun tutarVeyaBos(metin: String, alan: String): Long? =
-        if (metin.isBlank()) null else (kurusCoz(metin) ?: throw GirdiHatasi("$alan tutarını 15.000 biçiminde yaz.")).deger
-
-    private fun gun(metin: String, alan: String): Int =
-        metin.toIntOrNull()?.takeIf { it in 1..31 } ?: throw GirdiHatasi("$alan 1 ile 31 arasında olmalı.")
-
     suspend fun kartEkle(g: KartGirdisi): Sonuc = try {
-        if (g.ad.isBlank()) throw GirdiHatasi("Karta bir ad ver, ör. \"Bonus\".")
-        if (!Regex("""\d{4}""").matches(g.son4)) throw GirdiHatasi("Kartın son 4 hanesini yaz.")
+        KartDogrulayici.kimlik(g)
         val ana = if (g.tur == KartTuru.ANA) null else {
             val id = g.anaKartId ?: throw GirdiHatasi("Ek ve sanal kart için ana kartı seç.")
             db.kartDao().getir(id) ?: throw GirdiHatasi("Seçilen ana kart bulunamadı.")
         }
-        val kesim = ana?.kesimGunu ?: gun(g.kesimGunu, "Kesim günü")
-        val sonOdeme = ana?.sonOdemeGunu ?: gun(g.sonOdemeGunu, "Son ödeme günü")
-        val bankaLimiti = if (ana == null) tutarVeyaBos(g.bankaLimiti, "Banka limiti") else null
-        val kendiLimiti = if (ana == null) tutarVeyaBos(g.kendiLimiti, "Kendi limitin") else null
-        val oran = g.asgariOran.toIntOrNull()?.takeIf { it in 0..100 } ?: throw GirdiHatasi("Asgari ödeme oranı 0 ile 100 arasında olmalı.")
-        val kesilmis = if (ana == null) tutarVeyaBos(g.kesilmisEkstre, "Kesilmiş ekstre") else null
-        val donemIci = if (ana == null) tutarVeyaBos(g.donemIci, "Dönem içi harcama") else null
+        val ayar = if (ana == null) KartDogrulayici.anaKartAyarlari(g)
+            else KartAyarlari(ana.kesimGunu, ana.sonOdemeGunu, null, null, KartDogrulayici.asgariOranBinde(g.asgariOran))
+        val kesilmis = if (ana == null) KartDogrulayici.tutarVeyaBos(g.kesilmisEkstre, "Kesilmiş ekstre") else null
+        val donemIci = if (ana == null) KartDogrulayici.tutarVeyaBos(g.donemIci, "Dönem içi harcama") else null
         db.withTransaction {
             val bankaId = if (ana != null) db.hesapDao().getir(ana.hesapId)?.bankaId
                 else g.bankaAdi.takeIf { it.isNotBlank() }?.let { kayit.bankaBulVeyaEkle(it) }
             val id = db.hesapDao().ekle(Hesap(ad = g.ad.trim(), tur = HesapTuru.KREDI_KARTI, acilisTarihi = bugun(), bankaId = bankaId))
             db.kartDao().ekle(
-                Kart(hesapId = id, kartTuru = g.tur, anaKartId = ana?.hesapId, son4 = g.son4, kesimGunu = kesim, sonOdemeGunu = sonOdeme,
-                    bankaLimitiKurus = bankaLimiti, kendiLimitiKurus = kendiLimiti, asgariOranBinde = oran * 10)
+                Kart(hesapId = id, kartTuru = g.tur, anaKartId = ana?.hesapId, son4 = g.son4, kesimGunu = ayar.kesimGunu,
+                    sonOdemeGunu = ayar.sonOdemeGunu, bankaLimitiKurus = ayar.bankaLimitiKurus, kendiLimitiKurus = ayar.kendiLimitiKurus,
+                    asgariOranBinde = ayar.asgariOranBinde)
             )
             if (kesilmis != null && kesilmis > 0) kayit.acilisEkstresi(id, Kurus(kesilmis), bugun())
             if (donemIci != null && donemIci > 0) kayit.gecmisTaksit(GecmisTaksitGirisi.KalanBorc(Kurus(donemIci), 1), id, null,
