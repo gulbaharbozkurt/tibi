@@ -80,7 +80,7 @@ fun HareketlerEkrani(kalemAc: (kalemAnahtar: String) -> Unit = {}) {
             }
         }
         OutlinedTextField(arama, { vm.arama.value = it }, leadingIcon = { Icon(Icons.Filled.Search, null) },
-            placeholder = { Text("Ara: not, kategori, hesap, tutar") }, singleLine = true, modifier = Modifier.fillMaxWidth().padding(top = 8.dp))
+            placeholder = { Text("Ara: ad, not, kategori, hesap, tutar") }, singleLine = true, modifier = Modifier.fillMaxWidth().padding(top = 8.dp))
         Row(horizontalArrangement = Arrangement.spacedBy(6.dp), modifier = Modifier.padding(vertical = 8.dp)) {
             HareketFiltresi.entries.forEach { f -> FilterChip(filtre == f, { vm.filtre.value = f }, label = { Text(FILTRE_ADI.getValue(f)) }) }
         }

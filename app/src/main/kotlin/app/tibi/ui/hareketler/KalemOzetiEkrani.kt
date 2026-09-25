@@ -4,7 +4,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -36,9 +38,11 @@ fun KalemOzetiEkrani(kalemAnahtar: String, geri: () -> Unit) {
         if (x.aylar.isEmpty()) Text("Bu kalem için kayıt yok.", color = MaterialTheme.colorScheme.onSurfaceVariant)
         LazyColumn(contentPadding = PaddingValues(bottom = 16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
             items(x.aylar, key = { it.ay.toString() }) { a ->
-                Column {
-                    Text(a.etiket)
-                    Text(a.metin, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Column(
+                    Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.surface, MaterialTheme.shapes.medium).padding(14.dp),
+                ) {
+                    Text(a.etiket, style = MaterialTheme.typography.titleMedium)
+                    Text(a.metin, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
         }
