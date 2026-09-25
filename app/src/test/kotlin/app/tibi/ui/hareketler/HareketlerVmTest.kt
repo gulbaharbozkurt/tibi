@@ -109,4 +109,20 @@ class HareketlerVmTest {
         assertEquals(once, vm.donem.first())
         assertEquals(4, vm.gruplar.first().sumOf { it.satirlar.size })
     }
+
+    @Test
+    fun `kalem aramada bulunur, baslik olur, kategori alt satira iner`() = runTest {
+        val kayit = KayitServisi(db) { Instant.parse("2026-09-24T09:00:00Z") }
+        val nakit = db.hesapDao().ekle(Hesap(ad = "Cüzdan", tur = HesapTuru.NAKIT, acilisTarihi = bugun))
+        kayit.harcama(Kurus(9000), bugun, nakit, db.kategoriDao().adIle("Market")!!.id, kalem = "Probis")
+        vm.arama.value = "PROB"
+        val s = vm.gruplar.first().flatMap { it.satirlar }.single()
+        assertEquals(9000L, s.tutarKurus)
+        assertEquals("Probis", satirBasligi(s))
+        assertEquals("Market · Cüzdan", satirAltMetni(s))
+        vm.arama.value = "haftal"
+        val eski = vm.gruplar.first().flatMap { it.satirlar }.single()
+        assertEquals("Market", satirBasligi(eski))
+        assertEquals("Nakit · haftalık", satirAltMetni(eski))
+    }
 }

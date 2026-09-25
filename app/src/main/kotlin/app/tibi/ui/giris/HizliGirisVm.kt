@@ -7,6 +7,8 @@ import app.tibi.ui.ortak.hesapEtiketi
 import app.tibi.veri.KayitHatasi
 import app.tibi.veri.KayitServisi
 import app.tibi.veri.TibiVeritabani
+import app.tibi.veri.dao.KalemOnerisi
+import app.tibi.veri.kalemAnahtari
 import app.tibi.veri.tablo.HesapTuru
 import app.tibi.veri.tablo.Kategori
 import app.tibi.veri.tablo.KategoriYonu
@@ -31,9 +33,12 @@ class HizliGirisVm(
             kartlar.map { HesapSecenegi(it.hesapId, hesapEtiketi(it.bankaAdi, it.ad), true) }
     }
 
+    /** Yazılan metne uyan, daha önce girilmiş kalemler; sık girilen önce. Boş metin bütün kalemleri verir. */
+    suspend fun oneriler(metin: String): List<KalemOnerisi> = db.hareketDao().kalemOnerileri(kalemAnahtari(metin) ?: "")
+
     suspend fun kaydet(
         tur: GirisTuru, tutarMetni: String, hesapId: Long?, hedefHesapId: Long?, kategoriId: Long?,
-        taksit: Int, erteleme: Int, tarih: LocalDate, aciklama: String,
+        taksit: Int, erteleme: Int, tarih: LocalDate, aciklama: String, kalem: String = "",
     ): Sonuc {
         if (tarih.isAfter(bugun())) return Sonuc.Hata("İleri bir tarih seçilemez.")
         val tutar = kurusCoz(tutarMetni)?.takeIf { it.deger > 0 } ?: return Sonuc.Hata("Tutarı 1.249,90 biçiminde yaz.")
@@ -43,7 +48,7 @@ class HizliGirisVm(
             when (tur) {
                 GirisTuru.HARCAMA -> {
                     val kart = db.hesapDao().getir(kaynak)?.tur == HesapTuru.KREDI_KARTI
-                    kayit.harcama(tutar, tarih, kaynak, kategoriId, if (kart) taksit else 1, if (kart) erteleme else 0, not)
+                    kayit.harcama(tutar, tarih, kaynak, kategoriId, if (kart) taksit else 1, if (kart) erteleme else 0, not, kalem)
                 }
                 GirisTuru.GELIR -> {
                     if (db.hesapDao().getir(kaynak)?.tur == HesapTuru.KREDI_KARTI) return Sonuc.Hata("Gelir bir banka hesabına ya da nakde girer.")

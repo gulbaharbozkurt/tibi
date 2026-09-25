@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "322c5e46ab51e65dbe265116438cc88e",
+    "identityHash": "eadb52d5a60920f77fc3aa5e967a323e",
     "entities": [
       {
         "tableName": "banka",
@@ -349,7 +349,7 @@
       },
       {
         "tableName": "hareket",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `tur` TEXT NOT NULL, `tarih` INTEGER NOT NULL, `tutarKurus` INTEGER NOT NULL, `kaynakHesapId` INTEGER, `hedefHesapId` INTEGER, `kategoriId` INTEGER, `cuzdanId` INTEGER, `taksitSayisi` INTEGER NOT NULL, `ertelemeAy` INTEGER NOT NULL, `taksitTuru` TEXT, `gecmisAktarim` INTEGER NOT NULL, `ekstreId` INTEGER, `ogrenciId` INTEGER, `duzenliKuralId` INTEGER, `beklenenTarih` INTEGER, `aciklama` TEXT, `olusturma` INTEGER NOT NULL, FOREIGN KEY(`kaynakHesapId`) REFERENCES `hesap`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`hedefHesapId`) REFERENCES `hesap`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`kategoriId`) REFERENCES `kategori`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`ekstreId`) REFERENCES `ekstre`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `tur` TEXT NOT NULL, `tarih` INTEGER NOT NULL, `tutarKurus` INTEGER NOT NULL, `kaynakHesapId` INTEGER, `hedefHesapId` INTEGER, `kategoriId` INTEGER, `cuzdanId` INTEGER, `taksitSayisi` INTEGER NOT NULL, `ertelemeAy` INTEGER NOT NULL, `taksitTuru` TEXT, `gecmisAktarim` INTEGER NOT NULL, `ekstreId` INTEGER, `ogrenciId` INTEGER, `duzenliKuralId` INTEGER, `beklenenTarih` INTEGER, `aciklama` TEXT, `olusturma` INTEGER NOT NULL, `kalem` TEXT, `kalemAnahtar` TEXT, FOREIGN KEY(`kaynakHesapId`) REFERENCES `hesap`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`hedefHesapId`) REFERENCES `hesap`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`kategoriId`) REFERENCES `kategori`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`ekstreId`) REFERENCES `ekstre`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
         "fields": [
           {
             "fieldPath": "id",
@@ -458,6 +458,18 @@
             "columnName": "olusturma",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "kalem",
+            "columnName": "kalem",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "kalemAnahtar",
+            "columnName": "kalemAnahtar",
+            "affinity": "TEXT",
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -511,6 +523,15 @@
             ],
             "orders": [],
             "createSql": "CREATE INDEX IF NOT EXISTS `index_hareket_tarih` ON `${TABLE_NAME}` (`tarih`)"
+          },
+          {
+            "name": "index_hareket_kalemAnahtar",
+            "unique": false,
+            "columnNames": [
+              "kalemAnahtar"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_hareket_kalemAnahtar` ON `${TABLE_NAME}` (`kalemAnahtar`)"
           }
         ],
         "foreignKeys": [
@@ -1042,7 +1063,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '322c5e46ab51e65dbe265116438cc88e')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'eadb52d5a60920f77fc3aa5e967a323e')"
     ]
   }
 }

@@ -46,6 +46,7 @@ class KayitServisi(
         taksitSayisi: Int = 1,
         ertelemeAy: Int = 0,
         aciklama: String? = null,
+        kalem: String? = null,
     ): Long = db.withTransaction {
         pozitif(tutar)
         val hesap = hesapGetir(hesapId)
@@ -58,6 +59,7 @@ class KayitServisi(
                 kaynakHesapId = hesapId, kategoriId = kategoriId,
                 taksitSayisi = taksitSayisi, ertelemeAy = ertelemeAy,
                 aciklama = aciklama, olusturma = saat(),
+                kalem = kalem?.let(::kalemAdi), kalemAnahtar = kalem?.let(::kalemAnahtari),
             )
         )
         if (hesap.tur == HesapTuru.KREDI_KARTI) kartaYansit(hareketId, hesapId, tutar, taksitSayisi, ertelemeAy, tarih)

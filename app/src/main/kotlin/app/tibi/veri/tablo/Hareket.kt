@@ -19,7 +19,7 @@ enum class TaksitTuru { ALISVERIS, EKSTRE_TAKSIT, NAKIT_AVANS }
         ForeignKey(entity = Kategori::class, parentColumns = ["id"], childColumns = ["kategoriId"]),
         ForeignKey(entity = Ekstre::class, parentColumns = ["id"], childColumns = ["ekstreId"]),
     ],
-    indices = [Index("kaynakHesapId"), Index("hedefHesapId"), Index("kategoriId"), Index("ekstreId"), Index("tarih")],
+    indices = [Index("kaynakHesapId"), Index("hedefHesapId"), Index("kategoriId"), Index("ekstreId"), Index("tarih"), Index("kalemAnahtar")],
 )
 data class Hareket(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
@@ -40,4 +40,8 @@ data class Hareket(
     val beklenenTarih: LocalDate? = null,
     val aciklama: String? = null,
     val olusturma: Instant,
+    /** Harcamanın adı (ör. "Probis"), yazıldığı gibi. */
+    val kalem: String? = null,
+    /** Kalemin gruplama anahtarı: Türkçe küçük harf; bkz. kalemAnahtari(). */
+    val kalemAnahtar: String? = null,
 )

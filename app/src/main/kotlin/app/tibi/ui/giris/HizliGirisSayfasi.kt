@@ -28,6 +28,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -37,6 +38,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import app.tibi.core.para.Kurus
+import app.tibi.core.para.bicimle
 import app.tibi.ui.Sonuc
 import app.tibi.ui.ortak.Secici
 import app.tibi.ui.ortak.TutarAlani
@@ -44,6 +47,8 @@ import app.tibi.ui.ortak.kisa
 import app.tibi.ui.ortak.utcMillis
 import app.tibi.ui.ortak.utcTarih
 import app.tibi.ui.tibiVm
+import app.tibi.veri.dao.KalemOnerisi
+import app.tibi.veri.kalemAnahtari
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
@@ -70,6 +75,9 @@ fun HizliGirisSayfasi(kapat: (kaydedildi: Boolean) -> Unit) {
     var tarih by remember { mutableStateOf(bugun) }
     var takvimAcik by remember { mutableStateOf(false) }
     var aciklama by remember { mutableStateOf("") }
+    var kalem by remember { mutableStateOf("") }
+    var oneriler by remember { mutableStateOf(emptyList<KalemOnerisi>()) }
+    LaunchedEffect(tur, kalem) { oneriler = if (tur == GirisTuru.HARCAMA) vm.oneriler(kalem) else emptyList() }
     var hata by remember { mutableStateOf<String?>(null) }
 
     val hesapListesi = if (tur == GirisTuru.HARCAMA) hesaplar else hesaplar.filterNot { it.kart }
@@ -89,6 +97,19 @@ fun HizliGirisSayfasi(kapat: (kaydedildi: Boolean) -> Unit) {
                             GirisTuru.HARCAMA -> "Harcama"; GirisTuru.GELIR -> "Gelir"
                             GirisTuru.TRANSFER -> "Transfer"; GirisTuru.AVANS -> "Avans"
                         }, maxLines = 1, softWrap = false, style = MaterialTheme.typography.labelMedium)
+                    }
+                }
+            }
+            if (tur == GirisTuru.HARCAMA) {
+                OutlinedTextField(kalem, { kalem = it }, label = { Text("Ne aldın? (ör. Probis)") }, singleLine = true, modifier = Modifier.fillMaxWidth())
+                if (oneriler.isNotEmpty()) FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                    val anahtar = kalemAnahtari(kalem)
+                    oneriler.forEach { o ->
+                        FilterChip(anahtar == o.kalemAnahtar, {
+                            kalem = o.kalem
+                            o.kategoriId?.let { kategoriId = it }
+                            if (tutar.isBlank()) tutar = Kurus(o.sonTutarKurus).bicimle().removeSuffix(" ₺")
+                        }, label = { Text(o.kalem) })
                     }
                 }
             }
@@ -122,7 +143,7 @@ fun HizliGirisSayfasi(kapat: (kaydedildi: Boolean) -> Unit) {
             hata?.let { Text(it, color = MaterialTheme.colorScheme.error) }
             Button(onClick = {
                 kapsam.launch {
-                    when (val s = vm.kaydet(tur, tutar, hesapId, hedefId, kategoriId, taksit, erteleme, tarih, aciklama)) {
+                    when (val s = vm.kaydet(tur, tutar, hesapId, hedefId, kategoriId, taksit, erteleme, tarih, aciklama, kalem)) {
                         Sonuc.Tamam -> { durum.hide(); kapat(true) }
                         is Sonuc.Hata -> hata = s.mesaj
                     }

@@ -38,6 +38,7 @@ Tek kişinin kullanacağı Android uygulaması. Harcamaları, taksitleri, gelirl
 - **E6.** Sabit tutarlılar günü gelince kendiliğinden kaydedilir ve bildirim gelir ("YouTube 79,99 ₺ Bonus'a yazıldı"). Değişken tutarlılar (fatura gibi) için "tutarı gir" hatırlatması gelir. Her kalemde "önce bana sor" seçilebilir. Karta yazılanlar ilgili ekstreye düşer.
 - **E7.** Düzenli harcamalar listesinde aylık ve yıllık toplam ile sıradaki çekim tarihleri görünür. Yıllık yenilemelerden 7 gün önce hatırlatma gelir. Tutar değişince yeni tutar sonraki çekimden itibaren geçerli olur; geçmiş kayıtlar değişmez.
 - **E8.** Dönem içinde henüz çekilmemiş düzenli harcamalar "bu dönem kalan"dan önceden düşülür; F4'teki etki hesabına ve toplam kart tavanına beklenen gider olarak girer.
+- **E9. Kalem adı:** Harcamaya isteğe bağlı bir ad verilir (ör. Probis). Daha önce girilen adlar öneri olarak çıkar; seçilince kategori ve son tutar dolar. Bir kalemin ay ay kaç kez alındığı, toplamı ve ortalaması kalem özetinde görünür. Fiş kalemlere bölünmez; her ürün ayrı girilir.
 
 ### 3.3 Banka uygulaması tetikleyicisi
 - **T1.** Kullanıcı ayarlardan izlenecek banka uygulamalarını seçer ve her uygulamayı bir hesaba veya karta bağlar.

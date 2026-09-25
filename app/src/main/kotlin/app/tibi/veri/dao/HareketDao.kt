@@ -23,7 +23,14 @@ data class HareketSatiri(
     val gecmisAktarim: Boolean,
     /** Yalnızca avansta dolu: true = maaştan düşülecek, false = düşüldü. */
     val avansAcik: Boolean? = null,
+    val kalem: String? = null,
 )
+
+/** Hızlı girişte öneri: kalemin en son yazılışı, en son kategorisi ve tutarı, kaç kez girildiği. */
+data class KalemOnerisi(val kalem: String, val kalemAnahtar: String, val kategoriId: Long?, val sonTutarKurus: Long, val sayi: Int)
+
+/** Bir kalemin bir takvim ayındaki alımları; ay "2026-09" biçiminde. */
+data class AylikKalem(val ay: String, val sayi: Int, val toplamKurus: Long)
 
 @Dao
 interface HareketDao {
@@ -46,7 +53,7 @@ interface HareketDao {
     @Query(
         """
         SELECT h.id, h.tur, h.tarih, h.tutarKurus, k.ad AS kategoriAdi, ks.ad AS kaynakAdi, hd.ad AS hedefAdi,
-               h.taksitSayisi, h.aciklama, h.gecmisAktarim,
+               h.taksitSayisi, h.aciklama, h.gecmisAktarim, h.kalem,
                CASE WHEN a.hareketId IS NULL THEN NULL WHEN a.mahsupHareketId IS NULL THEN 1 ELSE 0 END AS avansAcik
         FROM hareket h
         LEFT JOIN avans a ON a.hareketId = h.id
@@ -58,6 +65,46 @@ interface HareketDao {
         """
     )
     fun satirlar(bas: LocalDate, bit: LocalDate): Flow<List<HareketSatiri>>
+
+    /** [arama] zaten kalemAnahtari() ile normalize edilmiş olmalı; boşsa bütün kalemler. Sık girilen önce. */
+    @Query(
+        """
+        SELECT h.kalem AS kalem, h.kalemAnahtar AS kalemAnahtar, h.kategoriId AS kategoriId,
+               h.tutarKurus AS sonTutarKurus, g.sayi AS sayi
+        FROM (
+          SELECT kalemAnahtar, COUNT(*) AS sayi, MAX(tarih) AS sonTarih FROM hareket
+          WHERE tur = 'HARCAMA' AND kalemAnahtar IS NOT NULL AND kalemAnahtar LIKE '%' || :arama || '%'
+          GROUP BY kalemAnahtar
+        ) g
+        JOIN hareket h ON h.id = (
+          SELECT s.id FROM hareket s WHERE s.tur = 'HARCAMA' AND s.kalemAnahtar = g.kalemAnahtar
+          ORDER BY s.tarih DESC, s.id DESC LIMIT 1
+        )
+        ORDER BY g.sayi DESC, g.sonTarih DESC
+        LIMIT :limit
+        """
+    )
+    suspend fun kalemOnerileri(arama: String, limit: Int = 6): List<KalemOnerisi>
+
+    /** Takvim ayına göre alım sayısı ve toplamı, yeni ay önce; geçmiş aktarım sayılmaz. tarih epochDay'dir. */
+    @Query(
+        """
+        SELECT strftime('%Y-%m', tarih * 86400, 'unixepoch') AS ay, COUNT(*) AS sayi, SUM(tutarKurus) AS toplamKurus
+        FROM hareket
+        WHERE tur = 'HARCAMA' AND kalemAnahtar = :kalemAnahtar AND gecmisAktarim = 0
+        GROUP BY ay ORDER BY ay DESC
+        """
+    )
+    fun kalemOzeti(kalemAnahtar: String): Flow<List<AylikKalem>>
+
+    /** Kalemin en son girildiği yazılış (başlık için). */
+    @Query(
+        """
+        SELECT kalem FROM hareket WHERE tur = 'HARCAMA' AND kalemAnahtar = :kalemAnahtar
+        ORDER BY tarih DESC, id DESC LIMIT 1
+        """
+    )
+    fun kalemAdi(kalemAnahtar: String): Flow<String?>
 
     @Query("DELETE FROM hareket WHERE id = :id") suspend fun sil(id: Long)
 }

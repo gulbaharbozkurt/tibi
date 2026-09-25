@@ -1,5 +1,6 @@
 package app.tibi.ui.hareketler
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -38,6 +39,7 @@ import app.tibi.ui.ortak.aralik
 import app.tibi.ui.ortak.gunBasligi
 import app.tibi.ui.tibiVm
 import app.tibi.veri.dao.HareketSatiri
+import app.tibi.veri.kalemAnahtari
 import app.tibi.veri.tablo.HareketTuru
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -48,7 +50,7 @@ private val FILTRE_ADI = mapOf(
 )
 
 @Composable
-fun HareketlerEkrani() {
+fun HareketlerEkrani(kalemAc: (kalemAnahtar: String) -> Unit = {}) {
     val vm = tibiVm { HareketlerVm(it.veritabani, it.donemServisi) }
     val gruplar by vm.gruplar.collectAsStateWithLifecycle(emptyList())
     val donem by vm.donem.collectAsStateWithLifecycle(null)
@@ -90,7 +92,9 @@ fun HareketlerEkrani() {
                     Text(g.tarih.gunBasligi(bugun).uppercase(app.tibi.ui.ortak.TR), style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(top = 10.dp))
                 }
-                items(g.satirlar, key = { it.id }) { s -> HareketSatirKutusu(s) { silinecek = s } }
+                items(g.satirlar, key = { it.id }) { s ->
+                    HareketSatirKutusu(s, ac = s.kalem?.let(::kalemAnahtari)?.let { a -> { kalemAc(a) } }) { silinecek = s }
+                }
             }
         }
     }
@@ -99,40 +103,23 @@ fun HareketlerEkrani() {
         AlertDialog(
             onDismissRequest = { silinecek = null },
             title = { Text("Kayıt silinsin mi?") },
-            text = { Text("${baslik(s)} · ${Kurus(s.tutarKurus).bicimle()}" + if (s.taksitSayisi > 1) "\nBütün taksitleri de silinir." else "") },
+            text = { Text("${satirBasligi(s)} · ${Kurus(s.tutarKurus).bicimle()}" + if (s.taksitSayisi > 1) "\nBütün taksitleri de silinir." else "") },
             confirmButton = { TextButton({ kapsam.launch { vm.sil(s.id) }; silinecek = null }) { Text("Sil") } },
             dismissButton = { TextButton({ silinecek = null }) { Text("Vazgeç") } },
         )
     }
 }
 
-private fun baslik(s: HareketSatiri) = s.kategoriAdi ?: when (s.tur) {
-    HareketTuru.TRANSFER -> "Transfer"
-    HareketTuru.KART_ODEME -> "Kart ödemesi"
-    HareketTuru.GELIR -> "Gelir"
-    HareketTuru.AVANS -> "Avans"
-    HareketTuru.TAHSILAT -> "Tahsilat"
-    HareketTuru.DUZELTME -> "Bakiye düzeltme"
-    else -> s.aciklama ?: "Harcama"
-}
-
 @Composable
-private fun HareketSatirKutusu(s: HareketSatiri, sil: () -> Unit) {
+/** [ac] doluysa (kalemli satır) satıra dokunmak kalem özetini açar; çöp kutusu kendi tıklamasını alır. */
+private fun HareketSatirKutusu(s: HareketSatiri, ac: (() -> Unit)?, sil: () -> Unit) {
     val duzeltme = s.tur == HareketTuru.DUZELTME
     val giris = s.tur in setOf(HareketTuru.GELIR, HareketTuru.TAHSILAT, HareketTuru.AVANS) || (duzeltme && s.hedefAdi != null)
     val cikis = s.tur == HareketTuru.HARCAMA || (duzeltme && s.kaynakAdi != null)
-    val alt = buildList {
-        when {
-            s.kaynakAdi != null && s.hedefAdi != null -> add("${s.kaynakAdi} → ${s.hedefAdi}")
-            else -> (s.kaynakAdi ?: s.hedefAdi)?.let(::add)
-        }
-        if (s.taksitSayisi > 1) add("${s.taksitSayisi} taksit")
-        when (s.avansAcik) { true -> add("maaştan düşülecek"); false -> add("maaştan düşüldü"); null -> Unit }
-        if (s.kategoriAdi != null || s.tur == HareketTuru.AVANS) s.aciklama?.let(::add)
-    }.joinToString(" · ")
-    Row(Modifier.fillMaxWidth().padding(vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
+    val alt = satirAltMetni(s)
+    Row(Modifier.fillMaxWidth().then(if (ac != null) Modifier.clickable(onClick = ac) else Modifier).padding(vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
         Column(Modifier.weight(1f)) {
-            Text(baslik(s))
+            Text(satirBasligi(s))
             if (alt.isNotEmpty()) Text(alt, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
         Text((if (giris) "+" else if (cikis) "−" else "") + Kurus(s.tutarKurus).bicimle(),

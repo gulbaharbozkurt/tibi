@@ -48,6 +48,17 @@ class KayitServisiTest {
     }
 
     @Test
+    fun `harcama kalem adini temizleyip anahtariyla yazar`() = runTest {
+        val id = servis.harcama(Kurus(9000), bugun, nakit, market(), kalem = "  Ülker   PROBİS ")
+        val h = db.hareketDao().getir(id)!!
+        assertEquals("Ülker PROBİS", h.kalem)
+        assertEquals("ülker probis", h.kalemAnahtar)
+        val bos = db.hareketDao().getir(servis.harcama(Kurus(100), bugun, nakit, null, kalem = "  "))!!
+        assertEquals(null, bos.kalem)
+        assertEquals(null, bos.kalemAnahtar)
+    }
+
+    @Test
     fun `gelir bakiyeye eklenir`() = runTest {
         servis.gelir(Kurus(105000), bugun, nakit, db.kategoriDao().adIle("Özel ders")!!.id)
         assertEquals(130000L + 105000L, bakiye(nakit))

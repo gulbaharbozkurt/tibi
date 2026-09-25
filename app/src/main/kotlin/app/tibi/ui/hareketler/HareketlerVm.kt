@@ -32,9 +32,32 @@ data class GunGrubu(val tarih: LocalDate, val satirlar: List<HareketSatiri>)
 fun HareketSatiri.eslesir(arama: String): Boolean {
     val a = arama.trim().lowercase(TR)
     if (a.isEmpty()) return true
-    val alanlar = listOfNotNull(kategoriAdi, aciklama, kaynakAdi, hedefAdi, Kurus(tutarKurus).bicimle())
+    val alanlar = listOfNotNull(kalem, kategoriAdi, aciklama, kaynakAdi, hedefAdi, Kurus(tutarKurus).bicimle())
     return alanlar.any { it.lowercase(TR).contains(a) }
 }
+
+/** Satır başlığı: kalem adı varsa o, yoksa kategori ya da hareket türü. */
+fun satirBasligi(s: HareketSatiri): String = s.kalem ?: s.kategoriAdi ?: when (s.tur) {
+    HareketTuru.TRANSFER -> "Transfer"
+    HareketTuru.KART_ODEME -> "Kart ödemesi"
+    HareketTuru.GELIR -> "Gelir"
+    HareketTuru.AVANS -> "Avans"
+    HareketTuru.TAHSILAT -> "Tahsilat"
+    HareketTuru.DUZELTME -> "Bakiye düzeltme"
+    else -> s.aciklama ?: "Harcama"
+}
+
+/** Başlığın altındaki satır: (kalem başlıksa) kategori, hesap(lar), taksit, avans durumu, not. */
+fun satirAltMetni(s: HareketSatiri): String = buildList {
+    if (s.kalem != null) s.kategoriAdi?.let(::add)
+    when {
+        s.kaynakAdi != null && s.hedefAdi != null -> add("${s.kaynakAdi} → ${s.hedefAdi}")
+        else -> (s.kaynakAdi ?: s.hedefAdi)?.let(::add)
+    }
+    if (s.taksitSayisi > 1) add("${s.taksitSayisi} taksit")
+    when (s.avansAcik) { true -> add("maaştan düşülecek"); false -> add("maaştan düşüldü"); null -> Unit }
+    if (s.kalem != null || s.kategoriAdi != null || s.tur == HareketTuru.AVANS) s.aciklama?.let(::add)
+}.joinToString(" · ")
 
 class HareketlerVm(
     private val db: TibiVeritabani,

@@ -1,5 +1,6 @@
 package app.tibi.ui
 
+import android.net.Uri
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -37,6 +38,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import app.tibi.ui.giris.HizliGirisSayfasi
 import app.tibi.ui.hareketler.HareketlerEkrani
+import app.tibi.ui.hareketler.KalemOzetiEkrani
 import app.tibi.ui.hesaplar.HesaplarEkrani
 import app.tibi.ui.hesaplar.HesapDuzenleEkrani
 import app.tibi.ui.hesaplar.KartDetayEkrani
@@ -71,7 +73,7 @@ fun Kabuk() {
             NavigationBar {
                 Sekme.entries.forEach { s ->
                     NavigationBarItem(
-                        selected = aktif == s.rota || (s == Sekme.HESAPLAR && (aktif?.startsWith("kart/") == true || aktif?.startsWith("hesap/") == true)),
+                        selected = aktif == s.rota || (s == Sekme.HAREKETLER && aktif?.startsWith("kalem/") == true) || (s == Sekme.HESAPLAR && (aktif?.startsWith("kart/") == true || aktif?.startsWith("hesap/") == true)),
                         onClick = {
                             nav.navigate(s.rota) {
                                 popUpTo(nav.graph.findStartDestination().id) { saveState = true }
@@ -88,7 +90,11 @@ fun Kabuk() {
     ) { ic ->
         NavHost(nav, startDestination = Sekme.OZET.rota, modifier = Modifier.padding(ic)) {
             composable(Sekme.OZET.rota) { OzetEkrani() }
-            composable(Sekme.HAREKETLER.rota) { HareketlerEkrani() }
+            composable(Sekme.HAREKETLER.rota) { HareketlerEkrani(kalemAc = { nav.navigate("kalem/${Uri.encode(it)}") }) }
+            // Navigation yol argümanını kendisi çözer (Uri.decode); ikinci kez çözmek "%" içeren adı bozar.
+            composable("kalem/{anahtar}", arguments = listOf(navArgument("anahtar") { type = NavType.StringType })) { giris ->
+                KalemOzetiEkrani(giris.arguments!!.getString("anahtar")!!, geri = { nav.popBackStack() })
+            }
             composable(Sekme.HESAPLAR.rota) {
                 HesaplarEkrani(kartAc = { nav.navigate("kart/$it") }, hesapAc = { nav.navigate("hesap/$it") })
             }

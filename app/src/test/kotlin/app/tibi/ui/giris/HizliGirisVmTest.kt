@@ -115,4 +115,34 @@ class HizliGirisVmTest {
             vm.kaydet(GirisTuru.HARCAMA, "100", nakit, null, null, 1, 0, bugun.plusDays(1), ""))
         assertEquals(1, db.hareketDao().sayi())
     }
+
+    @Test
+    fun `harcama kalem adiyla kaydedilir`() = runTest {
+        assertEquals(Sonuc.Tamam, vm.kaydet(GirisTuru.HARCAMA, "90", nakit, null, kat("Market"), 1, 0, bugun, "", kalem = " Probis "))
+        val h = db.hareketDao().satirlar(bugun, bugun).first().single()
+        assertEquals("Probis", h.kalem)
+    }
+
+    @Test
+    fun `oneriler sik alinan once, arama normalize edilir, son tutar ve kategori en yeni kayittan`() = runTest {
+        val market = kat("Market")
+        val yemek = kat("Yemek/Kafe")
+        vm.kaydet(GirisTuru.HARCAMA, "80", nakit, null, market, 1, 0, LocalDate.parse("2026-09-01"), "", kalem = "probis")
+        vm.kaydet(GirisTuru.HARCAMA, "85", nakit, null, market, 1, 0, LocalDate.parse("2026-09-10"), "", kalem = "PROBİS")
+        vm.kaydet(GirisTuru.HARCAMA, "90", nakit, null, yemek, 1, 0, LocalDate.parse("2026-09-20"), "", kalem = "Probis")
+        vm.kaydet(GirisTuru.HARCAMA, "30", nakit, null, market, 1, 0, LocalDate.parse("2026-09-22"), "", kalem = "Ekmek")
+        vm.kaydet(GirisTuru.HARCAMA, "30", nakit, null, market, 1, 0, LocalDate.parse("2026-09-23"), "", kalem = "Ekmek")
+        vm.kaydet(GirisTuru.HARCAMA, "250", nakit, null, market, 1, 0, LocalDate.parse("2026-09-24"), "", kalem = "Deterjan")
+
+        val hepsi = vm.oneriler("")
+        assertEquals(listOf("Probis", "Ekmek", "Deterjan"), hepsi.map { it.kalem })
+        assertEquals(listOf(3, 2, 1), hepsi.map { it.sayi })
+
+        val p = vm.oneriler("  PROB").single()
+        assertEquals("Probis", p.kalem)
+        assertEquals("probis", p.kalemAnahtar)
+        assertEquals(9000L, p.sonTutarKurus)
+        assertEquals(yemek, p.kategoriId)
+        assertEquals(emptyList(), vm.oneriler("çikolata"))
+    }
 }
